@@ -87,7 +87,7 @@ void mapped_data_set::_setup(bool new_file)
 
 void mapped_data_set::compute_aabb()
 {
-	stream_data_structure& vs = _header.get_vertex_structure();
+	stream_structure& vs = _header.get_vertex_structure();
 	const attribute& position = vs.get_attribute("position");
 	switch (position.get_data_type_id())
 	{

@@ -13,7 +13,7 @@ sort_data_set::sort_data_set(const params& params_) :
 	const attribute* attr;
 	if (sort_attr_name == "position")
 	{
-		const stream_data_structure& ps = in_header.get_vertex_structure();
+		const stream_structure& ps = in_header.get_vertex_structure();
 		attr = &ps.get_attribute(sort_attr_name);
 		data_type_id id_ = attr->get_data_type_id();
 		switch (id_)
@@ -32,7 +32,7 @@ sort_data_set::sort_data_set(const params& params_) :
 	}
 	else if (sort_attr_name == "vertex_indices")
 	{
-		const stream_data_structure& fs = in_header.get_face_structure();
+		const stream_structure& fs = in_header.get_face_structure();
 		attr = &fs.get_attribute(sort_attr_name);
 		data_type_id id_ = attr->get_data_type_id();
 		switch (id_)

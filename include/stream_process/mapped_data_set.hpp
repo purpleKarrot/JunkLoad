@@ -104,7 +104,7 @@ mapped_data_set::_compute_aabb()
 {
     typedef vmml::vector< 3, T >    vector_type;
 
-    const stream_data_structure& vs = _header.get_vertex_structure();
+    const stream_structure& vs = _header.get_vertex_structure();
 
     const attribute& position = vs.get_attribute( "position" );
     attribute_accessor< vector_type >  get_position;

@@ -123,8 +123,6 @@ stream_structure::create_attribute( const std::string& name, size_t array_size )
 	return *attr;
 }
 
-
 } // namespace stream_process
 
 #endif
-

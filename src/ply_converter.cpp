@@ -105,7 +105,7 @@ void ply_converter::_setup_header_from_vertex_properties(
 	bool has_color = false;
 	_color_names.resize(3);
 
-	stream_data_structure& vs = header.get_vertex_structure();
+	stream_structure& vs = header.get_vertex_structure();
 
 	for (int index = 0; index < _vertex_property_count; ++index)
 	{
@@ -188,7 +188,7 @@ void ply_converter::_setup_header_from_face_properties(data_set_header& header)
 
 	// atm only triangle support is implemented.
 
-	stream_data_structure& fs = header.get_face_structure();
+	stream_structure& fs = header.get_face_structure();
 
 	std::string index_name = "vertex_indices";
 
@@ -211,7 +211,7 @@ void ply_converter::_setup_header_from_face_properties(data_set_header& header)
 
 void ply_converter::_read_vertex_data()
 {
-	const stream_data_structure& vs =
+	const stream_structure& vs =
 			_data_set->get_header().get_vertex_structure();
 
 	const data_type_helper& dth = data_type_helper::get_singleton();
@@ -309,7 +309,7 @@ void ply_converter::_read_face_data()
 	// data extraction from the ply
 
 	const data_set_header& header = _data_set->get_header();
-	const stream_data_structure& fs = header.get_face_structure();
+	const stream_structure& fs = header.get_face_structure();
 
 	struct tmp_face
 	{

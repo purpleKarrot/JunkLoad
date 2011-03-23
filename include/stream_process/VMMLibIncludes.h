@@ -13,7 +13,6 @@
 #include <vmmlib/vector.hpp>
 #include <vmmlib/matrix.hpp>
 
-#include <vmmlib/svd.hpp>
 #include <vmmlib/jacobi_solver.hpp>
 #include <boost/cstdint.hpp>
 

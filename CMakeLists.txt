@@ -34,7 +34,7 @@ target_link_libraries(stream_process
   pthread
   )
 
-return()
+#return()
 
 set(depend "${CMAKE_BINARY_DIR}/CMakeFiles/stream_process.dir/depend.internal")
 file(STRINGS "${depend}" files REGEX "^ ../include/")
@@ -49,8 +49,8 @@ endforeach()
 list(SORT needed)
 list(REMOVE_DUPLICATES needed)
 
-file(GLOB available RELATIVE "${CMAKE_SOURCE_DIR}/include"
-  "${CMAKE_SOURCE_DIR}/include/stream_process/*.h*"
+file(GLOB_RECURSE available RELATIVE "${CMAKE_SOURCE_DIR}/include"
+  "${CMAKE_SOURCE_DIR}/include/*.h*"
   )
 
 list(SORT available)

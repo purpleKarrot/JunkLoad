@@ -46,7 +46,7 @@ template< typename T >
 attribute_accessor< T >
 point_set::get_accessor( const std::string& attr_name ) const
 {
-    const stream_data_structure& ps     = _header.get_vertex_structure();
+    const stream_structure& ps     = _header.get_vertex_structure();
 
     attribute_accessor< T > accessor;
     accessor.setup_attribute( ps, attr_name );
