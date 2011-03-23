@@ -18,7 +18,6 @@ add_executable(stream_process
   src/mapped_data_set.cpp
   src/ply_converter.cpp
   src/plyfile.cpp
-  src/preprocess.cpp
   src/reindex_faces.cpp
   src/sort_data_set.cpp
   src/stream_structure.cpp
@@ -51,7 +50,7 @@ list(SORT needed)
 list(REMOVE_DUPLICATES needed)
 
 file(GLOB available RELATIVE "${CMAKE_SOURCE_DIR}/include"
-  "${CMAKE_SOURCE_DIR}/include/stream_process/*.hpp"
+  "${CMAKE_SOURCE_DIR}/include/stream_process/*.h*"
   )
 
 list(SORT available)
