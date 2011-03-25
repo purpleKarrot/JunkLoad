@@ -5,7 +5,6 @@
 #include <string>
 #include <sstream>
 
-
 #define ERROR( desc ) throw( exception( desc, __FUNCTION__, __FILE__, __LINE__ ) )
 #define STREAM_EXCEPT( desc ) throw( exception( desc, __FUNCTION__, __FILE_WITHOUT_PATH__, __LINE__ ) )
 
@@ -14,35 +13,38 @@
 namespace stream_process
 {
 
-typedef std::stringstream exception_message;
-
 struct except_here
 {
-    except_here( const char* file_, int line_ ) : file( file_ ), line( line_ ) {}
-    const char*     file;
-    int          line;  
+	except_here(const char* file_, int line_) :
+		file(file_), line(line_)
+	{
+	}
+	const char* file;
+	int line;
 }; // struct except_here
 
-class exception : public std::exception
+class exception: public std::exception
 {
 public:
-    exception( const char* desc, const except_here& here );
-    exception( const std::string& desc, const except_here& here );
-    exception( const std::stringstream& desc, const char* function, const char* file, size_t line );  
-    exception( const std::string& desc, const char* function, const char* file, size_t line );  
-    virtual ~exception() throw();
-    virtual const char* what() const throw();
-    virtual void get_info( std::string& what_, std::string& where_ ) const throw();
+	exception(const char* desc, const except_here& here);
+	exception(const std::string& desc, const except_here& here);
+	exception(const std::stringstream& desc, const char* function,
+			const char* file, size_t line);
+	exception(const std::string& desc, const char* function, const char* file,
+			size_t line);
+	virtual ~exception() throw ();
+	virtual const char* what() const throw ();
+	virtual void
+			get_info(std::string& what_, std::string& where_) const throw ();
 
 protected:
-    std::string     _description;
-    const char*     _function;
-    std::string     _file;
-    size_t          _line;
+	std::string _description;
+	const char* _function;
+	std::string _file;
+	size_t _line;
 
 private:
-    exception();
-
+	exception();
 
 }; // class exception
 

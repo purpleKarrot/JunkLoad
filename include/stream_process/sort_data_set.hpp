@@ -1,7 +1,7 @@
 #ifndef __STREAM_PROCESS__SORT_DATA_SET__HPP__
 #define __STREAM_PROCESS__SORT_DATA_SET__HPP__
 
-#include <stream_process/data_set.hpp>
+#include <stream_process/mapped_data_set.hpp>
 #include <stream_process/exception.hpp>
 
 #include <stream_process/intro_sort.hpp>
@@ -47,7 +47,7 @@ protected:
 
 	params _params;
 
-	data_set _input;
+	mapped_data_set _input;
 
 	boost::iostreams::mapped_file _tmp_file;
 	boost::iostreams::mapped_file _out_file;

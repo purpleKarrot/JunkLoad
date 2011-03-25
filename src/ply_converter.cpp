@@ -67,7 +67,7 @@ void ply_converter::_from_ply()
 		_setup_header_from_vertex_properties(header);
 		_setup_header_from_face_properties(header);
 
-		_data_set = new data_set(header, _params.target_file);
+		_data_set = new mapped_data_set(header, _params.target_file);
 	}
 
 	// read data
@@ -289,7 +289,7 @@ void ply_converter::_read_vertex_data()
 		ply_get_property(_ply_file, "vertex", &(*it));
 	}
 
-	data_set::iterator vit = _data_set->vbegin(), vit_end = _data_set->vend();
+	mapped_data_set::iterator vit = _data_set->vbegin(), vit_end = _data_set->vend();
 	for (; vit != vit_end; ++vit)
 	{
 		// read object data into memory map
@@ -328,7 +328,7 @@ void ply_converter::_read_face_data()
 	attribute_accessor<vec3ui> get_indices;
 	get_indices.set_offset(vertex_indices.get_offset());
 
-	data_set::iterator fit = _data_set->fbegin(), fit_end = _data_set->fend();
+	mapped_data_set::iterator fit = _data_set->fbegin(), fit_end = _data_set->fend();
 	for (; fit != fit_end; ++fit)
 	{
 		// read object data into memory map

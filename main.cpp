@@ -15,7 +15,7 @@ namespace sp = stream_process;
 static void _apply_optimal_transform(const std::string& filename,
 		bool full_optimal_transform)
 {
-	sp::data_set data_set_(filename);
+	sp::mapped_data_set data_set_(filename);
 	bool has_faces = data_set_.get_header().has_faces();
 
 	sp::attribute_accessor<sp::vec3f> get_position;
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 		sp::sort_data_set sort(sort_params);
 	}
 
-	sp::data_set data_set_(unsorted);
+	sp::mapped_data_set data_set_(unsorted);
 	if (data_set_.get_header().has_faces())
 	{
 		const sp::data_set_header& h = data_set_.get_header();
