@@ -7,9 +7,6 @@
 #include <sstream>
 #include <cassert>
 
-#include <vmmlib/vmmlib_config.hpp>
-
-
 #define VMMLIB_HERE ( except_here( __FILE__, __LINE__ ) )
 
 #ifdef VMMLIB_THROW_EXCEPTIONS

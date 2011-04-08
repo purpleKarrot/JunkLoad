@@ -1,7 +1,6 @@
 #ifndef __VMML__VECTOR__HPP__
 #define __VMML__VECTOR__HPP__
 
-#include <vmmlib/vmmlib_config.hpp>
 #include <vmmlib/math.hpp>
 #include <vmmlib/enable_if.hpp>
 #include <vmmlib/exception.hpp>
@@ -294,9 +293,8 @@ public:
         
 
 
-        // storage
-        VMMLIB_ALIGN( T array[ M ] );
-    ;
+    // storage
+    T array[M];
 
     // Vector3 defaults
     static const vector FORWARD;

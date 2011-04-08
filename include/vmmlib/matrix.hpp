@@ -1,8 +1,6 @@
 #ifndef __VMML__MATRIX__HPP__
 #define __VMML__MATRIX__HPP__
 
-#include <vmmlib/vmmlib_config.hpp>
-
 #include <vmmlib/matrix_functors.hpp>
 #include <vmmlib/vector.hpp>
 #include <vmmlib/math.hpp>
@@ -390,7 +388,7 @@ public:
 
     // protected:
     // column_by_column
-    VMMLIB_ALIGN( T array[ M * N ] );
+    T array[ M * N ];
     
     // static members
     static const matrix< M, N, T > IDENTITY;
