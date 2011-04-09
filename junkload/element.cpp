@@ -1,6 +1,4 @@
-#include "data_element.hpp"
-
-#include "mapped_data_element.hpp"
+#include "element.hpp"
 
 #include "file_suffix_helper.hpp"
 
@@ -8,16 +6,6 @@
 
 namespace stream_process
 {
-
-data_element::data_element(const std::string& name) :
-	_name(name), _structure(name + " attribute"), _size(0), _offset(0),
-			_size_in_bytes(0), _data_size_in_bytes(0), _mapped_file(0)
-{
-}
-
-data_element::~data_element()
-{
-}
 
 void data_element::update()
 {
@@ -90,7 +78,6 @@ void data_element::merge_input(const data_element& input_element_)
 	_offset = input_element_._offset;
 
 	_structure.merge_input(input_element_.get_structure());
-
 }
 
 } // namespace stream_process

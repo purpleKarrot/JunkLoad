@@ -4,9 +4,7 @@
 namespace stream_process
 {
 
-struct stream_data
-{
-};
+typedef char stream_data;
 
 } // namespace stream_process
 

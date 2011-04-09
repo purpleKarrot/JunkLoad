@@ -9,12 +9,12 @@ reindex_faces::reindex_faces(const params& params_) :
 	_reindex_map.open(_params.reindex_map);
 
 	if (!_reindex_map.is_open())
-		throw exception("reindex map could not be opened.", SPROCESS_HERE);
+		throw std::runtime_error("reindex map could not be opened.");
 
 	_faces_file.open(_params.faces_file);
 
 	if (!_faces_file.is_open())
-		throw exception("faces file could not be opened.", SPROCESS_HERE);
+		throw std::runtime_error("faces file could not be opened.");
 
 	switch (_params.index_type)
 	{
@@ -25,8 +25,7 @@ reindex_faces::reindex_faces(const params& params_) :
 		_reindex<3, uint64_t> (); // triangles only atm
 		break;
 	default:
-		throw exception("NOT IMPLEMENTED YET.", SPROCESS_HERE);
-
+		throw std::runtime_error("NOT IMPLEMENTED YET.");
 	}
 }
 

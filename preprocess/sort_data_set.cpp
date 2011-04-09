@@ -26,7 +26,7 @@ sort_data_set::sort_data_set(const params& params_) :
 			break;
 		default:
 			// FIXME
-			throw exception("NOT IMPLEMENTED YET.", SPROCESS_HERE);
+			assert(!"NOT IMPLEMENTED YET.");
 			break;
 		}
 	}
@@ -44,13 +44,13 @@ sort_data_set::sort_data_set(const params& params_) :
 			_sort_faces<uint64_t, uint64_t> ();
 		default:
 			// FIXME
-			throw exception("NOT IMPLEMENTED YET.", SPROCESS_HERE);
+			assert(!"NOT IMPLEMENTED YET.");
 			break;
 		}
 	}
 	else
 	{
-		throw exception("NOT IMPLEMENTED YET.", SPROCESS_HERE);
+		assert(!"NOT IMPLEMENTED YET.");
 	}
 }
 

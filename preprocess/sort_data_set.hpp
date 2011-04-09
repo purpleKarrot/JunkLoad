@@ -2,14 +2,12 @@
 #define __STREAM_PROCESS__SORT_DATA_SET__HPP__
 
 #include "mapped_data_set.hpp"
-#include "exception.hpp"
-
 #include "intro_sort.hpp"
-
 #include "preprocess_types.hpp"
 #include "special_accessors.hpp"
 
 #include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/filesystem.hpp>
 
 #include <string>
 #include <cstddef>
@@ -118,8 +116,8 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 	_tmp_file.open(tmp_params);
 	if (!_tmp_file.is_open())
 	{
-		throw exception(_params.tmp_name + " could not be created/opened.",
-				SPROCESS_HERE);
+		throw std::runtime_error(
+				_params.tmp_name + " could not be created/opened.");
 	}
 
 	// copy comparison-value and index into sort-file
@@ -160,8 +158,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 
 	if (!_out_file.is_open())
 	{
-		throw exception("output file could not be created/opened.",
-				SPROCESS_HERE);
+		throw std::runtime_error("output file could not be created/opened.");
 	}
 
 	char* out_data = _out_file.data();

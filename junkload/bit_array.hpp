@@ -2,7 +2,6 @@
 #define __STREAM_PROCESS__BIT_ARRAY__HPP__
 
 #include <cstddef>
-#include <iostream>
 
 namespace stream_process
 {
@@ -10,17 +9,17 @@ namespace stream_process
 class bit_array
 {
 public:
-	inline bit_array() :
-		array(0)
+	bit_array() :
+			array(0)
 	{
 	}
 
-	inline bool get_bit(const size_t flag) const
+	bool get_bit(std::size_t flag) const
 	{
 		return array & flag;
 	}
 
-	inline void set_bit(const size_t flag, bool new_state_)
+	void set_bit(std::size_t flag, bool new_state_)
 	{
 		if (flag & array)
 		{
@@ -38,22 +37,20 @@ public:
 		}
 	}
 
-	inline void clear()
+	void clear()
 	{
-		memset(&array, 0, sizeof(size_t));
+		array = 0;
 	}
 
-	inline const bit_array& operator=(size_t flags_)
+	const bit_array& operator=(std::size_t flags_)
 	{
 		array = flags_;
 		return *this;
 	}
 
-	size_t array;
+	std::size_t array;
+};
 
-}; // class bit_array
-
-} // namespace gloo
+} // namespace stream_process
 
 #endif
-

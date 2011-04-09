@@ -27,7 +27,8 @@ public:
 		_data += _size_in_bytes;
 		return *this;
 	}
-	inline stream_data_iterator operator++(int dummy)
+
+	inline stream_data_iterator operator++(int)
 	{
 		stream_data_iterator tmp(*this);
 		++(*this);
@@ -40,7 +41,7 @@ public:
 		return *this;
 	}
 
-	inline stream_data_iterator operator--(int dummy)
+	inline stream_data_iterator operator--(int)
 	{
 		stream_data_iterator tmp(*this);
 		--(*this);
@@ -77,9 +78,7 @@ private:
 		_size_in_bytes(0)
 	{
 	}
-
-}; // class stream_data_iterator
-
+};
 
 class stream_data_const_iterator: public std::iterator<
 		std::bidirectional_iterator_tag, const stream_data*>
@@ -100,7 +99,8 @@ public:
 		_data += _size_in_bytes;
 		return *this;
 	}
-	inline stream_data_const_iterator operator++(int dummy)
+
+	inline stream_data_const_iterator operator++(int)
 	{
 		stream_data_const_iterator tmp(*this);
 		++(*this);
@@ -112,7 +112,8 @@ public:
 		_data -= _size_in_bytes;
 		return *this;
 	}
-	inline stream_data_const_iterator operator--(int dummy)
+
+	inline stream_data_const_iterator operator--(int)
 	{
 		stream_data_const_iterator tmp(*this);
 		--(*this);
@@ -149,11 +150,8 @@ private:
 		_size_in_bytes(0)
 	{
 	}
-
-}; // class stream_data_const_iterator
-
+};
 
 } // namespace stream_process
 
 #endif
-

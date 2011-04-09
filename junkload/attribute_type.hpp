@@ -45,10 +45,10 @@ struct attribute_type
 			std::cerr << "actual attribute type:   "
 					<< attribute_.get_data_type_id() << std::endl;
 		}
+
 		return ok;
 	}
-}; // class attribute_type
-
+};
 
 template<>
 inline attribute*
@@ -56,7 +56,6 @@ attribute_type<vec2f>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_32, 2);
 }
-;
 
 template<>
 inline bool attribute_type<vec2f>::operator()(const attribute& attribute_)
@@ -66,10 +65,7 @@ inline bool attribute_type<vec2f>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 2)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
 inline attribute*
@@ -77,7 +73,6 @@ attribute_type<vec3f>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_32, 3);
 }
-;
 
 template<>
 inline bool attribute_type<vec3f>::operator()(const attribute& attribute_)
@@ -87,18 +82,13 @@ inline bool attribute_type<vec3f>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 3)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
-inline attribute*
-attribute_type<vec3ui>::create(const std::string& name)
+inline attribute* attribute_type<vec3ui>::create(const std::string& name)
 {
 	return new attribute(name, SP_UINT_32, 3);
 }
-;
 
 template<>
 inline bool attribute_type<vec3ui>::operator()(const attribute& attribute_)
@@ -108,10 +98,7 @@ inline bool attribute_type<vec3ui>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 3)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
 inline attribute*
@@ -119,7 +106,6 @@ attribute_type<vec4f>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_32, 4);
 }
-;
 
 template<>
 inline bool attribute_type<vec4f>::operator()(const attribute& attribute_)
@@ -129,18 +115,13 @@ inline bool attribute_type<vec4f>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 4)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
-inline attribute*
-attribute_type<vec2d>::create(const std::string& name)
+inline attribute* attribute_type<vec2d>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_64, 2);
 }
-;
 
 template<>
 inline bool attribute_type<vec2d>::operator()(const attribute& attribute_)
@@ -150,10 +131,7 @@ inline bool attribute_type<vec2d>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 2)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
 inline attribute*
@@ -161,7 +139,6 @@ attribute_type<vec3d>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_64, 3);
 }
-;
 
 template<>
 inline bool attribute_type<vec3d>::operator()(const attribute& attribute_)
@@ -171,18 +148,13 @@ inline bool attribute_type<vec3d>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 3)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
-inline attribute*
-attribute_type<vec4d>::create(const std::string& name)
+inline attribute* attribute_type<vec4d>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_64, 4);
 }
-;
 
 template<>
 inline bool attribute_type<vec4d>::operator()(const attribute& attribute_)
@@ -192,10 +164,7 @@ inline bool attribute_type<vec4d>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 4)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
 inline attribute*
@@ -203,7 +172,6 @@ attribute_type<vec4ub>::create(const std::string& name)
 {
 	return new attribute(name, SP_UINT_8, 4);
 }
-;
 
 template<>
 inline bool attribute_type<vec4ub>::operator()(const attribute& attribute_)
@@ -213,10 +181,7 @@ inline bool attribute_type<vec4ub>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 4)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
 inline attribute*
@@ -224,7 +189,6 @@ attribute_type<mat3f>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_32, 9);
 }
-;
 
 template<>
 inline bool attribute_type<mat3f>::operator()(const attribute& attribute_)
@@ -234,10 +198,7 @@ inline bool attribute_type<mat3f>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 9)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
 inline attribute*
@@ -245,7 +206,6 @@ attribute_type<mat4f>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_32, 16);
 }
-;
 
 template<>
 inline bool attribute_type<mat4f>::operator()(const attribute& attribute_)
@@ -255,10 +215,7 @@ inline bool attribute_type<mat4f>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 16)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
 inline attribute*
@@ -266,7 +223,6 @@ attribute_type<mat3d>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_64, 9);
 }
-;
 
 template<>
 inline bool attribute_type<mat3d>::operator()(const attribute& attribute_)
@@ -276,10 +232,7 @@ inline bool attribute_type<mat3d>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 9)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 template<>
 inline attribute*
@@ -287,7 +240,6 @@ attribute_type<mat4d>::create(const std::string& name)
 {
 	return new attribute(name, SP_FLOAT_64, 16);
 }
-;
 
 template<>
 inline bool attribute_type<mat4d>::operator()(const attribute& attribute_)
@@ -297,12 +249,8 @@ inline bool attribute_type<mat4d>::operator()(const attribute& attribute_)
 	if (attribute_.get_number_of_elements() != 16)
 		return false;
 	return true;
-
 }
-; // class attribute_type
-
 
 } // namespace stream_process
 
 #endif
-

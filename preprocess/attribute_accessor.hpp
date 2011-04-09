@@ -4,7 +4,6 @@
 #include "attribute.hpp"
 #include "attribute_type.hpp"
 #include "stream_structure.hpp"
-#include "exception.hpp"
 #include "VMMLibIncludes.h"
 #include "stream_data.hpp"
 
@@ -91,9 +90,10 @@ inline attribute& attribute_accessor<T>::setup_attribute(stream_structure& ps,
 
 		if (!test_type(*attr))
 		{
-			throw exception(std::string("attempt to initialize accessor ")
-					+ " with attribute " + attr->get_name()
-					+ ": type mismatch.", SPROCESS_HERE);
+			throw std::runtime_error(
+					std::string("attempt to initialize accessor ")
+							+ " with attribute " + attr->get_name()
+							+ ": type mismatch.");
 		}
 
 		if (!attr->is_output() && is_output_)
@@ -111,8 +111,9 @@ inline attribute& attribute_accessor<T>::setup_attribute(
 	attribute* attr = 0;
 	if (!ps.has_attribute(name))
 	{
-		throw exception(std::string("attempt to initialize accessor ")
-				+ " with invalid attribute '" + name + "'", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("attempt to initialize accessor ")
+						+ " with invalid attribute '" + name + "'");
 	}
 
 	// FIXME
@@ -123,9 +124,10 @@ inline attribute& attribute_accessor<T>::setup_attribute(
 		// if it's a non-built-in-type, make sure the attribute_type
 		// template is implemented for the requested type
 		// in file: attribute_type.hpp
-		throw exception(std::string("attempt to initialize accessor")
-				+ " with attribute " + attr->get_name() + ": type mismatch.",
-				SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("attempt to initialize accessor")
+						+ " with attribute " + attr->get_name()
+						+ ": type mismatch.");
 	}
 
 	_attribute_ptr = attr;

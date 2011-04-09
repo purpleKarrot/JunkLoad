@@ -2,7 +2,7 @@
 #define __STREAM_PROCESS__SPECIAL_ACCESSORS__HPP__
 
 #include "VMMLibIncludes.h"
-#include "point_set.hpp"
+#include "attribute_accessor.hpp"
 
 namespace stream_process
 {
@@ -11,11 +11,6 @@ template<size_t M, typename T>
 struct smallest_component_accessor
 {
 	typedef vmml::vector<M, T> vec_type;
-
-	void setup(const point_set& ps, const std::string& attr_name)
-	{
-		get_attribute = ps.get_accessor<vec_type> (attr_name);
-	}
 
 	void setup(size_t offset)
 	{
@@ -39,6 +34,7 @@ struct conversion_accessor
 	{
 		get_attribute.set_offset(offset);
 	}
+
 	conversion_accessor(const attribute_accessor<T>& acc) :
 		get_attribute(acc)
 	{
@@ -50,11 +46,8 @@ struct conversion_accessor
 	}
 
 	attribute_accessor<T> get_attribute;
-
-}; // struct conversion_accessor
-
+};
 
 } // namespace stream_process
 
 #endif
-

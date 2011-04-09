@@ -29,11 +29,8 @@ protected:
 
 	size_t _input_offset;
 	size_t _input_face_offset;
-
-}; // class point_set_header_io
-
+};
 
 } // namespace stream_process
 
 #endif
-

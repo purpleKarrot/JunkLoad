@@ -3,7 +3,7 @@
 
 #include "VMMLibIncludes.h"
 #include "stream_structure.hpp"
-#include "data_element.hpp"
+#include "element.hpp"
 
 #include <cstddef>
 
@@ -107,20 +107,22 @@ inline data_element& data_set_header::get_element(const std::string& name)
 {
 	if (name == "vertex")
 		return _vertices;
-	else if (name == "face")
+
+	if (name == "face")
 		return _faces;
-	else
-		throw exception("element not found.", SPROCESS_HERE);
+
+	throw std::runtime_error("element not found.");
 }
 
 inline const data_element& data_set_header::get_element(const std::string& name) const
 {
 	if (name == "vertex")
 		return _vertices;
-	else if (name == "face")
+
+	if (name == "face")
 		return _faces;
-	else
-		throw exception("element not found.", SPROCESS_HERE);
+
+	throw std::runtime_error("element not found.");
 }
 
 inline data_element& data_set_header::get_vertex_element()

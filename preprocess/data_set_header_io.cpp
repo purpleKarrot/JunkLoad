@@ -1,6 +1,4 @@
 #include "data_set_header_io.hpp"
-
-#include "exception.hpp"
 #include "file_suffix_helper.hpp"
 
 #include <boost/lexical_cast.hpp>
@@ -22,12 +20,9 @@ void data_set_header_io::read_from_file(const std::string& filename_base,
 	{
 		_parse_header();
 		hdr_ = _working_copy;
-	} catch (exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		throw e;
 	} catch (std::exception& e)
 	{
+		std::cerr << e.what() << std::endl;
 		throw e;
 	}
 
@@ -102,8 +97,8 @@ void data_set_header_io::_open_file(const std::string& filename_base,
 	if (!_fstream.is_open())
 	{
 
-		throw exception(std::string("opening point header ") + _filename
-				+ " failed.", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("opening point header ") + _filename + " failed.");
 	}
 }
 
@@ -111,7 +106,7 @@ void data_set_header_io::_parse_header()
 {
 	std::string line;
 	size_t offset;
-	std::deque < std::string > tokens;
+	std::deque<std::string> tokens;
 	while (std::getline(_fstream, line))
 	{
 		// check for comments and remove them
@@ -130,9 +125,9 @@ void data_set_header_io::_parse_header()
 		if (!_parse_line(tokens))
 		{
 
-			throw exception(std::string("parsing header ") + _filename
-					+ " failed. " + "could not parse line '" + line + "'.",
-					SPROCESS_HERE);
+			throw std::runtime_error(
+					std::string("parsing header ") + _filename + " failed. "
+							+ "could not parse line '" + line + "'.");
 		}
 
 	}

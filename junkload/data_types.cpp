@@ -1,7 +1,5 @@
 #include "data_types.hpp"
 
-#include "exception.hpp"
-
 namespace stream_process
 {
 
@@ -37,7 +35,8 @@ data_type_helper::get_default_name(data_type_id type) const
 	{
 		return (*it).second;
 	}
-	throw exception("requested name of unknown type.", SPROCESS_HERE);
+
+	throw std::runtime_error("requested name of unknown type.");
 }
 
 data_type_id data_type_helper::get_data_type_id(const std::string& name) const
@@ -48,7 +47,8 @@ data_type_id data_type_helper::get_data_type_id(const std::string& name) const
 	{
 		return (*it).second;
 	}
-	throw exception("requested data_type_id of unknown type.", SPROCESS_HERE);
+
+	throw std::runtime_error("requested data_type_id of unknown type.");
 }
 
 size_t data_type_helper::get_size_in_bytes(data_type_id type) const
@@ -59,7 +59,8 @@ size_t data_type_helper::get_size_in_bytes(data_type_id type) const
 	{
 		return (*it).second;
 	}
-	throw exception("requested data_type_id of unknown type.", SPROCESS_HERE);
+
+	throw std::runtime_error("requested data_type_id of unknown type.");
 }
 
 void data_type_helper::_fill_db()
@@ -127,4 +128,3 @@ void data_type_helper::_fill_db()
 }
 
 } // namespace stream_process
-

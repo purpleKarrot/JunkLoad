@@ -39,8 +39,8 @@ void mapped_data_element::open(const std::string& filename_base,
 
 	if (!_mapped_file.is_open())
 	{
-		throw exception(std::string("opening file '") + params_.path
-				+ "' failed.", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("opening file '") + params_.path + "' failed.");
 	}
 
 	if (create_new_file)

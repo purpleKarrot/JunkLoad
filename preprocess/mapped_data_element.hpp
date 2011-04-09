@@ -1,7 +1,7 @@
 #ifndef __STREAM_PROCESS__MAPPED_DATA_ELEMENT__HPP__
 #define __STREAM_PROCESS__MAPPED_DATA_ELEMENT__HPP__
 
-#include "data_element.hpp"
+#include "element.hpp"
 
 #include "stream_data_iterators.hpp"
 

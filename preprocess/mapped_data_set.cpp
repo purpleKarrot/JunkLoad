@@ -20,8 +20,8 @@ mapped_data_set::mapped_data_set(const std::string& filename) :
 // ctor that prepares a new data set according to the header
 mapped_data_set::mapped_data_set(const data_set_header& header_,
 		const std::string& filename) :
-	_header(header_), _vertices(_header.get_vertex_element()), _faces(
-			_header.get_face_element()), _vertex_map(0), _face_map(0),
+	_header(header_), _vertices(_header.get_vertex_element()),
+			_faces(_header.get_face_element()), _vertex_map(0), _face_map(0),
 			_filename(filename)
 {
 	_setup(true);
@@ -52,7 +52,7 @@ void mapped_data_set::_setup(bool new_file)
 
 		if (!_vertex_map->is_open())
 		{
-			throw exception("opening vertex file failed.", SPROCESS_HERE);
+			throw std::runtime_error("opening vertex file failed.");
 		}
 
 		if (new_file || _header.has_faces())
@@ -60,9 +60,8 @@ void mapped_data_set::_setup(bool new_file)
 			_face_map = new mapped_data_element(_faces, _filename, new_file);
 			if (!_vertex_map->is_open())
 			{
-				throw exception("opening face file failed.", SPROCESS_HERE);
+				throw std::runtime_error("opening face file failed.");
 			}
-
 		}
 
 	} catch (std::exception& e)
@@ -70,7 +69,7 @@ void mapped_data_set::_setup(bool new_file)
 		std::string msg("Opening point data set ");
 		msg += _filename;
 		msg += " failed.";
-		throw exception(msg, SPROCESS_HERE);
+		throw std::runtime_error(msg);
 	}
 
 #if 0
@@ -89,6 +88,7 @@ void mapped_data_set::compute_aabb()
 {
 	stream_structure& vs = _header.get_vertex_structure();
 	const attribute& position = vs.get_attribute("position");
+
 	switch (position.get_data_type_id())
 	{
 	case SP_FLOAT_32:
@@ -98,7 +98,7 @@ void mapped_data_set::compute_aabb()
 		_compute_aabb<double> ();
 		break;
 	default:
-		throw exception("invalid type for computing aabb.", SPROCESS_HERE);
+		throw std::runtime_error("invalid type for computing aabb.");
 	}
 }
 

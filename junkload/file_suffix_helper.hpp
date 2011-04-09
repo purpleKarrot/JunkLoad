@@ -1,19 +1,13 @@
 #ifndef __STREAM_PROCESS__FILE_SUFFIX_HELPER__HPP__
 #define __STREAM_PROCESS__FILE_SUFFIX_HELPER__HPP__
 
-#include "exception.hpp"
-
 #include <string>
 
 namespace stream_process
 {
 
-class file_suffix_helper
+struct file_suffix_helper
 {
-public:
-	static file_suffix_helper& get_singleton();
-	static file_suffix_helper* get_singleton_ptr();
-
 	static std::string get_header_suffix()
 	{
 		return ".header";
@@ -33,16 +27,15 @@ public:
 	{
 		if (element == "vertex")
 			return get_vertex_suffix();
-		else if (element == "face")
-			return get_face_suffix();
-		else if (element == "header")
-			return get_header_suffix();
-		else
-			throw exception("unknown element.", SPROCESS_HERE);
-	}
 
-protected:
-	static file_suffix_helper* _singleton_instance;
+		if (element == "face")
+			return get_face_suffix();
+
+		if (element == "header")
+			return get_header_suffix();
+
+		return "." + element;
+	}
 };
 
 } // namespace stream_process

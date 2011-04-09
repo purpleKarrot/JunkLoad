@@ -5,7 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include "ply_converter.hpp"
+#include "ply/convert.hpp"
 #include "sort_data_set.hpp"
 #include "reindex_faces.hpp"
 #include "find_optimal_transform.hpp"
@@ -92,11 +92,7 @@ int main(int argc, char* argv[])
 	if (boost::algorithm::iends_with(input, ".ply"))
 	{
 		unsorted = output + ".unsorted";
-
-		sp::ply_converter::params ply_params;
-		ply_params.source_file = input;
-		ply_params.target_file = unsorted;
-		sp::ply_converter ply_cv(ply_params);
+		sp::ply_convert(input.c_str(), unsorted);
 	}
 
 	std::string reindex_map = output + ".reindex_map";

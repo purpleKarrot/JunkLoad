@@ -10,6 +10,9 @@
 #include <vector>
 #include <functional>
 
+namespace stream_process
+{
+
 /**
  *	this class contains the description / meta data of an attribute of a stream_point.
  *	attributes are for example the point position or the normal.
@@ -17,44 +20,94 @@
  *	for an array of attributes, use a data_type_id with the array flag set.
  *
  */
-
-namespace stream_process
-{
-
 class attribute
 {
 public:
-	static const size_t ATTR_IS_HIGH_PRECISION = 1;
-	static const size_t ATTR_IS_TEMPORARY = 2;
+	enum
+	{
+		ATTR_IS_HIGH_PRECISION, ATTR_IS_TEMPORARY
+	};
 
 	attribute();
+
 	attribute(const std::string& name_, data_type_id data_type_id_,
 			size_t number_of_elements = 1);
+
 	attribute(const std::string& name, size_t element_size_in_bytes,
 			size_t number_of_elements, bool is_custom_type);
 
-	const std::string& get_name() const;
-	const data_type_id& get_data_type_id() const;
-	void set_data_type_id(data_type_id id_);
+	const std::string& get_name() const
+	{
+		return _name;
+	}
 
-	size_t get_element_size_in_bytes() const;
-	size_t get_number_of_elements() const;
-	size_t get_size_in_bytes() const;
+	const data_type_id& get_data_type_id() const
+	{
+		return _data_type_id;
+	}
 
-	size_t get_offset() const;
-	void set_offset(size_t offset_);
+	void set_data_type_id(data_type_id id_)
+	{
+		_data_type_id = id_;
+	}
 
-	bool is_array() const;
+	size_t get_element_size_in_bytes() const
+	{
+		return _element_size_in_bytes;
+	}
 
-	void set_number_of_elements(size_t number_of_elements_);
+	size_t get_number_of_elements() const
+	{
+		return _number_of_elements;
+	}
 
-	void set_is_high_precision(bool is_hp);
-	bool is_high_precision() const;
+	size_t get_size_in_bytes() const
+	{
+		return _size_in_bytes;
+	}
 
-	void set_is_output(bool is_output);
-	bool is_output() const;
+	size_t get_offset() const
+	{
+		return _offset;
+	}
+
+	void set_offset(size_t offset_)
+	{
+		_offset = offset_;
+	}
+
+	bool is_array() const
+	{
+		return _number_of_elements > 1;
+	}
+
+	void set_number_of_elements(size_t number_of_elements_)
+	{
+		_number_of_elements = number_of_elements_;
+	}
+
+	void set_is_high_precision(bool is_hp)
+	{
+		_flags.set_bit(ATTR_IS_HIGH_PRECISION, is_hp);
+	}
+
+	bool is_high_precision() const
+	{
+		return _flags.get_bit(ATTR_IS_HIGH_PRECISION);
+	}
+
+	void set_is_output(bool is_output)
+	{
+		_flags.set_bit(ATTR_IS_TEMPORARY, !is_output);
+	}
+
+	bool is_output() const
+	{
+		return !_flags.get_bit(ATTR_IS_TEMPORARY);
+	}
 
 	bool from_header_string(const std::string& attr_string);
+
 	bool from_header_string_vector(const std::vector<std::string>& attr_tokens);
 
 	template<typename container_t>
@@ -64,22 +117,23 @@ public:
 	std::string to_header_string() const;
 	std::string to_header_string(const std::string& identifier) const;
 
-protected:
+private:
 	void _update();
 
 	std::string _name;
+
 	data_type_id _data_type_id;
+
 	size_t _number_of_elements;
 
 	size_t _element_size_in_bytes;
+
 	size_t _size_in_bytes;
 
 	size_t _offset;
 
 	bit_array _flags;
-
-}; // class attribute
-
+};
 
 struct attribute_ptr_offset_less
 {
@@ -98,6 +152,7 @@ struct attribute_ptr_outputs_first
 
 		if (!a_is_output && b_is_output)
 			return false;
+
 		if (a_is_output && !b_is_output)
 			return true;
 
@@ -160,4 +215,3 @@ bool attribute::from_header_strings(const container_t& tokens)
 } // namespace stream_process
 
 #endif
-

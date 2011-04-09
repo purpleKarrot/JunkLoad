@@ -3,7 +3,7 @@ project(stream_process)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 
-include_directories(include)
+include_directories(include junkload)
 
 find_package(Boost COMPONENTS iostreams thread filesystem NO_MODULE)
 include(${Boost_USE_FILE})

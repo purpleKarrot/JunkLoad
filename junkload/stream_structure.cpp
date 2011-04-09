@@ -1,5 +1,4 @@
 #include "stream_structure.hpp"
-#include "exception.hpp"
 
 namespace stream_process
 {
@@ -40,6 +39,7 @@ void stream_structure::clear()
 	{
 		delete *it;
 	}
+
 	super::clear();
 	_by_name.clear();
 }
@@ -70,8 +70,8 @@ attribute& stream_structure::get_attribute(const std::string& name)
 	named_iterator it = _by_name.find(name);
 	if (it == _by_name.end())
 	{
-		throw exception(std::string("could not find attribute with name ")
-				+ name + ".", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("could not find attribute with name ") + name + ".");
 	}
 
 	return *(it->second);
@@ -82,8 +82,8 @@ const attribute& stream_structure::get_attribute(const std::string& name) const
 	const_named_iterator it = _by_name.find(name);
 	if (it == _by_name.end())
 	{
-		throw exception(std::string("could not find attribute with name ")
-				+ name + ".", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("could not find attribute with name ") + name + ".");
 	}
 
 	return *(it->second);
@@ -98,10 +98,10 @@ attribute& stream_structure::create_attribute(const std::string& name,
 	try
 	{
 		_add_attribute(*new_attr);
-	} catch (exception& e)
+	} catch (...)
 	{
 		delete new_attr;
-		throw e;
+		throw;
 	}
 
 	return *new_attr;
@@ -117,10 +117,10 @@ attribute& stream_structure::create_custom_attribute(const std::string& name,
 	try
 	{
 		_add_attribute(*new_attr);
-	} catch (exception& e)
+	} catch (...)
 	{
 		delete new_attr;
-		throw e;
+		throw;
 	}
 
 	return *new_attr;
@@ -130,9 +130,9 @@ void stream_structure::create_attribute(const attribute& attr)
 {
 	if (attr.get_name() == "uninitialized")
 	{
-		throw exception(std::string(
-				"attempt to add uninitialized attribute to ")
-				+ " point structure failed.", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("attempt to add uninitialized attribute to ")
+						+ " point structure failed.");
 	}
 
 	attribute* new_attr = new attribute(attr);
@@ -140,10 +140,10 @@ void stream_structure::create_attribute(const attribute& attr)
 	try
 	{
 		_add_attribute(*new_attr);
-	} catch (exception& e)
+	} catch (...)
 	{
 		delete new_attr;
-		throw e;
+		throw;
 	}
 }
 
@@ -153,8 +153,9 @@ void stream_structure::_add_attribute(attribute& attr)
 
 	if (has_attribute(name))
 	{
-		throw exception(std::string("could not create attribute with name ")
-				+ name + " - name is already taken.", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("could not create attribute with name ") + name
+						+ " - name is already taken.");
 	}
 
 	named_container::value_type new_element(name, &attr);
@@ -162,8 +163,9 @@ void stream_structure::_add_attribute(attribute& attr)
 
 	if (result.second != true)
 	{
-		throw exception(std::string("could not create attribute with name ")
-				+ name + ".", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("could not create attribute with name ") + name
+						+ ".");
 	}
 
 	push_back(&attr);
@@ -285,7 +287,7 @@ void stream_structure::merge_input(const stream_structure& input_structure)
 			if (out_attr->get_data_type_id() != stream_type
 					|| out_attr->get_number_of_elements() != number_of_elements)
 			{
-				throw exception("invalid request for attribute.", SPROCESS_HERE);
+				throw std::runtime_error("invalid request for attribute.");
 			}
 		}
 		else
@@ -308,8 +310,9 @@ void stream_structure::delete_attribute(const std::string& attr_name_)
 	named_iterator it = _by_name.find(attr_name_);
 	if (it == _by_name.end())
 	{
-		throw exception(std::string("could not find attribute with name ")
-				+ attr_name_ + ".", SPROCESS_HERE);
+		throw std::runtime_error(
+				std::string("could not find attribute with name ") + attr_name_
+						+ ".");
 	}
 
 	attribute* attr = it->second;
