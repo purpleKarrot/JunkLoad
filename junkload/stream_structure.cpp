@@ -8,39 +8,15 @@ stream_structure::stream_structure(const std::string& attribute_identifier_) :
 {
 }
 
-stream_structure::stream_structure(const stream_structure& src) :
-	_attribute_identifier(src._attribute_identifier)
-{
-	for (const_iterator it = src.begin(), it_end = src.end(); it != it_end; ++it)
-	{
-		const attribute& attr = **it;
-		create_attribute(attr);
-	}
-}
-
-const stream_structure& stream_structure::operator=(
-		const stream_structure& stream_structure_)
-{
-	clear();
-	const_iterator it = stream_structure_.begin(), it_end =
-			stream_structure_.end();
-	for (; it != it_end; ++it)
-	{
-		const attribute& attr = **it;
-		create_attribute(attr);
-	}
-	return *this;
-}
-
 void stream_structure::clear()
 {
-	iterator it = begin(), it_end = end();
-	for (; it != it_end; ++it)
-	{
-		delete *it;
-	}
+//	iterator it = begin(), it_end = end();
+//	for (; it != it_end; ++it)
+//	{
+//		delete *it;
+//	}
 
-	super::clear();
+	attributes.clear();
 	_by_name.clear();
 }
 
@@ -168,7 +144,7 @@ void stream_structure::_add_attribute(attribute& attr)
 						+ ".");
 	}
 
-	push_back(&attr);
+	attributes.push_back(attr);
 }
 
 attribute* stream_structure::find(const std::string& name) const
@@ -182,20 +158,20 @@ attribute* stream_structure::find(const std::string& name) const
 
 stream_structure::~stream_structure()
 {
-	iterator it = begin(), it_end = end();
-	for (; it != it_end; ++it)
-	{
-		delete *it;
-	}
+//	iterator it = begin(), it_end = end();
+//	for (; it != it_end; ++it)
+//	{
+//		delete *it;
+//	}
 }
 
 size_t stream_structure::compute_size_in_bytes() const
 {
 	size_t size_in_bytes = 0;
-	const_iterator it = begin(), it_end = end();
+	super::const_iterator it = attributes.begin(), it_end = attributes.end();
 	for (; it != it_end; ++it)
 	{
-		size_in_bytes += (*it)->get_size_in_bytes();
+		size_in_bytes += (it)->get_size_in_bytes();
 	}
 
 	return size_in_bytes;
@@ -204,12 +180,12 @@ size_t stream_structure::compute_size_in_bytes() const
 size_t stream_structure::compute_out_size_in_bytes() const
 {
 	size_t size_in_bytes = 0;
-	const_iterator it = begin(), it_end = end();
+	super::const_iterator it = attributes.begin(), it_end = attributes.end();
 	for (; it != it_end; ++it)
 	{
-		const attribute& attr = **it;
+		const attribute& attr = *it;
 		if (attr.is_output())
-			size_in_bytes += (*it)->get_size_in_bytes();
+			size_in_bytes += (it)->get_size_in_bytes();
 	}
 
 	return size_in_bytes;
@@ -218,9 +194,9 @@ size_t stream_structure::compute_out_size_in_bytes() const
 void stream_structure::compute_offsets()
 {
 	size_t offset = 0;
-	for (iterator it = begin(), it_end = end(); it != it_end; ++it)
+	for (super::iterator it = attributes.begin(), it_end = attributes.end(); it != it_end; ++it)
 	{
-		attribute& attr = **it;
+		attribute& attr = *it;
 		attr.set_offset(offset);
 		offset += attr.get_size_in_bytes();
 	}
@@ -228,12 +204,12 @@ void stream_structure::compute_offsets()
 
 std::string stream_structure::to_string() const
 {
-	assert(_by_name.size() == size());
+	assert(_by_name.size() == attributes.size());
 
 	std::string structure_string;
-	for (const_iterator it = begin(), it_end = end(); it != it_end; ++it)
+	for (super::const_iterator it = attributes.begin(), it_end = attributes.end(); it != it_end; ++it)
 	{
-		const attribute& attr = **it;
+		const attribute& attr = *it;
 		structure_string += attr.to_string();
 	}
 	return structure_string;
@@ -241,15 +217,15 @@ std::string stream_structure::to_string() const
 
 std::string stream_structure::to_header_string() const
 {
-	assert(_by_name.size() == size());
+	assert(_by_name.size() == attributes.size());
 
 	std::string structure_string = "";
 	structure_string += "# element, attribute-identifier, name, type, ";
 	structure_string += " array_size, size_in_bytes, flags\n";
 
-	for (const_iterator it = begin(), it_end = end(); it != it_end; ++it)
+	for (super::const_iterator it = attributes.begin(), it_end = attributes.end(); it != it_end; ++it)
 	{
-		const attribute& attr = **it;
+		const attribute& attr = *it;
 		if (attr.is_output())
 			structure_string += attr.to_header_string(_attribute_identifier);
 	}
@@ -266,34 +242,9 @@ const std::string& stream_structure::get_name() const
 	return _attribute_identifier;
 }
 
-void stream_structure::delete_attribute(const std::string& attr_name_)
-{
-	named_iterator it = _by_name.find(attr_name_);
-	if (it == _by_name.end())
-	{
-		throw std::runtime_error(
-				std::string("could not find attribute with name ") + attr_name_
-						+ ".");
-	}
-
-	attribute* attr = it->second;
-	_by_name.erase(it);
-
-	iterator ait = begin(), ait_end = end();
-	for (; ait != ait_end; ++ait)
-	{
-		attribute* a = *ait;
-		if (a == attr)
-		{
-			erase(ait);
-			break;
-		}
-	}
-}
-
 size_t stream_structure::get_number_of_attributes() const
 {
-	return super::size();
+	return attributes.size();
 }
 
 } // namespace stream_process

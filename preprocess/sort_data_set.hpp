@@ -61,7 +61,7 @@ void sort_data_set::_sort_vertices(size_t index)
 
 	assert(_input.get_vertex_map().is_open());
 
-	const stream_structure& vs = vertices.get_structure();
+	const stream_structure& vs = vertices; //.get_structure();
 	const attribute& sort_attr = vs.get_attribute(_params.sort_attribute);
 
 	accessor_type get_attr;

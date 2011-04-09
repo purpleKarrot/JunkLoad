@@ -5,8 +5,6 @@ include(CMakeParseArguments)
 
 add_executable(stream_process
   main.cpp
-  data_set_header_io.cpp
-  data_set_header.cpp
   mapped_data_element.cpp
   mapped_data_set.cpp
   reindex_faces.cpp

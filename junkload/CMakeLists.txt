@@ -8,4 +8,9 @@ add_library(junkload
   data_types.cpp
   stream_structure.hpp
   stream_structure.cpp
+
+  data_set_header.hpp
+  data_set_header.cpp
+  data_set_header_io.hpp
+  data_set_header_io.cpp
   )

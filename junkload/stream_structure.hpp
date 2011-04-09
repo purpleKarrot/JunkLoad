@@ -3,6 +3,7 @@
 
 #include "attribute.hpp"
 #include "attribute_type.hpp"
+#include <boost/noncopyable.hpp>
 
 #include <iostream>
 
@@ -12,18 +13,15 @@
 namespace stream_process
 {
 
-class stream_structure: private std::list<attribute*>
+class stream_structure: private boost::noncopyable
 {
 public:
-	typedef std::list<attribute*> super;
+	typedef std::vector<attribute> super;
+	super attributes;
 
 	stream_structure(const std::string& attribute_identifier_);
 
-	stream_structure(const stream_structure& stream_structure_);
-
 	~stream_structure();
-
-	const stream_structure& operator=(const stream_structure& point_structure_);
 
 	size_t get_number_of_attributes() const;
 
@@ -49,19 +47,14 @@ public:
 	attribute& create_custom_attribute(const std::string& name,
 			size_t element_size_in_bytes, size_t array_size = 1);
 
-	// WARNING: do not use unless you know exactly what you are doing.
-	// stuff will break!
-	void delete_attribute(const std::string& attr_name_);
-
-	// iterators
-	using super::iterator;
-	using super::const_iterator;
-	using super::begin;
-	using super::end;
-
-	using super::sort;
-	using super::size;
-	using super::empty;
+//	// iterators
+//	using super::iterator;
+//	using super::const_iterator;
+//	using super::begin;
+//	using super::end;
+//
+//	using super::size;
+//	using super::empty;
 
 	typedef std::map<std::string, attribute*> named_container;
 

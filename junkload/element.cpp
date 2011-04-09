@@ -9,9 +9,9 @@ namespace stream_process
 
 void data_element::update()
 {
-	_structure.compute_offsets();
+	stream_structure::compute_offsets();
 
-	_size_in_bytes = _structure.compute_size_in_bytes();
+	_size_in_bytes = stream_structure::compute_size_in_bytes();
 	_data_size_in_bytes = _size * _size_in_bytes;
 }
 
@@ -35,7 +35,7 @@ std::string data_element::to_string() const
 	}
 	result += "\n";
 
-	result += _structure.to_string();
+	result += stream_structure::to_string();
 
 	return result;
 }
@@ -60,7 +60,7 @@ std::string data_element::to_header_string() const
 	}
 	result += "\n";
 
-	result += _structure.to_header_string();
+	result += stream_structure::to_header_string();
 
 	return result;
 }

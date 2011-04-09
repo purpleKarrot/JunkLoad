@@ -8,24 +8,33 @@ namespace stream_process
 {
 
 // ctor that loads an existing data set
-mapped_data_set::mapped_data_set(const std::string& filename) :
-	_filename(filename), _header(), _vertices(_header.get_vertex_element()),
-			_faces(_header.get_face_element()), _vertex_map(0), _face_map(0)
+mapped_data_set::mapped_data_set(const std::string& filename, bool new_file) :
+	_filename(filename),
+	_header(),
+	_vertices(_header.get_vertex_element()),
+	_faces(_header.get_face_element()),
+	_vertex_map(0),
+	_face_map(0)
 {
-	_header.read_from_file(filename);
-
-	_setup(false);
+	if (!new_file)
+	{
+		_header.read_from_file(filename);
+		_setup(false);
+	}
 }
 
-// ctor that prepares a new data set according to the header
-mapped_data_set::mapped_data_set(const data_set_header& header_,
-		const std::string& filename) :
-	_header(header_), _vertices(_header.get_vertex_element()),
-			_faces(_header.get_face_element()), _vertex_map(0), _face_map(0),
-			_filename(filename)
-{
-	_setup(true);
-}
+//// ctor that prepares a new data set according to the header
+//mapped_data_set::mapped_data_set(const data_set_header& header_,
+//		const std::string& filename) :
+//	_header(header_),
+//	_vertices(_header.get_vertex_element()),
+//	_faces(_header.get_face_element()),
+//	_vertex_map(0),
+//	_face_map(0),
+//	_filename(filename)
+//{
+//	_setup(true);
+//}
 
 mapped_data_set::~mapped_data_set()
 {
@@ -117,7 +126,7 @@ mapped_data_set::get_vertex_element() const
 const stream_structure&
 mapped_data_set::get_vertex_structure() const
 {
-	return _vertices.get_structure();
+	return _vertices; //.get_structure();
 }
 
 data_element&
@@ -135,7 +144,7 @@ mapped_data_set::get_face_element() const
 const stream_structure&
 mapped_data_set::get_face_structure() const
 {
-	return _faces.get_structure();
+	return _faces; //.get_structure();
 }
 
 mapped_data_element&
@@ -194,11 +203,11 @@ std::string mapped_data_set::build_info_string() const
 			<< _vertices.get_size_in_bytes() << " Bytes/Vertex\n" << "\n"
 			<< "Vertex Attributes\n";
 
-	const stream_structure& vs = _vertices.get_structure();
-	stream_structure::const_iterator vit = vs.begin(), vit_end = vs.end();
+	const stream_structure& vs = _vertices; //.get_structure();
+	stream_structure::super::const_iterator vit = vs.attributes.begin(), vit_end = vs.attributes.end();
 	for (; vit != vit_end; ++vit)
 	{
-		ss << "  - " << (*vit)->get_name() << "\n";
+		ss << "  - " << (vit)->get_name() << "\n";
 	}
 	ss << "\n\n";
 
@@ -210,11 +219,11 @@ std::string mapped_data_set::build_info_string() const
 				<< " Mio Faces\n" << "  - " << _vertices.get_size_in_bytes()
 				<< " Bytes/Face\n" << "\n" << "Face Attributes\n";
 
-		const stream_structure& fs = _faces.get_structure();
-		stream_structure::const_iterator fit = fs.begin(), fit_end = fs.end();
+		const stream_structure& fs = _faces; //.get_structure();
+		stream_structure::super::const_iterator fit = fs.attributes.begin(), fit_end = fs.attributes.end();
 		for (; fit != fit_end; ++fit)
 		{
-			ss << "  - " << (*fit)->get_name() << "\n";
+			ss << "  - " << (fit)->get_name() << "\n";
 		}
 		ss << "\n\n";
 	}

@@ -7,36 +7,19 @@ namespace stream_process
 {
 
 data_set_header::data_set_header() :
-	_vertices("vertex"), _faces("face"), _aabb_min(
-			-std::numeric_limits<double>::max()), _aabb_max(
-			std::numeric_limits<double>::max()), _transform(mat4d::IDENTITY)
+	_vertices("vertex"),
+	_faces("face"),
+	_aabb_min(-std::numeric_limits<double>::max()),
+	_aabb_max(std::numeric_limits<double>::max()),
+	_transform(mat4d::IDENTITY),
 #ifdef __BIG_ENDIAN__
-			, _data_is_big_endian( true )
+	_data_is_big_endian(true)
 #else
-			, _data_is_big_endian(false)
+	_data_is_big_endian(false)
 #endif
 {
 	super::push_back(&_vertices);
 	super::push_back(&_faces);
-	update();
-}
-
-data_set_header::data_set_header(const data_set_header& header_) :
-	_vertices(header_._vertices), _faces(header_._faces), _aabb_min(
-			header_._aabb_min), _aabb_max(header_._aabb_max), _transform(
-			header_._transform), _data_is_big_endian(
-			header_._data_is_big_endian)
-{
-	super::push_back(&_vertices);
-	super::push_back(&_faces);
-
-	if (header_.size() > 2)
-	{
-		for (iterator it = begin() + 2, it_end = end(); it != it_end; ++it)
-		{
-			super::push_back(new data_element(**it));
-		}
-	}
 	update();
 }
 
@@ -59,25 +42,25 @@ bool data_set_header::has_faces() const
 stream_structure&
 data_set_header::get_vertex_structure()
 {
-	return _vertices.get_structure();
+	return _vertices; //.get_structure();
 }
 
 const stream_structure&
 data_set_header::get_vertex_structure() const
 {
-	return _vertices.get_structure();
+	return _vertices; //.get_structure();
 }
 
 stream_structure&
 data_set_header::get_face_structure()
 {
-	return _faces.get_structure();
+	return _faces; //.get_structure();
 }
 
 const stream_structure&
 data_set_header::get_face_structure() const
 {
-	return _faces.get_structure();
+	return _faces; //.get_structure();
 }
 
 size_t data_set_header::get_number_of_vertices() const
@@ -160,12 +143,12 @@ void data_set_header::update_float_precision(data_type_id sp, data_type_id hp)
 	data_set_header::iterator eit = begin(), eit_end = end();
 	for (; eit != eit_end; ++eit)
 	{
-		stream_structure& s = (*eit)->get_structure();
+		stream_structure& s = *(*eit); //->get_structure();
 
-		stream_structure::iterator it = s.begin(), it_end = s.end();
+		stream_structure::super::iterator it = s.attributes.begin(), it_end = s.attributes.end();
 		for (; it != it_end; ++it)
 		{
-			attribute& attr = **it;
+			attribute& attr = *it;
 			data_type_id in_type = attr.get_data_type_id();
 			bool is_hp = attr.is_high_precision();
 
@@ -189,19 +172,19 @@ void data_set_header::finalize_structures()
 		// - if they are outputs (so the whole output data is one block)
 		// - their offset (so inputs stay in order)
 
-		stream_structure& s = (*eit)->get_structure();
+		stream_structure& s = *(*eit); //->get_structure();
 
-		s.sort(attribute_ptr_outputs_first());
+//		s.sort(attribute_ptr_outputs_first());
 
 		size_t offset = 0;
 
 		std::cout << "  data_set_header: finalizing " << s.get_name()
 				<< " structure." << std::endl;
 
-		stream_structure::iterator it = s.begin(), it_end = s.end();
+		stream_structure::super::iterator it = s.attributes.begin(), it_end = s.attributes.end();
 		for (; it != it_end; ++it)
 		{
-			attribute& attr = **it;
+			attribute& attr = *it;
 			attr.set_offset(offset);
 			offset += attr.get_size_in_bytes();
 		}

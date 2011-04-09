@@ -24,11 +24,11 @@ public:
 	typedef stream_data_const_iterator const_iterator;
 
 	// ctor that loads an existing data set
-	mapped_data_set(const std::string& filename);
+	mapped_data_set(const std::string& filename, bool new_file = false);
 
-	// ctor that prepares a new data set according to the header
-	mapped_data_set(const data_set_header& header_,
-					const std::string& filename);
+//	// ctor that prepares a new data set according to the header
+//	mapped_data_set(const data_set_header& header_,
+//					const std::string& filename);
 
 	~mapped_data_set();
 
@@ -82,9 +82,9 @@ public:
 
 	std::string build_info_string() const;
 
-protected:
 	void _setup(bool new_file);
 
+protected:
 	template<typename T>
 	void _compute_aabb();
 

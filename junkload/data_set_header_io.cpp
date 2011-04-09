@@ -12,22 +12,14 @@ void data_set_header_io::read_from_file(const std::string& filename_base,
 {
 	_open_file(filename_base, std::fstream::in);
 
-	_working_copy = hdr_;
+//	_working_copy = hdr_;
 	_input_offset = 0;
 	_input_face_offset = 0;
 
-	try
-	{
-		_parse_header();
-		hdr_ = _working_copy;
-	} catch (std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		throw e;
-	}
+	_parse_header(hdr_);
+//	hdr_ = _working_copy;
 
-	_fstream.close();
-
+//	_fstream.close();
 }
 
 void data_set_header_io::write_to_file(const std::string& filename_base,
@@ -102,11 +94,12 @@ void data_set_header_io::_open_file(const std::string& filename_base,
 	}
 }
 
-void data_set_header_io::_parse_header()
+void data_set_header_io::_parse_header(data_set_header& _working_copy)
 {
 	std::string line;
 	size_t offset;
 	std::deque<std::string> tokens;
+
 	while (std::getline(_fstream, line))
 	{
 		// check for comments and remove them
@@ -122,21 +115,20 @@ void data_set_header_io::_parse_header()
 		boost::split(tokens, line, boost::algorithm::is_any_of(" "),
 				boost::token_compress_on);
 
-		if (!_parse_line(tokens))
+		if (!_parse_line(tokens, _working_copy))
 		{
-
 			throw std::runtime_error(
 					std::string("parsing header ") + _filename + " failed. "
 							+ "could not parse line '" + line + "'.");
 		}
-
 	}
 }
 
-bool data_set_header_io::_parse_line(std::deque<std::string>& tokens)
+bool data_set_header_io::_parse_line(std::deque<std::string>& tokens, data_set_header& _working_copy)
 {
 	if (tokens.empty() || tokens[0].empty())
 		return true;
+
 	try
 	{
 		if (tokens[0] == "element")
@@ -161,11 +153,13 @@ bool data_set_header_io::_parse_line(std::deque<std::string>& tokens)
 		{
 			if (tokens.size() < 4)
 				return false;
+
 			vec3d aabb;
 			for (size_t index = 0; index < 3; ++index)
 			{
 				aabb[index] = boost::lexical_cast<double>(tokens[index + 1]);
 			}
+
 			_working_copy.set_aabb_min(aabb);
 			return true;
 		}

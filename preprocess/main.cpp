@@ -20,7 +20,7 @@ static void _apply_optimal_transform(const std::string& filename,
 
 	sp::attribute_accessor<sp::vec3f> get_position;
 	get_position.set_offset(
-			data_set_ .get_vertex_element() .get_structure() .get_attribute(
+			data_set_ .get_vertex_element() /*.get_structure()*/ .get_attribute(
 					"position") .get_offset());
 
 	const sp::data_set_header& h = data_set_.get_header();
@@ -32,7 +32,7 @@ static void _apply_optimal_transform(const std::string& filename,
 
 		sp::attribute_accessor<sp::vec3f> get_position;
 		get_position.set_offset(
-				data_set_ .get_vertex_element() .get_structure() .get_attribute(
+				data_set_ .get_vertex_element() /*.get_structure()*/ .get_attribute(
 						"position") .get_offset());
 
 		sp::optimal_transform<sp::vec3f, sp::attribute_accessor<sp::vec3f>,

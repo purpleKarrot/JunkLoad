@@ -9,14 +9,12 @@
 namespace stream_process
 {
 
-class mapped_data_element;
-
-class data_element
+class data_element: public stream_structure
 {
 public:
 	data_element(const std::string& name) :
+		stream_structure(name + " attribute"),
 		_name(name),
-		_structure(name + " attribute"),
 		_size(0),
 		_offset(0),
 		_size_in_bytes(0),
@@ -24,18 +22,18 @@ public:
 	{
 	}
 
+	std::string name() const
+	{
+		return _name;
+	}
+
+	void name(const std::string& value)
+	{
+		_name = value;
+	}
+
 	~data_element()
 	{
-	}
-
-	stream_structure& get_structure()
-	{
-		return _structure;
-	}
-
-	const stream_structure& get_structure() const
-	{
-		return _structure;
 	}
 
 	void update();
@@ -96,6 +94,7 @@ public:
 	}
 
 	std::string to_string() const;
+
 	std::string to_header_string() const;
 
 	template<typename container_t>
@@ -105,8 +104,6 @@ public:
 
 private:
 	std::string _name;
-
-	stream_structure _structure;
 
 	std::size_t _size;
 	std::size_t _offset;
@@ -129,7 +126,7 @@ bool data_element::set_from_strings(const container_t& tokens)
 		if (!attrib.from_header_strings(tokens))
 			return false;
 
-		_structure.create_attribute(attrib);
+		stream_structure::create_attribute(attrib);
 		return true;
 	}
 

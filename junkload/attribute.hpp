@@ -120,6 +120,7 @@ public:
 private:
 	void _update();
 
+public:
 	std::string _name;
 
 	data_type_id _data_type_id;

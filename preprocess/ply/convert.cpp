@@ -416,12 +416,17 @@ void ply_convert(const char* source_file, const std::string& target_file)
 
 	// read header
 	_read_meta_data();
-	data_set_header header;
+
+	_static._data_set = new mapped_data_set(target_file, true);
+
+	data_set_header& header = _static._data_set->get_header();
 
 	_setup_header_from_vertex_properties(header);
 	_setup_header_from_face_properties(header);
 
-	_static._data_set = new mapped_data_set(header, target_file);
+	_static._data_set->_setup(true);
+
+	//	_static._data_set = new mapped_data_set(header, target_file);
 
 	// read data
 	_read_vertex_data();
