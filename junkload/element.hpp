@@ -103,8 +103,6 @@ public:
 
 	std::string get_filename(const std::string& base_filename) const;
 
-	void merge_input(const data_element& input_element);
-
 private:
 	std::string _name;
 

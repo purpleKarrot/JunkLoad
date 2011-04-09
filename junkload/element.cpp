@@ -70,14 +70,4 @@ std::string data_element::get_filename(const std::string& base_filename) const
 	return base_filename + file_suffix_helper::get_suffix(_name);
 }
 
-void data_element::merge_input(const data_element& input_element_)
-{
-	assert(_name == input_element_._name);
-
-	_size = input_element_._size;
-	_offset = input_element_._offset;
-
-	_structure.merge_input(input_element_.get_structure());
-}
-
 } // namespace stream_process

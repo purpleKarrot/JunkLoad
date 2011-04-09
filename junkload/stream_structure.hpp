@@ -93,8 +93,6 @@ public:
 
 	const std::string& get_name() const;
 
-	void merge_input(const stream_structure& input_structure);
-
 private:
 	void _add_attribute(attribute& attr);
 

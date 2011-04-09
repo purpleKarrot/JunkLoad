@@ -266,45 +266,6 @@ const std::string& stream_structure::get_name() const
 	return _attribute_identifier;
 }
 
-void stream_structure::merge_input(const stream_structure& input_structure)
-{
-	stream_structure::const_iterator in_it = input_structure.begin(),
-			in_it_end = input_structure.end();
-	for (; in_it != in_it_end; ++in_it)
-	{
-		const attribute& in_attr = **in_it;
-
-		data_type_id in_type = in_attr.get_data_type_id();
-		size_t number_of_elements = in_attr.get_number_of_elements();
-		bool is_hp = in_attr.is_high_precision();
-
-		data_type_id stream_type = in_type;
-
-		attribute* out_attr = 0;
-		if (has_attribute(in_attr.get_name()))
-		{
-			out_attr = &get_attribute(in_attr.get_name());
-			if (out_attr->get_data_type_id() != stream_type
-					|| out_attr->get_number_of_elements() != number_of_elements)
-			{
-				throw std::runtime_error("invalid request for attribute.");
-			}
-		}
-		else
-		{
-			out_attr = &create_attribute(in_attr.get_name(), stream_type,
-					number_of_elements);
-		}
-
-		assert(out_attr->get_name() != "uninitialized");
-
-		out_attr->set_is_high_precision(is_hp);
-
-		// all input attributes are output attributes by default
-		out_attr->set_is_output(true);
-	}
-}
-
 void stream_structure::delete_attribute(const std::string& attr_name_)
 {
 	named_iterator it = _by_name.find(attr_name_);

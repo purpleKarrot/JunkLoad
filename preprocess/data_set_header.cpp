@@ -155,33 +155,6 @@ void data_set_header::update()
 	}
 }
 
-void data_set_header::merge_input(const data_set_header& input_header_)
-{
-	set_aabb_min<double> (input_header_.get_aabb_min<double> ());
-	set_aabb_max<double> (input_header_.get_aabb_max<double> ());
-	set_transform<double> (input_header_.get_transform<double> ());
-
-	data_set_header::const_iterator in_it = input_header_.begin(), in_it_end =
-			input_header_.end();
-	data_set_header::iterator it = begin(), it_end = end();
-	for (; in_it != in_it_end; ++in_it)
-	{
-		if (it != it_end)
-		{
-			(*it)->merge_input(**in_it);
-			++it;
-		}
-		else
-		{
-			push_back(new data_element((*in_it)->get_name()));
-			back()->merge_input(**in_it);
-		}
-
-	}
-
-	// FIXME fix changed single/high precision types
-}
-
 void data_set_header::update_float_precision(data_type_id sp, data_type_id hp)
 {
 	data_set_header::iterator eit = begin(), eit_end = end();

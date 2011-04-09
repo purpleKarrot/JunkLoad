@@ -86,7 +86,6 @@ public:
 
 	void update();
 
-	void merge_input(const data_set_header& input_header_);
 	void update_float_precision(data_type_id sp, data_type_id hp);
 	void finalize_structures();
 
