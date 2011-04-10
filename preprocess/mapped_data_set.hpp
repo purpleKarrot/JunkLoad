@@ -60,15 +60,13 @@ public:
 
 	void compute_aabb();
 
-	data_element& get_vertex_element();
-	const data_element& get_vertex_element() const;
+	element& get_vertex_element();
+	const element& get_vertex_element() const;
+	const element& get_vertex_structure() const;
 
-	const stream_structure& get_vertex_structure() const;
-
-	data_element& get_face_element();
-	const data_element& get_face_element() const;
-
-	const stream_structure& get_face_structure() const;
+	element& get_face_element();
+	const element& get_face_element() const;
+	const element& get_face_structure() const;
 
 	mapped_data_element& get_vertex_map();
 	const mapped_data_element& get_vertex_map() const;
@@ -80,8 +78,6 @@ public:
 		return _filename;
 	}
 
-	std::string build_info_string() const;
-
 	void _setup(bool new_file);
 
 protected:
@@ -89,8 +85,8 @@ protected:
 	void _compute_aabb();
 
 	data_set_header _header;
-	data_element& _vertices;
-	data_element& _faces;
+	element& _vertices;
+	element& _faces;
 	mapped_data_element* _vertex_map;
 	mapped_data_element* _face_map;
 
@@ -104,10 +100,10 @@ void mapped_data_set::_compute_aabb()
 {
 	typedef vmml::vector<3, T> vector_type;
 
-	const stream_structure& vs = _header.get_vertex_structure();
+	const element& vs = _header.get_vertex_structure();
 
 	const attribute& position = vs.get_attribute("position");
-	attribute_accessor<vector_type> get_position(position.get_offset());
+	attribute_accessor<vector_type> get_position(position.offset());
 
 	vector_type aabb_min(std::numeric_limits<T>::max());
 	vector_type aabb_max(-std::numeric_limits<T>::max());

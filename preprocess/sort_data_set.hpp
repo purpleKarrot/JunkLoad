@@ -56,15 +56,15 @@ void sort_data_set::_sort_vertices(size_t index)
 {
 	typedef attribute_accessor<value_t> accessor_type;
 
-	data_element& vertices = _input.get_vertex_element();
+	element& vertices = _input.get_vertex_element();
 	mapped_data_element& vertex_map = _input.get_vertex_map();
 
 	assert(_input.get_vertex_map().is_open());
 
-	const stream_structure& vs = vertices; //.get_structure();
+	const element& vs = vertices; //.get_structure();
 	const attribute& sort_attr = vs.get_attribute(_params.sort_attribute);
 
-	size_t base_offset = sort_attr.get_offset();
+	size_t base_offset = sort_attr.offset();
 	base_offset += index * sizeof(value_t);
 
 	accessor_type get_attr(base_offset);
@@ -77,12 +77,12 @@ void sort_data_set::_sort_faces()
 	typedef smallest_component_accessor<3, value_t> accessor_type;
 
 	const data_set_header& in_header = _input.get_header();
-	const stream_structure& fs = in_header.get_face_structure();
+	const element& fs = in_header.get_face_structure();
 	const attribute& sort_attr = fs.get_attribute(_params.sort_attribute);
 
 	size_t size = in_header.get_number_of_faces();
 
-	accessor_type get_attr(sort_attr.get_offset());
+	accessor_type get_attr(sort_attr.offset());
 
 	_sort_file<value_t, index_t, accessor_type> (_input.get_face_map(),
 			get_attr);
@@ -99,7 +99,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 	assert(sizeof(sort_ref) == sizeof(index_ref));
 
 	const size_t number_of_elements = source_.size();
-	const data_element& source = source_.get_element();
+	const element& source = source_.get_element();
 	const mapped_data_element& source_map = source_;
 
 	assert(source_.is_open());

@@ -7,15 +7,15 @@
 namespace stream_process
 {
 
-void data_element::update()
+void element::update()
 {
-	stream_structure::compute_offsets();
+	compute_offsets();
 
-	_size_in_bytes = stream_structure::compute_size_in_bytes();
+	_size_in_bytes = compute_size_in_bytes();
 	_data_size_in_bytes = _size * _size_in_bytes;
 }
 
-std::string data_element::to_string() const
+std::string element::to_string() const
 {
 	std::string result = "element ";
 	result += _name;
@@ -28,12 +28,12 @@ std::string data_element::to_string() const
 
 	result += "\n";
 
-	result += stream_structure::to_string();
+	result += to_string_();
 
 	return result;
 }
 
-std::string data_element::to_header_string() const
+std::string element::to_header_string() const
 {
 	std::string result = "element ";
 	result += _name;
@@ -46,12 +46,12 @@ std::string data_element::to_header_string() const
 
 	result += "\n";
 
-	result += stream_structure::to_header_string();
+	result += to_header_string_();
 
 	return result;
 }
 
-std::string data_element::get_filename(const std::string& base_filename) const
+std::string element::get_filename(const std::string& base_filename) const
 {
 	return base_filename + file_suffix_helper::get_suffix(_name);
 }

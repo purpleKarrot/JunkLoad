@@ -11,6 +11,8 @@
 
 #include <boost/algorithm/string.hpp>
 
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+
 namespace stream_process
 {
 
@@ -118,7 +120,7 @@ static void _setup_header_from_vertex_properties(data_set_header& header)
 	bool has_color = false;
 	_static._color_names.resize(3);
 
-	stream_structure& vs = header.get_vertex_structure();
+	element& vs = header.get_vertex_structure();
 
 	for (int index = 0; index < _static._vertex_property_count; ++index)
 	{
@@ -201,7 +203,7 @@ static void _setup_header_from_face_properties(data_set_header& header)
 
 	// atm only triangle support is implemented.
 
-	stream_structure& fs = header.get_face_structure();
+	element& fs = header.get_face_structure();
 
 	std::string index_name = "vertex_indices";
 
@@ -224,7 +226,7 @@ static void _setup_header_from_face_properties(data_set_header& header)
 
 static void _read_vertex_data()
 {
-	const stream_structure& vs =
+	const element& vs =
 			_static._data_set->get_header().get_vertex_structure();
 
 	const data_type_helper& dth = data_type_helper::get_singleton();
@@ -239,7 +241,7 @@ static void _read_vertex_data()
 	{
 		const attribute& attr = vs.get_attribute("position");
 
-		size_t offset = attr.get_offset();
+		size_t offset = attr.offset();
 
 		ply_props.push_back(_create_ply_property("x", Float32, offset));
 		offset += sizeof(float);
@@ -252,7 +254,7 @@ static void _read_vertex_data()
 	{
 		const attribute& attr = vs.get_attribute("normal");
 
-		size_t offset = attr.get_offset();
+		size_t offset = attr.offset();
 
 		ply_props.push_back(_create_ply_property("nx", Float32, offset));
 		offset += sizeof(float);
@@ -265,7 +267,7 @@ static void _read_vertex_data()
 	{
 		const attribute& attr = vs.get_attribute("color");
 
-		size_t offset = attr.get_offset();
+		size_t offset = attr.offset();
 
 		ply_props.push_back(
 				_create_ply_property(_static._color_names[0], Uint8, offset));
@@ -292,9 +294,9 @@ static void _read_vertex_data()
 		const attribute& attr = vs.get_attribute(opit->first);
 		ply_props.push_back(
 				_create_ply_property(
-						attr.get_name(),
+						attr.name(),
 						_static._vertex_properties[opit->second]->external_type,
-						attr.get_offset()));
+						attr.offset()));
 	}
 
 	std::vector<PlyProperty>::iterator it = ply_props.begin(), it_end =
@@ -326,7 +328,7 @@ static void _read_face_data()
 	// data extraction from the ply
 
 	const data_set_header& header = _static._data_set->get_header();
-	const stream_structure& fs = header.get_face_structure();
+	const element& fs = header.get_face_structure();
 
 	struct tmp_face
 	{
@@ -342,7 +344,7 @@ static void _read_face_data()
 
 	const attribute& vertex_indices = fs.get_attribute("vertex_indices");
 
-	attribute_accessor<vec3ui> get_indices(vertex_indices.get_offset());
+	attribute_accessor<vec3ui> get_indices(vertex_indices.offset());
 
 	mapped_data_set::iterator fit = _static._data_set->fbegin(), fit_end =
 			_static._data_set->fend();

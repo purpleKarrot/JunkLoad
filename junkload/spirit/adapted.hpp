@@ -23,8 +23,8 @@ BOOST_FUSION_ADAPT_STRUCT(stream_process::attribute,
 
 typedef const std::vector<stream_process::attribute>& attributes_t;
 
-BOOST_FUSION_ADAPT_ADT(stream_process::data_element,
-		(std::string, const std::string&, obj.name(), obj.name(val))
+BOOST_FUSION_ADAPT_ADT(stream_process::element,
+		(std::string, std::string, obj.name(), obj.name(val))
 		(std::size_t, std::size_t, obj.size(), obj.size(val))
 		(attributes_t, attributes_t, obj.attributes(), obj.attributes(val))
 )

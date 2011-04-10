@@ -19,8 +19,8 @@ public:
 	typedef stream_data_iterator iterator;
 	typedef stream_data_const_iterator const_iterator;
 
-	mapped_data_element(data_element& element_);
-	mapped_data_element(data_element& element_,
+	mapped_data_element(element& element_);
+	mapped_data_element(element& element_,
 			const std::string& filename_base, bool create_new_file = false);
 
 	~mapped_data_element()
@@ -44,7 +44,7 @@ public:
 	inline void close();
 	inline bool is_open() const;
 
-	const data_element& get_element() const;
+	const element& get_element() const;
 
 	char* data();
 	const char* data() const;
@@ -53,7 +53,7 @@ protected:
 	void _update();
 
 	boost::iostreams::mapped_file _mapped_file;
-	data_element& _element;
+	element& _element;
 
 }; // class mapped_data_element
 

@@ -2,7 +2,6 @@
 #define __STREAM_PROCESS__DATA_SET_HEADER__HPP__
 
 #include "VMMLibIncludes.h"
-#include "stream_structure.hpp"
 #include "element.hpp"
 
 #include <cstddef>
@@ -10,10 +9,10 @@
 namespace stream_process
 {
 
-class data_set_header: private std::vector<data_element*>, private boost::noncopyable
+class data_set_header: private std::vector<element*>, private boost::noncopyable
 {
 public:
-	typedef std::vector<data_element*> super;
+	typedef std::vector<element*> super;
 
 	using super::iterator;
 	using super::const_iterator;
@@ -30,26 +29,26 @@ public:
 
 	using super::operator[];
 
-	inline data_element& get_element(const std::string& name);
+	inline element& get_element(const std::string& name);
 
-	inline data_element& get_vertex_element();
+	inline element& get_vertex_element();
 
-	inline data_element& get_face_element();
+	inline element& get_face_element();
 
-	inline const data_element& get_element(const std::string& name) const;
+	inline const element& get_element(const std::string& name) const;
 
-	inline const data_element& get_vertex_element() const;
+	inline const element& get_vertex_element() const;
 
-	inline const data_element& get_face_element() const;
+	inline const element& get_face_element() const;
 
 	// legacy_begin
-	stream_structure& get_vertex_structure();
+	element& get_vertex_structure();
 
-	const stream_structure& get_vertex_structure() const;
+	const element& get_vertex_structure() const;
 
-	stream_structure& get_face_structure();
+	element& get_face_structure();
 
-	const stream_structure& get_face_structure() const;
+	const element& get_face_structure() const;
 
 	bool has_faces() const;
 
@@ -89,13 +88,9 @@ public:
 
 	void update();
 
-	void update_float_precision(data_type_id sp, data_type_id hp);
-
-	void finalize_structures();
-
 protected:
-	data_element _vertices;
-	data_element _faces;
+	element _vertices;
+	element _faces;
 
 	vec3d _aabb_min;
 	vec3d _aabb_max;
@@ -105,7 +100,7 @@ protected:
 	bool _data_is_big_endian;
 };
 
-inline data_element& data_set_header::get_element(const std::string& name)
+inline element& data_set_header::get_element(const std::string& name)
 {
 	if (name == "vertex")
 		return _vertices;
@@ -116,7 +111,7 @@ inline data_element& data_set_header::get_element(const std::string& name)
 	throw std::runtime_error("element not found.");
 }
 
-inline const data_element& data_set_header::get_element(const std::string& name) const
+inline const element& data_set_header::get_element(const std::string& name) const
 {
 	if (name == "vertex")
 		return _vertices;
@@ -127,22 +122,22 @@ inline const data_element& data_set_header::get_element(const std::string& name)
 	throw std::runtime_error("element not found.");
 }
 
-inline data_element& data_set_header::get_vertex_element()
+inline element& data_set_header::get_vertex_element()
 {
 	return _vertices;
 }
 
-inline const data_element& data_set_header::get_vertex_element() const
+inline const element& data_set_header::get_vertex_element() const
 {
 	return _vertices;
 }
 
-inline data_element& data_set_header::get_face_element()
+inline element& data_set_header::get_face_element()
 {
 	return _faces;
 }
 
-inline const data_element& data_set_header::get_face_element() const
+inline const element& data_set_header::get_face_element() const
 {
 	return _faces;
 }

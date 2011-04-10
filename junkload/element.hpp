@@ -1,7 +1,14 @@
 #ifndef __STREAM_PROCESS__DATA_ELEMENT__HPP__
 #define __STREAM_PROCESS__DATA_ELEMENT__HPP__
 
-#include "stream_structure.hpp"
+#include "attribute.hpp"
+#include "attribute_type.hpp"
+#include <boost/noncopyable.hpp>
+
+#include <iostream>
+
+#include <map>
+#include <list>
 
 #include <boost/lexical_cast.hpp>
 #include <string>
@@ -9,10 +16,10 @@
 namespace stream_process
 {
 
-class data_element: public stream_structure
+class element
 {
 public:
-	data_element(const std::string& name) :
+	element(const std::string& name) :
 		_name(name),
 		_size(0),
 		_size_in_bytes(0),
@@ -20,10 +27,11 @@ public:
 	{
 	}
 
-	~data_element()
+	~element()
 	{
 	}
 
+public: // getter and setter
 	std::string name() const
 	{
 		return _name;
@@ -46,20 +54,31 @@ public:
 
 	const std::vector<attribute>& attributes() const
 	{
-		return stream_structure::attributes;
+		return attributes_;
 	}
 
 	void attributes(const std::vector<attribute>& value)
 	{
-		stream_structure::attributes = value;
+		attributes_ = value;
 	}
 
-	void update();
+public:
 
 	bool empty() const
 	{
 		return _size == 0;
 	}
+
+	void update();
+
+	std::string to_header_string() const;
+
+	std::string get_name() const;
+
+	template<typename container_t>
+	bool set_from_strings(const container_t& strings_);
+
+public:
 
 	// returns the size of a  point/face/...
 	std::size_t get_size_in_bytes() const
@@ -81,24 +100,62 @@ public:
 
 	std::string to_string() const;
 
-	std::string to_header_string() const;
-
-	template<typename container_t>
-	bool set_from_strings(const container_t& strings_);
-
 	std::string get_filename(const std::string& base_filename) const;
+
+	size_t get_number_of_attributes() const;
+
+	bool has_attribute(const std::string& name) const;
+
+	bool has_attribute(const std::string& name, data_type_id id_,
+			size_t array_size) const;
+
+	attribute& get_attribute(const std::string& name);
+
+	const attribute& get_attribute(const std::string& name) const;
+
+	void create_attribute(const attribute& attr);
+
+	template<typename T>
+	attribute& create_attribute(const std::string& name, size_t array_size = 0);
+
+	attribute& create_attribute(const std::string& name,
+			data_type_id data_type_id_, size_t array_size = 1);
+
+	const attribute* find(const std::string& name) const;
+
+	// string stuff
+	std::string to_string_() const;
+
+	// creates the string in 'header-format'
+	std::string to_header_string_() const;
+
+	void print(std::ostream& os) const;
+
+	friend std::ostream& operator<<(std::ostream& os,
+			const element& ds)
+	{
+		return os << ds.to_string() << std::endl;
+	}
+
+	size_t compute_size_in_bytes() const;
+
+	size_t compute_out_size_in_bytes() const;
+
+	void compute_offsets();
+
+	void _add_attribute(attribute& attr);
 
 private:
 	std::string _name;
-
 	std::size_t _size;
+	std::vector<attribute> attributes_;
 
 	std::size_t _size_in_bytes; // one point
 	std::size_t _data_size_in_bytes; // _size * point
 };
 
 template<typename container_t>
-bool data_element::set_from_strings(const container_t& tokens)
+bool element::set_from_strings(const container_t& tokens)
 {
 	if (tokens.size() < 2)
 		return false;
@@ -111,7 +168,7 @@ bool data_element::set_from_strings(const container_t& tokens)
 		if (!attrib.from_header_strings(tokens))
 			return false;
 
-		stream_structure::create_attribute(attrib);
+		create_attribute(attrib);
 		return true;
 	}
 
@@ -122,6 +179,30 @@ bool data_element::set_from_strings(const container_t& tokens)
 	}
 
 	return false;
+}
+
+template<typename T>
+attribute& element::create_attribute(const std::string& name,
+		size_t array_size)
+{
+	attribute_type<T> attribute_type_;
+	attribute* attr = 0;
+
+	try
+	{
+		if (array_size == 0)
+			attr = attribute_type_.create(name);
+		else
+			attr = attribute_type_.create(name, array_size);
+		assert(attr);
+		_add_attribute(*attr);
+	} catch (...)
+	{
+		delete attr;
+		throw;
+	}
+
+	return *attr;
 }
 
 } // namespace stream_process

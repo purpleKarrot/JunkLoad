@@ -19,7 +19,7 @@ static void _apply_optimal_transform(const std::string& filename,
 	bool has_faces = data_set_.get_header().has_faces();
 
 	sp::attribute_accessor<sp::vec3f> get_position(
-			data_set_.get_vertex_element().get_attribute("position").get_offset());
+			data_set_.get_vertex_element().get_attribute("position").offset());
 
 	const sp::data_set_header& h = data_set_.get_header();
 
@@ -29,7 +29,7 @@ static void _apply_optimal_transform(const std::string& filename,
 				<< std::endl;
 
 		sp::attribute_accessor<sp::vec3f> get_position(
-				data_set_.get_vertex_element().get_attribute("position").get_offset());
+				data_set_.get_vertex_element().get_attribute("position").offset());
 
 		sp::optimal_transform<sp::vec3f, sp::attribute_accessor<sp::vec3f>,
 				sp::mapped_data_element> ot;
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 	if (data_set_.get_header().has_faces())
 	{
 		const sp::data_set_header& h = data_set_.get_header();
-		const sp::stream_structure& fs = h.get_face_structure();
+		const sp::element& fs = h.get_face_structure();
 		const size_t num_faces = h.get_number_of_faces();
 
 		const sp::attribute& attr = fs.get_attribute("vertex_indices");
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
 		ri_params.faces_file = unsorted + ".faces";
 		ri_params.reindex_map = reindex_map;
 		ri_params.number_of_faces = num_faces;
-		ri_params.index_type = attr.get_data_type_id();
+		ri_params.index_type = attr.type();
 
 		sp::reindex_faces rif(ri_params);
 

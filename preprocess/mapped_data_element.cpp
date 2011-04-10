@@ -3,13 +3,13 @@
 namespace stream_process
 {
 
-mapped_data_element::mapped_data_element(data_element& element_) :
+mapped_data_element::mapped_data_element(element& element_) :
 	_element(element_), _mapped_file()
 {
 
 }
 
-mapped_data_element::mapped_data_element(data_element& element_,
+mapped_data_element::mapped_data_element(element& element_,
 		const std::string& filename_base, bool create_new_file) :
 	_element(element_), _mapped_file()
 {
@@ -51,8 +51,7 @@ void mapped_data_element::open(const std::string& filename_base,
 	}
 }
 
-const data_element&
-mapped_data_element::get_element() const
+const element& mapped_data_element::get_element() const
 {
 	return _element;
 }

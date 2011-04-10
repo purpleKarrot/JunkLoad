@@ -67,7 +67,7 @@ void data_set_header_io::write_to_file(const std::string& filename_base,
 	data_set_header::const_iterator it = hdr_.begin(), it_end = hdr_.end();
 	for (; it != it_end; ++it)
 	{
-		const data_element& elem = **it;
+		const element& elem = **it;
 		if (!elem.empty())
 		{
 			_fstream << "# == " << elem.get_name() << " == \n\n";

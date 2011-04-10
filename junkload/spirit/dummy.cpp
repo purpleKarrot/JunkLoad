@@ -5,5 +5,5 @@
  *      Author: daniel
  */
 
-//#include "adapted.hpp"
-//#include "symbols.hpp"
+#include "adapted.hpp"
+#include "symbols.hpp"

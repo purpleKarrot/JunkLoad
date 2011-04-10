@@ -30,13 +30,13 @@ struct attribute_type
 	inline bool operator()(const attribute& attribute_)
 	{
 		get_data_type_id_from_type<T> get_id;
-		bool ok = get_id() == attribute_.get_data_type_id();
+		bool ok = get_id() == attribute_.type();
 		if (!ok)
 		{
 			std::cerr << "expected attribute type: " << get_id() << std::endl;
 
 			std::cerr << "actual attribute type:   "
-					<< attribute_.get_data_type_id() << std::endl;
+					<< attribute_.type() << std::endl;
 		}
 
 		return ok;
@@ -53,7 +53,7 @@ attribute_type<vec2f>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec2f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_32)
+	if (attribute_.type() != SP_FLOAT_32)
 		return false;
 	if (attribute_.get_number_of_elements() != 2)
 		return false;
@@ -70,7 +70,7 @@ attribute_type<vec3f>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec3f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_32)
+	if (attribute_.type() != SP_FLOAT_32)
 		return false;
 	if (attribute_.get_number_of_elements() != 3)
 		return false;
@@ -86,7 +86,7 @@ inline attribute* attribute_type<vec3ui>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec3ui>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_UINT_32)
+	if (attribute_.type() != SP_UINT_32)
 		return false;
 	if (attribute_.get_number_of_elements() != 3)
 		return false;
@@ -103,7 +103,7 @@ attribute_type<vec4f>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec4f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_32)
+	if (attribute_.type() != SP_FLOAT_32)
 		return false;
 	if (attribute_.get_number_of_elements() != 4)
 		return false;
@@ -119,7 +119,7 @@ inline attribute* attribute_type<vec2d>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec2d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_64)
+	if (attribute_.type() != SP_FLOAT_64)
 		return false;
 	if (attribute_.get_number_of_elements() != 2)
 		return false;
@@ -136,7 +136,7 @@ attribute_type<vec3d>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec3d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_64)
+	if (attribute_.type() != SP_FLOAT_64)
 		return false;
 	if (attribute_.get_number_of_elements() != 3)
 		return false;
@@ -152,7 +152,7 @@ inline attribute* attribute_type<vec4d>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec4d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_64)
+	if (attribute_.type() != SP_FLOAT_64)
 		return false;
 	if (attribute_.get_number_of_elements() != 4)
 		return false;
@@ -169,7 +169,7 @@ attribute_type<vec4ub>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec4ub>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_UINT_8)
+	if (attribute_.type() != SP_UINT_8)
 		return false;
 	if (attribute_.get_number_of_elements() != 4)
 		return false;
@@ -186,7 +186,7 @@ attribute_type<mat3f>::create(const std::string& name)
 template<>
 inline bool attribute_type<mat3f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_32)
+	if (attribute_.type() != SP_FLOAT_32)
 		return false;
 	if (attribute_.get_number_of_elements() != 9)
 		return false;
@@ -203,7 +203,7 @@ attribute_type<mat4f>::create(const std::string& name)
 template<>
 inline bool attribute_type<mat4f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_32)
+	if (attribute_.type() != SP_FLOAT_32)
 		return false;
 	if (attribute_.get_number_of_elements() != 16)
 		return false;
@@ -220,7 +220,7 @@ attribute_type<mat3d>::create(const std::string& name)
 template<>
 inline bool attribute_type<mat3d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_64)
+	if (attribute_.type() != SP_FLOAT_64)
 		return false;
 	if (attribute_.get_number_of_elements() != 9)
 		return false;
@@ -237,7 +237,7 @@ attribute_type<mat4d>::create(const std::string& name)
 template<>
 inline bool attribute_type<mat4d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.get_data_type_id() != SP_FLOAT_64)
+	if (attribute_.type() != SP_FLOAT_64)
 		return false;
 	if (attribute_.get_number_of_elements() != 16)
 		return false;

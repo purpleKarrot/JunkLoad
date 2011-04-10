@@ -39,26 +39,22 @@ bool data_set_header::has_faces() const
 	return !_faces.empty();
 }
 
-stream_structure&
-data_set_header::get_vertex_structure()
+element& data_set_header::get_vertex_structure()
 {
 	return _vertices; //.get_structure();
 }
 
-const stream_structure&
-data_set_header::get_vertex_structure() const
+const element& data_set_header::get_vertex_structure() const
 {
 	return _vertices; //.get_structure();
 }
 
-stream_structure&
-data_set_header::get_face_structure()
+element& data_set_header::get_face_structure()
 {
 	return _faces; //.get_structure();
 }
 
-const stream_structure&
-data_set_header::get_face_structure() const
+const element& data_set_header::get_face_structure() const
 {
 	return _faces; //.get_structure();
 }
@@ -118,59 +114,4 @@ void data_set_header::update()
 	}
 }
 
-void data_set_header::update_float_precision(data_type_id sp, data_type_id hp)
-{
-	data_set_header::iterator eit = begin(), eit_end = end();
-	for (; eit != eit_end; ++eit)
-	{
-		stream_structure& s = *(*eit); //->get_structure();
-
-		stream_structure::super::iterator it = s.attributes.begin(), it_end = s.attributes.end();
-		for (; it != it_end; ++it)
-		{
-			attribute& attr = *it;
-			data_type_id in_type = attr.get_data_type_id();
-			bool is_hp = attr.is_high_precision();
-
-			if (in_type == SP_FLOAT_32 || in_type == SP_FLOAT_64)
-			{
-				if (is_hp)
-					attr.set_data_type_id(hp);
-				else
-					attr.set_data_type_id(sp);
-			}
-		}
-	}
-}
-
-void data_set_header::finalize_structures()
-{
-	data_set_header::iterator eit = begin(), eit_end = end();
-	for (; eit != eit_end; ++eit)
-	{
-		// we sort the attributes according to
-		// - if they are outputs (so the whole output data is one block)
-		// - their offset (so inputs stay in order)
-
-		stream_structure& s = *(*eit); //->get_structure();
-
-//		s.sort(attribute_ptr_outputs_first());
-
-		size_t offset = 0;
-
-		std::cout << "  data_set_header: finalizing " << s.get_name()
-				<< " structure." << std::endl;
-
-		stream_structure::super::iterator it = s.attributes.begin(), it_end = s.attributes.end();
-		for (; it != it_end; ++it)
-		{
-			attribute& attr = *it;
-			attr.set_offset(offset);
-			offset += attr.get_size_in_bytes();
-		}
-
-	}
-}
-
 } // namespace stream_process
-
