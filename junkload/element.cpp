@@ -10,9 +10,6 @@ namespace stream_process
 void element::update()
 {
 	compute_offsets();
-
-	_size_in_bytes = compute_size_in_bytes();
-	_data_size_in_bytes = _size * _size_in_bytes;
 }
 
 std::string element::to_string() const

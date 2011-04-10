@@ -6,7 +6,6 @@ add_library(junkload
   element.cpp
   data_types.hpp
   data_types.cpp
-  stream_structure.hpp
   stream_structure.cpp
 
   data_set_header.hpp
@@ -14,5 +13,5 @@ add_library(junkload
   data_set_header_io.hpp
   data_set_header_io.cpp
   
-  spirit/dummy.cpp
+  spirit/generator.cpp
   )

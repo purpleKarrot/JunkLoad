@@ -64,7 +64,7 @@ mapped_data_element::operator[](size_t index)
 	assert(index < _element.size());
 	assert(_mapped_file.data());
 	return reinterpret_cast<stream_data*> (data() + index
-			* _element.get_size_in_bytes());
+			* size_in_bytes(_element));
 }
 
 inline const stream_data*
@@ -73,37 +73,37 @@ mapped_data_element::operator[](size_t index) const
 	assert(index < _element.size());
 	assert(_mapped_file.data());
 	return reinterpret_cast<const stream_data*> (data() + index
-			* _element.get_size_in_bytes());
+			* size_in_bytes(_element));
 }
 
 inline mapped_data_element::iterator mapped_data_element::begin()
 {
 	assert(_mapped_file.is_open());
 	assert(_mapped_file.data());
-	return iterator(data(), _element.get_size_in_bytes());
+	return iterator(data(), size_in_bytes(_element));
 }
 
 inline mapped_data_element::iterator mapped_data_element::end()
 {
 	assert(_mapped_file.is_open());
 	assert(_mapped_file.data());
-	return iterator(data() + _element.get_file_size_in_bytes(),
-			_element.get_size_in_bytes());
+	return iterator(data() + file_size_in_bytes(_element),
+			size_in_bytes(_element));
 }
 
 inline mapped_data_element::const_iterator mapped_data_element::begin() const
 {
 	assert(_mapped_file.is_open() == true);
 	assert(_mapped_file.data() != 0);
-	return const_iterator(data(), _element.get_size_in_bytes());
+	return const_iterator(data(), size_in_bytes(_element));
 }
 
 inline mapped_data_element::const_iterator mapped_data_element::end() const
 {
 	assert(_mapped_file.is_open());
 	assert(_mapped_file.data());
-	return const_iterator(data() + _element.get_file_size_in_bytes(),
-			_element.get_size_in_bytes());
+	return const_iterator(data() + file_size_in_bytes(_element),
+			size_in_bytes(_element));
 }
 
 inline void mapped_data_element::close()

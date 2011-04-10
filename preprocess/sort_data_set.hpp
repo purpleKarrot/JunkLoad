@@ -76,7 +76,7 @@ void sort_data_set::_sort_faces()
 {
 	typedef smallest_component_accessor<3, value_t> accessor_type;
 
-	const data_set_header& in_header = _input.get_header();
+	const header& in_header = _input.get_header();
 	const element& fs = in_header.get_face_structure();
 	const attribute& sort_attr = fs.get_attribute(_params.sort_attribute);
 
@@ -149,7 +149,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 	boost::iostreams::mapped_file_params out_params;
 	out_params.path = source.get_filename(_params.out_name);
 	out_params.mode = std::ios_base::in | std::ios_base::out;
-	out_params.new_file_size = source.get_data_size_in_bytes();
+	out_params.new_file_size = file_size_in_bytes(source);
 
 	_out_file.open(out_params);
 
@@ -161,7 +161,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 	char* out_data = _out_file.data();
 
 	// copy data to result file
-	const size_t in_point_size = source.get_size_in_bytes();
+	const size_t in_point_size = size_in_bytes(source);
 	for (sort_ref* it = begin; it != end; ++it, out_data += in_point_size)
 	{
 		sort_ref& sr = *it;

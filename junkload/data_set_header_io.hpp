@@ -14,16 +14,16 @@ class data_set_header_io
 {
 public:
 	void read_from_file(const std::string& filename_base,
-			data_set_header& hdr_);
+			header& hdr_);
 
 	void write_to_file(const std::string& filename_base,
-			const data_set_header& hdr_);
+			const header& hdr_);
 
 protected:
 	void _open_file(const std::string& filename, std::fstream::openmode mode_);
-	void _parse_header(data_set_header& _working_copy);
+	void _parse_header(header& _working_copy);
 	bool _parse_line(std::deque<std::string>& tokens,
-			data_set_header& _working_copy);
+			header& _working_copy);
 
 	std::string _filename;
 	std::fstream _fstream;

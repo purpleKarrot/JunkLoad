@@ -21,7 +21,7 @@ static void _apply_optimal_transform(const std::string& filename,
 	sp::attribute_accessor<sp::vec3f> get_position(
 			data_set_.get_vertex_element().get_attribute("position").offset());
 
-	const sp::data_set_header& h = data_set_.get_header();
+	const sp::header& h = data_set_.get_header();
 
 	if (full_optimal_transform)
 	{
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 	sp::mapped_data_set data_set_(unsorted);
 	if (data_set_.get_header().has_faces())
 	{
-		const sp::data_set_header& h = data_set_.get_header();
+		const sp::header& h = data_set_.get_header();
 		const sp::element& fs = h.get_face_structure();
 		const size_t num_faces = h.get_number_of_faces();
 

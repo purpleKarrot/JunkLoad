@@ -25,7 +25,7 @@ void mapped_data_element::open(const std::string& filename_base,
 
 	if (create_new_file)
 	{
-		params_.new_file_size = _element.get_file_size_in_bytes();
+		params_.new_file_size = file_size_in_bytes(_element);
 		assert(params_.new_file_size);
 	}
 

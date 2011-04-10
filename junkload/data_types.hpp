@@ -15,13 +15,10 @@ enum data_type_id
 	SP_INT_16,
 	SP_INT_32,
 	SP_INT_64,
-	SP_INT_128,
 	SP_UINT_8,
 	SP_UINT_16,
 	SP_UINT_32,
 	SP_UINT_64,
-	SP_UINT_128,
-
 	SP_FLOAT_32,
 	SP_FLOAT_64,
 };
@@ -29,7 +26,6 @@ enum data_type_id
 template<typename T>
 struct get_data_type_id_from_type
 {
-	static const data_type_id value = SP_INT_8;
 };
 
 template<>

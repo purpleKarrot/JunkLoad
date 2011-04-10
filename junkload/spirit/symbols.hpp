@@ -9,14 +9,15 @@
 #define JUNKLOAD_SPIRIT_SYMBOLS_HPP
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/karma.hpp>
 #include "../data_types.hpp"
 
 namespace stream_process
 {
 
-struct scalar_symbols: boost::spirit::qi::symbols<char, data_type_id>
+struct scalar_symbols_parser: boost::spirit::qi::symbols<char, data_type_id>
 {
-	scalar_symbols()
+	scalar_symbols_parser()
 	{
 		this->add
 			("int8",    SP_INT_8   )

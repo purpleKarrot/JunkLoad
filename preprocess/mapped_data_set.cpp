@@ -167,12 +167,12 @@ const mapped_data_element& mapped_data_set::get_face_map() const
 
 size_t mapped_data_set::get_vertex_size_in_bytes() const
 {
-	return _vertices.get_size_in_bytes();
+	return size_in_bytes(_vertices);
 }
 
 size_t mapped_data_set::get_face_size_in_bytes() const
 {
-	return _faces.get_size_in_bytes();
+	return size_in_bytes(_faces);
 }
 
 } // namespace stream_process

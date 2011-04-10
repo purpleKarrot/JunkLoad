@@ -15,10 +15,9 @@
 #include "../element.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(stream_process::attribute,
-		(std::string, _name)
-		(stream_process::data_type_id, _data_type_id)
-		(std::size_t, _number_of_elements)
-		(std::size_t, _flags)
+		(std::string, name_)
+		(stream_process::data_type_id, type_)
+		(std::size_t, size_)
 )
 
 typedef const std::vector<stream_process::attribute>& attributes_t;

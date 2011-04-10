@@ -6,7 +6,7 @@ namespace stream_process
 sort_data_set::sort_data_set(const params& params_) :
 	_params(params_), _input(_params.in_name)
 {
-	const data_set_header& in_header = _input.get_header();
+	const header& in_header = _input.get_header();
 
 	const std::string& sort_attr_name = _params.sort_attribute;
 

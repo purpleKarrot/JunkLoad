@@ -8,7 +8,7 @@ namespace stream_process
 {
 
 void data_set_header_io::read_from_file(const std::string& filename_base,
-		data_set_header& hdr_)
+		header& hdr_)
 {
 	_open_file(filename_base, std::fstream::in);
 
@@ -23,7 +23,7 @@ void data_set_header_io::read_from_file(const std::string& filename_base,
 }
 
 void data_set_header_io::write_to_file(const std::string& filename_base,
-		const data_set_header& hdr_)
+		const header& hdr_)
 {
 	_open_file(filename_base, std::fstream::out | std::fstream::trunc);
 
@@ -64,10 +64,10 @@ void data_set_header_io::write_to_file(const std::string& filename_base,
 		_fstream << "\n\n";
 	}
 
-	data_set_header::const_iterator it = hdr_.begin(), it_end = hdr_.end();
+	header::super::const_iterator it = hdr_.elements.begin(), it_end = hdr_.elements.end();
 	for (; it != it_end; ++it)
 	{
-		const element& elem = **it;
+		const element& elem = *it;
 		if (!elem.empty())
 		{
 			_fstream << "# == " << elem.get_name() << " == \n\n";
@@ -94,7 +94,7 @@ void data_set_header_io::_open_file(const std::string& filename_base,
 	}
 }
 
-void data_set_header_io::_parse_header(data_set_header& _working_copy)
+void data_set_header_io::_parse_header(header& _working_copy)
 {
 	std::string line;
 	size_t offset;
@@ -124,7 +124,7 @@ void data_set_header_io::_parse_header(data_set_header& _working_copy)
 	}
 }
 
-bool data_set_header_io::_parse_line(std::deque<std::string>& tokens, data_set_header& _working_copy)
+bool data_set_header_io::_parse_line(std::deque<std::string>& tokens, header& _working_copy)
 {
 	if (tokens.empty() || tokens[0].empty())
 		return true;

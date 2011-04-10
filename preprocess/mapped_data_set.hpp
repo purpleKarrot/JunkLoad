@@ -32,8 +32,8 @@ public:
 
 	~mapped_data_set();
 
-	inline data_set_header& get_header();
-	inline const data_set_header& get_header() const;
+	inline header& get_header();
+	inline const header& get_header() const;
 
 	size_t get_vertex_size_in_bytes() const;
 	size_t get_face_size_in_bytes() const;
@@ -84,7 +84,7 @@ protected:
 	template<typename T>
 	void _compute_aabb();
 
-	data_set_header _header;
+	header _header;
 	element& _vertices;
 	element& _faces;
 	mapped_data_element* _vertex_map;
@@ -153,14 +153,12 @@ mapped_data_set::get_face(size_t index) const
 	return _face_map->operator[](index);
 }
 
-inline data_set_header&
-mapped_data_set::get_header()
+inline header& mapped_data_set::get_header()
 {
 	return _header;
 }
 
-inline const data_set_header&
-mapped_data_set::get_header() const
+inline const header& mapped_data_set::get_header() const
 {
 	return _header;
 }

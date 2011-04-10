@@ -131,10 +131,12 @@ const attribute* element::find(const std::string& name) const
 size_t element::compute_size_in_bytes() const
 {
 	size_t size_in_bytes = 0;
-	std::vector<attribute>::const_iterator it = attributes_.begin(), it_end = attributes_.end();
+	std::vector<attribute>::const_iterator it = attributes_.begin();
+	std::vector<attribute>::const_iterator it_end = attributes_.end();
+
 	for (; it != it_end; ++it)
 	{
-		size_in_bytes += (it)->get_size_in_bytes();
+		size_in_bytes += it->get_size_in_bytes();
 	}
 
 	return size_in_bytes;

@@ -110,7 +110,7 @@ static void _read_meta_data()
 			"face", &_static._face_count, &_static._face_property_count);
 }
 
-static void _setup_header_from_vertex_properties(data_set_header& header)
+static void _setup_header_from_vertex_properties(header& header)
 {
 	header.set_number_of_vertices(_static._vertex_count);
 
@@ -194,7 +194,7 @@ static void _setup_header_from_vertex_properties(data_set_header& header)
 	std::cout << vs.to_header_string() << std::endl;
 }
 
-static void _setup_header_from_face_properties(data_set_header& header)
+static void _setup_header_from_face_properties(header& header)
 {
 	if (_static._face_property_count == 0)
 		return;
@@ -327,7 +327,7 @@ static void _read_face_data()
 	// we have to build the required PlyProperties that allow
 	// data extraction from the ply
 
-	const data_set_header& header = _static._data_set->get_header();
+	const header& header = _static._data_set->get_header();
 	const element& fs = header.get_face_structure();
 
 	struct tmp_face
@@ -420,7 +420,7 @@ void ply_convert(const char* source_file, const std::string& target_file)
 
 	_static._data_set = new mapped_data_set(target_file, true);
 
-	data_set_header& header = _static._data_set->get_header();
+	header& header = _static._data_set->get_header();
 
 	_setup_header_from_vertex_properties(header);
 	_setup_header_from_face_properties(header);

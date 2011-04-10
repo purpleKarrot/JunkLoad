@@ -20,10 +20,12 @@ class element
 {
 public:
 	element(const std::string& name) :
-		_name(name),
-		_size(0),
-		_size_in_bytes(0),
-		_data_size_in_bytes(0)
+		_name(name), _size(0)
+	{
+	}
+
+	element(const element& other) :
+		_name(other._name), _size(other._size), attributes_(other.attributes_)
 	{
 	}
 
@@ -79,25 +81,6 @@ public:
 	bool set_from_strings(const container_t& strings_);
 
 public:
-
-	// returns the size of a  point/face/...
-	std::size_t get_size_in_bytes() const
-	{
-		return _size_in_bytes;
-	}
-
-	// returns the size of the whole data set
-	std::size_t get_data_size_in_bytes() const
-	{
-		return _data_size_in_bytes;
-	}
-
-	// returns the size of the whole data set
-	std::size_t get_file_size_in_bytes() const
-	{
-		return _data_size_in_bytes;
-	}
-
 	std::string to_string() const;
 
 	std::string get_filename(const std::string& base_filename) const;
@@ -137,7 +120,7 @@ public:
 		return os << ds.to_string() << std::endl;
 	}
 
-	size_t compute_size_in_bytes() const;
+	std::size_t compute_size_in_bytes() const;
 
 	size_t compute_out_size_in_bytes() const;
 
@@ -145,14 +128,33 @@ public:
 
 	void _add_attribute(attribute& attr);
 
-private:
+public:
 	std::string _name;
 	std::size_t _size;
 	std::vector<attribute> attributes_;
-
-	std::size_t _size_in_bytes; // one point
-	std::size_t _data_size_in_bytes; // _size * point
 };
+
+// returns the size of a  point/face/...
+inline std::size_t size_in_bytes(const element& e)
+{
+	std::size_t size = 0;
+
+	std::vector<attribute>::const_iterator it = e.attributes_.begin();
+	std::vector<attribute>::const_iterator it_end = e.attributes_.end();
+
+	for (; it != it_end; ++it)
+	{
+		size += it->get_size_in_bytes();
+	}
+
+	return size;
+}
+
+// returns the size of the whole data set
+inline std::size_t file_size_in_bytes(const element& e)
+{
+	return e._size * size_in_bytes(e);
+}
 
 template<typename container_t>
 bool element::set_from_strings(const container_t& tokens)
