@@ -11,8 +11,6 @@ namespace stream_process
 
 enum data_type_id
 {
-	SP_UNKNOWN_DATA_TYPE,
-
 	SP_INT_8,
 	SP_INT_16,
 	SP_INT_32,
@@ -26,15 +24,12 @@ enum data_type_id
 
 	SP_FLOAT_32,
 	SP_FLOAT_64,
-
-	SP_BOOL,
-	SP_STRING
 };
 
 template<typename T>
 struct get_data_type_id_from_type
 {
-	static const data_type_id value = SP_UNKNOWN_DATA_TYPE;
+	static const data_type_id value = SP_INT_8;
 };
 
 template<>
@@ -95,12 +90,6 @@ template<>
 struct get_data_type_id_from_type<uint64_t>
 {
 	static const data_type_id value = SP_UINT_64;
-};
-
-template<>
-struct get_data_type_id_from_type<std::string>
-{
-	static const data_type_id value = SP_STRING;
 };
 
 class data_type_helper

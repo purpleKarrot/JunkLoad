@@ -19,14 +19,7 @@ struct attribute_type
 	inline attribute* create(const std::string& name, size_t array_size)
 	{
 		data_type_id id_ = get_data_type_id_from_type<T> ()();
-		if (id_ == SP_UNKNOWN_DATA_TYPE)
-		{
-			return new attribute(name, sizeof(T), array_size, true);
-		}
-		else
-		{
-			return new attribute(name, id_, array_size);
-		}
+		return new attribute(name, id_, array_size);
 	}
 
 	inline bool test(const attribute& attribute_)

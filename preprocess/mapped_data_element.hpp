@@ -61,7 +61,7 @@ protected:
 inline stream_data*
 mapped_data_element::operator[](size_t index)
 {
-	assert(index < _element.get_size());
+	assert(index < _element.size());
 	assert(_mapped_file.data());
 	return reinterpret_cast<stream_data*> (data() + index
 			* _element.get_size_in_bytes());
@@ -70,7 +70,7 @@ mapped_data_element::operator[](size_t index)
 inline const stream_data*
 mapped_data_element::operator[](size_t index) const
 {
-	assert(index < _element.get_size());
+	assert(index < _element.size());
 	assert(_mapped_file.data());
 	return reinterpret_cast<const stream_data*> (data() + index
 			* _element.get_size_in_bytes());
@@ -118,7 +118,7 @@ inline bool mapped_data_element::is_open() const
 
 inline size_t mapped_data_element::size() const
 {
-	return _element.get_size();
+	return _element.size();
 }
 
 } // namespace stream_process

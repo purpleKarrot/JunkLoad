@@ -3,23 +3,6 @@
 namespace stream_process
 {
 
-stream_structure::stream_structure(const std::string& attribute_identifier_) :
-	_attribute_identifier(attribute_identifier_)
-{
-}
-
-void stream_structure::clear()
-{
-//	iterator it = begin(), it_end = end();
-//	for (; it != it_end; ++it)
-//	{
-//		delete *it;
-//	}
-
-	attributes.clear();
-	_by_name.clear();
-}
-
 bool stream_structure::has_attribute(const std::string& name) const
 {
 	return _by_name.find(name) != _by_name.end();
@@ -156,15 +139,6 @@ attribute* stream_structure::find(const std::string& name) const
 		return 0;
 }
 
-stream_structure::~stream_structure()
-{
-//	iterator it = begin(), it_end = end();
-//	for (; it != it_end; ++it)
-//	{
-//		delete *it;
-//	}
-}
-
 size_t stream_structure::compute_size_in_bytes() const
 {
 	size_t size_in_bytes = 0;
@@ -227,7 +201,7 @@ std::string stream_structure::to_header_string() const
 	{
 		const attribute& attr = *it;
 		if (attr.is_output())
-			structure_string += attr.to_header_string(_attribute_identifier);
+			structure_string += attr.to_header_string("");
 	}
 	return structure_string;
 }
@@ -237,9 +211,9 @@ void stream_structure::print(std::ostream& os) const
 	os << to_string() << std::endl;
 }
 
-const std::string& stream_structure::get_name() const
+std::string stream_structure::get_name() const
 {
-	return _attribute_identifier;
+	return std::string();
 }
 
 size_t stream_structure::get_number_of_attributes() const

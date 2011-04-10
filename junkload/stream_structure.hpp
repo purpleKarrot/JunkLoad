@@ -19,13 +19,15 @@ public:
 	typedef std::vector<attribute> super;
 	super attributes;
 
-	stream_structure(const std::string& attribute_identifier_);
+	stream_structure()
+	{
+	}
 
-	~stream_structure();
+	~stream_structure()
+	{
+	}
 
 	size_t get_number_of_attributes() const;
-
-	void clear();
 
 	bool has_attribute(const std::string& name) const;
 
@@ -46,15 +48,6 @@ public:
 
 	attribute& create_custom_attribute(const std::string& name,
 			size_t element_size_in_bytes, size_t array_size = 1);
-
-//	// iterators
-//	using super::iterator;
-//	using super::const_iterator;
-//	using super::begin;
-//	using super::end;
-//
-//	using super::size;
-//	using super::empty;
 
 	typedef std::map<std::string, attribute*> named_container;
 
@@ -84,12 +77,11 @@ public:
 
 	void compute_offsets();
 
-	const std::string& get_name() const;
+	std::string get_name() const;
 
 private:
 	void _add_attribute(attribute& attr);
 
-	std::string _attribute_identifier; // for to_header_string
 	std::map<std::string, attribute*> _by_name;
 };
 

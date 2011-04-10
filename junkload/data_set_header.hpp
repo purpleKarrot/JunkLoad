@@ -60,14 +60,6 @@ public:
 	size_t get_number_of_faces() const;
 
 	void set_number_of_faces(size_t num);
-
-	size_t get_vertex_offset() const;
-
-	void set_vertex_offset(size_t offset);
-
-	size_t get_face_offset() const;
-
-	void set_face_offset(size_t offset);
 	// legacy_end
 
 	template<typename T>

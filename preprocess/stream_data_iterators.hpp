@@ -17,55 +17,55 @@ public:
 	{
 	}
 
-	inline stream_data* operator*() const
+	stream_data* operator*() const
 	{
 		return reinterpret_cast<stream_data*> (_data);
 	}
 
-	inline stream_data_iterator& operator++()
+	stream_data_iterator& operator++()
 	{
 		_data += _size_in_bytes;
 		return *this;
 	}
 
-	inline stream_data_iterator operator++(int)
+	stream_data_iterator operator++(int)
 	{
 		stream_data_iterator tmp(*this);
 		++(*this);
 		return tmp;
 	}
 
-	inline stream_data_iterator& operator--()
+	stream_data_iterator& operator--()
 	{
 		_data -= _size_in_bytes;
 		return *this;
 	}
 
-	inline stream_data_iterator operator--(int)
+	stream_data_iterator operator--(int)
 	{
 		stream_data_iterator tmp(*this);
 		--(*this);
 		return tmp;
 	}
 
-	inline void operator+=(size_t increment)
+	void operator+=(size_t increment)
 	{
 		_data += increment * _size_in_bytes;
 	}
 
-	inline stream_data_iterator operator+(size_t increment)
+	stream_data_iterator operator+(size_t increment)
 	{
 		stream_data_iterator it(*this);
 		it += increment;
 		return it;
 	}
 
-	inline bool operator==(const stream_data_iterator& other_) const
+	bool operator==(const stream_data_iterator& other_) const
 	{
 		return _data == other_._data;
 	}
 
-	inline bool operator!=(const stream_data_iterator& other_) const
+	bool operator!=(const stream_data_iterator& other_) const
 	{
 		return _data != other_._data;
 	}
@@ -89,55 +89,55 @@ public:
 	{
 	}
 
-	inline const stream_data* operator*() const
+	const stream_data* operator*() const
 	{
 		return reinterpret_cast<const stream_data*> (_data);
 	}
 
-	inline stream_data_const_iterator& operator++()
+	stream_data_const_iterator& operator++()
 	{
 		_data += _size_in_bytes;
 		return *this;
 	}
 
-	inline stream_data_const_iterator operator++(int)
+	stream_data_const_iterator operator++(int)
 	{
 		stream_data_const_iterator tmp(*this);
 		++(*this);
 		return tmp;
 	}
 
-	inline stream_data_const_iterator& operator--()
+	stream_data_const_iterator& operator--()
 	{
 		_data -= _size_in_bytes;
 		return *this;
 	}
 
-	inline stream_data_const_iterator operator--(int)
+	stream_data_const_iterator operator--(int)
 	{
 		stream_data_const_iterator tmp(*this);
 		--(*this);
 		return tmp;
 	}
 
-	inline void operator+=(size_t increment)
+	void operator+=(size_t increment)
 	{
 		_data += increment * _size_in_bytes;
 	}
 
-	inline stream_data_const_iterator operator+(size_t increment)
+	stream_data_const_iterator operator+(size_t increment)
 	{
 		stream_data_const_iterator it(*this);
 		it += increment;
 		return it;
 	}
 
-	inline bool operator==(const stream_data_const_iterator& other_) const
+	bool operator==(const stream_data_const_iterator& other_) const
 	{
 		return _data == other_._data;
 	}
 
-	inline bool operator!=(const stream_data_const_iterator& other_) const
+	bool operator!=(const stream_data_const_iterator& other_) const
 	{
 		return _data != other_._data;
 	}

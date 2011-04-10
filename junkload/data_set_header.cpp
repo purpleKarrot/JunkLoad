@@ -70,7 +70,7 @@ size_t data_set_header::get_number_of_vertices() const
 
 void data_set_header::set_number_of_vertices(size_t num)
 {
-	_vertices.set_size(num);
+	_vertices.size(num);
 }
 
 size_t data_set_header::get_number_of_faces() const
@@ -80,27 +80,7 @@ size_t data_set_header::get_number_of_faces() const
 
 void data_set_header::set_number_of_faces(size_t num)
 {
-	_faces.set_size(num);
-}
-
-size_t data_set_header::get_vertex_offset() const
-{
-	return _vertices.get_offset();
-}
-
-void data_set_header::set_vertex_offset(size_t offset)
-{
-	_vertices.set_offset(offset);
-}
-
-size_t data_set_header::get_face_offset() const
-{
-	return _faces.get_offset();
-}
-
-void data_set_header::set_face_offset(size_t offset)
-{
-	_faces.set_offset(offset);
+	_faces.size(num);
 }
 
 void data_set_header::set_data_is_big_endian(bool is_big_endian)

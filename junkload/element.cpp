@@ -26,13 +26,6 @@ std::string data_element::to_string() const
 	result += boost::lexical_cast<std::string>(_size);
 	result += " \n";
 
-	if (_offset)
-	{
-		result += _name;
-		result += " offset ";
-		result += boost::lexical_cast<std::string>(_offset);
-		result += " \n";
-	}
 	result += "\n";
 
 	result += stream_structure::to_string();
@@ -51,13 +44,6 @@ std::string data_element::to_header_string() const
 	result += boost::lexical_cast<std::string>(_size);
 	result += " \n";
 
-	if (_offset)
-	{
-		result += _name;
-		result += " offset ";
-		result += boost::lexical_cast<std::string>(_offset);
-		result += " \n";
-	}
 	result += "\n";
 
 	result += stream_structure::to_header_string();

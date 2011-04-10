@@ -13,12 +13,14 @@ class data_element: public stream_structure
 {
 public:
 	data_element(const std::string& name) :
-		stream_structure(name + " attribute"),
 		_name(name),
 		_size(0),
-		_offset(0),
 		_size_in_bytes(0),
 		_data_size_in_bytes(0)
+	{
+	}
+
+	~data_element()
 	{
 	}
 
@@ -32,8 +34,24 @@ public:
 		_name = value;
 	}
 
-	~data_element()
+	std::size_t size() const
 	{
+		return _size;
+	}
+
+	void size(std::size_t value)
+	{
+		_size = value;
+	}
+
+	const std::vector<attribute>& attributes() const
+	{
+		return stream_structure::attributes;
+	}
+
+	void attributes(const std::vector<attribute>& value)
+	{
+		stream_structure::attributes = value;
 	}
 
 	void update();
@@ -43,54 +61,22 @@ public:
 		return _size == 0;
 	}
 
-	std::size_t size() const
-	{
-		return _size;
-	}
-
-	std::size_t get_size() const
-	{
-		return _size;
-	}
-
-	void set_size(std::size_t size_)
-	{
-		_size = size_;
-		update();
-	}
-
-	std::string get_name() const
-	{
-		return _name;
-	}
-
-	// returns the offset (e.g. a binary header before the data blob)
-	std::size_t get_offset() const
-	{
-		return _offset;
-	}
-
-	void set_offset(std::size_t offset_)
-	{
-		_offset = offset_;
-	}
-
 	// returns the size of a  point/face/...
 	std::size_t get_size_in_bytes() const
 	{
 		return _size_in_bytes;
 	}
 
-	// returns the size of the whole data (sub)set, without offset
+	// returns the size of the whole data set
 	std::size_t get_data_size_in_bytes() const
 	{
 		return _data_size_in_bytes;
 	}
 
-	// returns the size of the data set, plus offset
+	// returns the size of the whole data set
 	std::size_t get_file_size_in_bytes() const
 	{
-		return _data_size_in_bytes + _offset;
+		return _data_size_in_bytes;
 	}
 
 	std::string to_string() const;
@@ -106,7 +92,6 @@ private:
 	std::string _name;
 
 	std::size_t _size;
-	std::size_t _offset;
 
 	std::size_t _size_in_bytes; // one point
 	std::size_t _data_size_in_bytes; // _size * point
@@ -133,12 +118,6 @@ bool data_element::set_from_strings(const container_t& tokens)
 	if (keyword == "count" || keyword == "size")
 	{
 		_size = boost::lexical_cast<size_t>(tokens[1]);
-		return true;
-	}
-
-	if (keyword == "offset")
-	{
-		_offset = boost::lexical_cast<size_t>(tokens[1]);
 		return true;
 	}
 

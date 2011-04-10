@@ -107,9 +107,7 @@ void mapped_data_set::_compute_aabb()
 	const stream_structure& vs = _header.get_vertex_structure();
 
 	const attribute& position = vs.get_attribute("position");
-	attribute_accessor<vector_type> get_position;
-
-	get_position.set_offset(position.get_offset());
+	attribute_accessor<vector_type> get_position(position.get_offset());
 
 	vector_type aabb_min(std::numeric_limits<T>::max());
 	vector_type aabb_max(-std::numeric_limits<T>::max());

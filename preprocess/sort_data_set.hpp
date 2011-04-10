@@ -64,12 +64,10 @@ void sort_data_set::_sort_vertices(size_t index)
 	const stream_structure& vs = vertices; //.get_structure();
 	const attribute& sort_attr = vs.get_attribute(_params.sort_attribute);
 
-	accessor_type get_attr;
-
 	size_t base_offset = sort_attr.get_offset();
 	base_offset += index * sizeof(value_t);
 
-	get_attr.set_offset(base_offset);
+	accessor_type get_attr(base_offset);
 	_sort_file<value_t, index_t, accessor_type> (vertex_map, get_attr);
 }
 
@@ -84,8 +82,7 @@ void sort_data_set::_sort_faces()
 
 	size_t size = in_header.get_number_of_faces();
 
-	accessor_type get_attr;
-	get_attr.setup(sort_attr.get_offset());
+	accessor_type get_attr(sort_attr.get_offset());
 
 	_sort_file<value_t, index_t, accessor_type> (_input.get_face_map(),
 			get_attr);

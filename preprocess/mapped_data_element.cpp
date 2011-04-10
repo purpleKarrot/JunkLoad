@@ -57,17 +57,14 @@ mapped_data_element::get_element() const
 	return _element;
 }
 
-char*
-mapped_data_element::data()
+char* mapped_data_element::data()
 {
-	return _mapped_file.data() + _element.get_offset();
+	return _mapped_file.data();
 }
 
-const char*
-mapped_data_element::data() const
+const char* mapped_data_element::data() const
 {
-	return _mapped_file.data() + _element.get_offset();
+	return _mapped_file.data();
 }
 
 } // namespace stream_process
-

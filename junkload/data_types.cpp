@@ -92,11 +92,6 @@ void data_type_helper::_fill_db()
 	_type_names["int64"] = SP_INT_64;
 	_type_names["uint64"] = SP_UINT_64;
 
-	_type_names["bool"] = SP_BOOL;
-	_type_names["string"] = SP_STRING;
-
-	_type_names["unknown"] = SP_UNKNOWN_DATA_TYPE;
-
 	_default_name[SP_FLOAT_32] = "float";
 	_default_name[SP_FLOAT_64] = "double";
 	_default_name[SP_INT_8] = "int8";
@@ -107,10 +102,6 @@ void data_type_helper::_fill_db()
 	_default_name[SP_UINT_32] = "uint32";
 	_default_name[SP_INT_64] = "int64";
 	_default_name[SP_UINT_64] = "uint64";
-	_default_name[SP_BOOL] = "bool";
-	_default_name[SP_STRING] = "string";
-
-	_default_name[SP_UNKNOWN_DATA_TYPE] = "unknown";
 
 	_type_size_in_bytes[SP_FLOAT_32] = sizeof(float);
 	_type_size_in_bytes[SP_FLOAT_64] = sizeof(double);
@@ -124,7 +115,6 @@ void data_type_helper::_fill_db()
 	_type_size_in_bytes[SP_UINT_64] = sizeof(uint64_t);
 	_type_size_in_bytes[SP_UINT_64] = sizeof(bool);
 	_type_size_in_bytes[SP_UINT_64] = sizeof(std::string);
-
 }
 
 } // namespace stream_process

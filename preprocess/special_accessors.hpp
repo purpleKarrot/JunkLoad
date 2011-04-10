@@ -7,14 +7,13 @@
 namespace stream_process
 {
 
-template<size_t M, typename T>
-struct smallest_component_accessor
+template<std::size_t M, typename T>
+class smallest_component_accessor
 {
-	typedef vmml::vector<M, T> vec_type;
-
-	void setup(size_t offset)
+public:
+	smallest_component_accessor(std::size_t offset) :
+		get_attribute(offset)
 	{
-		get_attribute.set_offset(offset);
 	}
 
 	inline const T& operator()(const stream_data* d) const
@@ -23,29 +22,9 @@ struct smallest_component_accessor
 		return v.find_min();
 	}
 
+private:
+	typedef vmml::vector<M, T> vec_type;
 	attribute_accessor<vec_type> get_attribute;
-};
-
-// a stream_data accessor that converts an attribute of type T to type U
-template<typename T, typename U>
-struct conversion_accessor
-{
-	conversion_accessor(size_t offset)
-	{
-		get_attribute.set_offset(offset);
-	}
-
-	conversion_accessor(const attribute_accessor<T>& acc) :
-		get_attribute(acc)
-	{
-	}
-
-	inline U operator()(const stream_data* d) const
-	{
-		return static_cast<U> (get_attribute(d));
-	}
-
-	attribute_accessor<T> get_attribute;
 };
 
 } // namespace stream_process

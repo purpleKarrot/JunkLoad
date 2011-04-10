@@ -11,7 +11,7 @@ namespace stream_process
 
 attribute::attribute() :
 	_name("uninitialized"),
-	_data_type_id(SP_UNKNOWN_DATA_TYPE),
+	_data_type_id(SP_INT_8),
 	_number_of_elements(0),
 	_element_size_in_bytes(0),
 	_size_in_bytes(0),
@@ -36,7 +36,7 @@ attribute::attribute(const std::string& name_, data_type_id data_type_id_,
 attribute::attribute(const std::string& name_, size_t element_size_in_bytes_,
 		size_t number_of_elements_, bool is_custom_type) :
 	_name(name_),
-	_data_type_id(SP_UNKNOWN_DATA_TYPE),
+	_data_type_id(SP_INT_8),
 	_number_of_elements(number_of_elements_),
 	_element_size_in_bytes(element_size_in_bytes_),
 	_size_in_bytes(_element_size_in_bytes * _number_of_elements),
@@ -75,7 +75,7 @@ bool attribute::from_header_string_vector(
 		return false;
 
 	std::string name = tokens[1];
-	data_type_id type_ = SP_UNKNOWN_DATA_TYPE;
+	data_type_id type_ = SP_INT_8;
 	size_t number_of_elements = 1;
 	size_t flags = 0;
 
@@ -104,15 +104,7 @@ bool attribute::from_header_string_vector(
 	_number_of_elements = number_of_elements;
 	_flags = flags;
 
-	if (_data_type_id != SP_UNKNOWN_DATA_TYPE)
-	{
-		_update();
-	}
-	else
-	{
-		_element_size_in_bytes = size_in_bytes / number_of_elements;
-		_size_in_bytes = size_in_bytes;
-	}
+	_update();
 
 	return true;
 }

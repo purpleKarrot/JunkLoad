@@ -21,11 +21,12 @@ BOOST_FUSION_ADAPT_STRUCT(stream_process::attribute,
 		(std::size_t, _flags)
 )
 
+typedef const std::vector<stream_process::attribute>& attributes_t;
+
 BOOST_FUSION_ADAPT_ADT(stream_process::data_element,
-		(std::string, _name)
-		(stream_process::data_type_id, _data_type_id)
-		(std::size_t, _number_of_elements)
-		(std::size_t, _flags)
+		(std::string, const std::string&, obj.name(), obj.name(val))
+		(std::size_t, std::size_t, obj.size(), obj.size(val))
+		(attributes_t, attributes_t, obj.attributes(), obj.attributes(val))
 )
 
 #endif /* JUNKLOAD_SPIRIT_ADAPTED_HPP */

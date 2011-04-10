@@ -3,6 +3,7 @@
 
 #include "preprocess_types.hpp"
 #include "special_accessors.hpp"
+#include "attribute_type.hpp"
 
 #include <boost/filesystem.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>

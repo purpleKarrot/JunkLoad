@@ -171,7 +171,7 @@ bool attribute::from_header_strings(const container_t& tokens)
 		return false;
 
 	std::string name = tokens[1];
-	data_type_id type_ = SP_UNKNOWN_DATA_TYPE;
+	data_type_id type_ = SP_INT_8;
 	size_t number_of_elements = 1;
 	size_t flags = 0;
 
@@ -200,15 +200,7 @@ bool attribute::from_header_strings(const container_t& tokens)
 	_number_of_elements = number_of_elements;
 	_flags = flags;
 
-	if (_data_type_id != SP_UNKNOWN_DATA_TYPE)
-	{
-		_update();
-	}
-	else
-	{
-		_element_size_in_bytes = size_in_bytes / number_of_elements;
-		_size_in_bytes = size_in_bytes;
-	}
+	_update();
 
 	return true;
 }

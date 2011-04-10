@@ -83,7 +83,7 @@ static void _init_ply_sp_type_map()
 	 #define PLY_INT32      11
 	 #define PLY_END_TYPE   12
 	 */
-	_static._ply_sp_type_map.resize(EndType + 1, SP_UNKNOWN_DATA_TYPE);
+	_static._ply_sp_type_map.resize(EndType + 1, SP_INT_8);
 
 	_static._ply_sp_type_map[Int8] = SP_INT_8;
 	_static._ply_sp_type_map[Int16] = SP_INT_16;
@@ -342,8 +342,7 @@ static void _read_face_data()
 
 	const attribute& vertex_indices = fs.get_attribute("vertex_indices");
 
-	attribute_accessor<vec3ui> get_indices;
-	get_indices.set_offset(vertex_indices.get_offset());
+	attribute_accessor<vec3ui> get_indices(vertex_indices.get_offset());
 
 	mapped_data_set::iterator fit = _static._data_set->fbegin(), fit_end =
 			_static._data_set->fend();
