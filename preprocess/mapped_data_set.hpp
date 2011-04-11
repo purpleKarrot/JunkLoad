@@ -102,7 +102,7 @@ void mapped_data_set::_compute_aabb()
 
 	const element& vs = _header.vertex();
 
-	const attribute& position = vs.get_attribute("position");
+	const attribute& position = get_attribute(vs, "position");
 	attribute_accessor<vector_type> get_position(position.offset);
 
 	vector_type aabb_min(std::numeric_limits<T>::max());

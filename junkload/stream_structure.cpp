@@ -3,7 +3,7 @@
 #include <boost/range/algorithm/find_if.hpp>
 using boost::range::find_if;
 
-namespace junkload
+namespace junk
 {
 
 struct match_name
@@ -21,15 +21,15 @@ struct match_name
 	const std::string& name;
 };
 
-bool element::has_attribute(const std::string& name) const
+bool has_attribute(const element& e, const std::string& name)
 {
-	return find_if(attributes, match_name(name)) != attributes.end();
+	return find_if(e.attributes, match_name(name)) != e.attributes.end();
 }
 
-attribute& element::get_attribute(const std::string& name)
+attribute& get_attribute(element& e,const std::string& name)
 {
-	std::vector<attribute>::iterator it = find_if(attributes, match_name(name));
-	if (it == attributes.end())
+	std::vector<attribute>::iterator it = find_if(e.attributes, match_name(name));
+	if (it == e.attributes.end())
 	{
 		throw std::runtime_error(
 				std::string("could not find attribute with name ") + name + ".");
@@ -38,10 +38,10 @@ attribute& element::get_attribute(const std::string& name)
 	return *it;
 }
 
-const attribute& element::get_attribute(const std::string& name) const
+const attribute& get_attribute(const element& e, const std::string& name)
 {
-	std::vector<attribute>::const_iterator it = find_if(attributes, match_name(name));
-	if (it == attributes.end())
+	std::vector<attribute>::const_iterator it = find_if(e.attributes, match_name(name));
+	if (it == e.attributes.end())
 	{
 		throw std::runtime_error(
 				std::string("could not find attribute with name ") + name + ".");
@@ -51,17 +51,18 @@ const attribute& element::get_attribute(const std::string& name) const
 }
 
 // creates an empty attribute with the specified name
-void element::create_attribute(const std::string& name, type_id type,
-		size_t size)
+void create_attribute(element& e, const std::string& name, typid type, size_t size)
 {
-	attributes.push_back(attribute(name, type, size));
+	e.attributes.push_back(attribute(name, type, size, 0));
 }
 
-void element::compute_offsets()
+void compute_offsets(element& e)
 {
 	size_t offset = 0;
-	for (std::vector<attribute>::iterator it = attributes.begin(), it_end =
-			attributes.end(); it != it_end; ++it)
+	std::vector<attribute>::iterator it = e.attributes.begin();
+	std::vector<attribute>::iterator end = e.attributes.end();
+
+	for (; it != end; ++it)
 	{
 		attribute& attr = *it;
 		attr.offset = offset;
@@ -69,4 +70,4 @@ void element::compute_offsets()
 	}
 }
 
-} // namespace junkload
+} // namespace junk

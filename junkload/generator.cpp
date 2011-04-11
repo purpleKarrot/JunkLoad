@@ -15,10 +15,10 @@
 namespace karma = boost::spirit::karma;
 namespace ascii = boost::spirit::ascii;
 
-namespace junkload
+namespace junk
 {
 
-struct scalar_symbols: karma::symbols<type_id, const char*>
+struct scalar_symbols: karma::symbols<typid, const char*>
 {
 	scalar_symbols()
 	{
@@ -108,6 +108,6 @@ bool save_header(const std::string& filename, const header& h)
 	return karma::generate_delimited(sink, g, ascii::space, h);
 }
 
-} // namespace junkload
+} // namespace junk
 
 #endif /* JUNKLOAD_SPIRIT_GENERATOR_HPP */

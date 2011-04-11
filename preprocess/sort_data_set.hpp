@@ -62,7 +62,7 @@ void sort_data_set::_sort_vertices(size_t index)
 	assert(_input.get_vertex_map().is_open());
 
 	const element& vs = vertices; //.get_structure();
-	const attribute& sort_attr = vs.get_attribute(_params.sort_attribute);
+	const attribute& sort_attr = get_attribute(vs, _params.sort_attribute);
 
 	size_t base_offset = sort_attr.offset;
 	base_offset += index * sizeof(value_t);
@@ -78,7 +78,7 @@ void sort_data_set::_sort_faces()
 
 	const header& in_header = _input.get_header();
 	const element& fs = in_header.face();
-	const attribute& sort_attr = fs.get_attribute(_params.sort_attribute);
+	const attribute& sort_attr = get_attribute(fs, _params.sort_attribute);
 
 	size_t size = in_header.face().size;
 
@@ -190,7 +190,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 		boost::filesystem::remove(tmp_params.path);
 	}
 
-	junkload::save_header(_params.out_name, _input.get_header());
+	junk::save_header(_params.out_name, _input.get_header());
 }
 
 } // namespace stream_process

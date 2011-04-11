@@ -14,10 +14,10 @@
 
 #include "VMMLibIncludes.h"
 
-namespace junkload
+namespace junk
 {
 
-enum type_id
+enum typid
 {
 	SP_INT_8,
 	SP_INT_16,
@@ -31,78 +31,43 @@ enum type_id
 	SP_FLOAT_64,
 };
 
-std::size_t size_in_bytes(type_id type);
+} // namespace junk
 
-struct attribute
+BOOST_FUSION_DEFINE_STRUCT((junk), attribute,
+	(std::string, name)
+	(junk::typid, type)
+	(std::size_t, size)
+	(std::size_t, offset)
+)
+
+BOOST_FUSION_DEFINE_STRUCT((junk), element,
+	(std::string, name)
+	(std::size_t, size)
+	(std::vector<junk::attribute>, attributes)
+)
+
+namespace junk
 {
-	attribute() :
-		type(SP_INT_8), size(1), offset(0)
-	{
-	}
 
-	attribute(const std::string& name, type_id type, std::size_t size = 1) :
-		name(name), type(type), size(size), offset(0)
-	{
-	}
-
-	std::string name;
-	type_id type;
-	std::size_t size;
-	std::size_t offset;
-};
+std::size_t size_in_bytes(typid type);
 
 inline std::size_t size_in_bytes(const attribute& a)
 {
 	return a.size * size_in_bytes(a.type);
 }
 
-class element
-{
-public:
-	element(const std::string& name = std::string()) :
-		name(name), size(0)
-	{
-	}
+void compute_offsets(element& e);
 
-	element(const element& other) :
-		name(other.name), size(other.size), attributes(other.attributes)
-	{
-	}
+bool has_attribute(const element& e, const std::string& name);
 
-	~element()
-	{
-	}
+attribute& get_attribute(element& e, const std::string& name);
+const attribute& get_attribute(const element& e, const std::string& name);
 
-public:
+template<typename T>
+void create_attribute(element& e, const std::string& name);
 
-	bool empty() const
-	{
-		return size == 0;
-	}
-
-	void update()
-	{
-		compute_offsets();
-	}
-
-	bool has_attribute(const std::string& name) const;
-
-	junkload::attribute& get_attribute(const std::string& name);
-	const junkload::attribute& get_attribute(const std::string& name) const;
-
-	template<typename T>
-	attribute& create_attribute(const std::string& name, size_t array_size = 0);
-
-	void create_attribute(const std::string& name, type_id type,
-			size_t size = 1);
-
-	void compute_offsets();
-
-public:
-	std::string name;
-	std::size_t size;
-	std::vector<junkload::attribute> attributes;
-};
+void create_attribute(element& e, const std::string& name, typid type,
+		size_t size = 1);
 
 // returns the size of a  point/face/...
 inline std::size_t size_in_bytes(const element& e)
@@ -127,247 +92,111 @@ inline std::size_t file_size_in_bytes(const element& e)
 }
 
 template<typename T>
-struct get_type_id_from_type
+struct get_typid_from_type
 {
 };
 
 template<>
-struct get_type_id_from_type<float>
+struct get_typid_from_type<float>
 {
-	static const type_id value = SP_FLOAT_32;
+	static const typid value = SP_FLOAT_32;
 };
 
 template<>
-struct get_type_id_from_type<double>
+struct get_typid_from_type<double>
 {
-	static const type_id value = SP_FLOAT_64;
+	static const typid value = SP_FLOAT_64;
 };
 
 template<>
-struct get_type_id_from_type<int8_t>
+struct get_typid_from_type<int8_t>
 {
-	static const type_id value = SP_INT_8;
+	static const typid value = SP_INT_8;
 };
 
 template<>
-struct get_type_id_from_type<uint8_t>
+struct get_typid_from_type<uint8_t>
 {
-	static const type_id value = SP_UINT_8;
+	static const typid value = SP_UINT_8;
 };
 
 template<>
-struct get_type_id_from_type<int16_t>
+struct get_typid_from_type<int16_t>
 {
-	static const type_id value = SP_INT_16;
+	static const typid value = SP_INT_16;
 };
 
 template<>
-struct get_type_id_from_type<uint16_t>
+struct get_typid_from_type<uint16_t>
 {
-	static const type_id value = SP_UINT_16;
+	static const typid value = SP_UINT_16;
 };
 
 template<>
-struct get_type_id_from_type<int32_t>
+struct get_typid_from_type<int32_t>
 {
-	static const type_id value = SP_INT_32;
+	static const typid value = SP_INT_32;
 };
 
 template<>
-struct get_type_id_from_type<uint32_t>
+struct get_typid_from_type<uint32_t>
 {
-	static const type_id value = SP_UINT_32;
+	static const typid value = SP_UINT_32;
 };
 
 template<>
-struct get_type_id_from_type<int64_t>
+struct get_typid_from_type<int64_t>
 {
-	static const type_id value = SP_INT_64;
+	static const typid value = SP_INT_64;
 };
 
 template<>
-struct get_type_id_from_type<uint64_t>
+struct get_typid_from_type<uint64_t>
 {
-	static const type_id value = SP_UINT_64;
+	static const typid value = SP_UINT_64;
 };
 
-template<typename T>
+template<typename T, class Enable = void>
 struct attribute_type
 {
-	inline attribute* create(const std::string& name)
+	static attribute create(const std::string& name)
 	{
-		return create(name, 1);
+		return attribute(name, get_typid_from_type<T>::value, 1);
 	}
 
-	inline attribute* create(const std::string& name, size_t array_size)
+	static bool test(const attribute& attr)
 	{
-		type_id id_ = get_type_id_from_type<T>::value;
-		return new attribute(name, id_, array_size);
+		return attr.type == get_typid_from_type<T>::value && attr.size == 1;
+	}
+};
+
+template<class V>
+struct attribute_type<V, typename boost::enable_if<boost::qvm::is_v<V> >::type>
+{
+	typedef typename boost::qvm::v_traits<V>::scalar_type scalar_type;
+
+	static const int size = boost::qvm::v_traits<V>::dim;
+	static const int type = get_typid_from_type<scalar_type>::value;
+
+	static attribute create(const std::string& name)
+	{
+		return attribute(name, type, size);
 	}
 
-	inline bool test(const attribute& attribute_)
+	static bool test(const attribute& attr)
 	{
-		return operator()(attribute_);
-	}
-
-	inline bool operator()(const attribute& attribute_)
-	{
-		type_id id_ = get_type_id_from_type<T>::value;
-		bool ok = id_ == attribute_.type();
-		if (!ok)
-		{
-			std::cerr << "expected attribute type: " << id_ << std::endl;
-
-			std::cerr << "actual attribute type:   "
-					<< attribute_.type() << std::endl;
-		}
-
-		return ok;
+		return attr.type == type && attr.size == size;
 	}
 };
 
 template<>
-inline attribute*
-attribute_type<vec2f>::create(const std::string& name)
+inline attribute attribute_type<mat3f>::create(const std::string& name)
 {
-	return new attribute(name, SP_FLOAT_32, 2);
+	return attribute(name, SP_FLOAT_32, 9, 0);
 }
 
 template<>
-inline bool attribute_type<vec2f>::operator()(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_32)
-		return false;
-	if (attribute_.size != 2)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute*
-attribute_type<vec3f>::create(const std::string& name)
-{
-	return new attribute(name, SP_FLOAT_32, 3);
-}
-
-template<>
-inline bool attribute_type<vec3f>::operator()(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_32)
-		return false;
-	if (attribute_.size != 3)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute* attribute_type<vec3ui>::create(const std::string& name)
-{
-	return new attribute(name, SP_UINT_32, 3);
-}
-
-template<>
-inline bool attribute_type<vec3ui>::operator()(const attribute& attribute_)
-{
-	if (attribute_.type != SP_UINT_32)
-		return false;
-	if (attribute_.size != 3)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute*
-attribute_type<vec4f>::create(const std::string& name)
-{
-	return new attribute(name, SP_FLOAT_32, 4);
-}
-
-template<>
-inline bool attribute_type<vec4f>::operator()(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_32)
-		return false;
-	if (attribute_.size != 4)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute* attribute_type<vec2d>::create(const std::string& name)
-{
-	return new attribute(name, SP_FLOAT_64, 2);
-}
-
-template<>
-inline bool attribute_type<vec2d>::operator()(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_64)
-		return false;
-	if (attribute_.size != 2)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute*
-attribute_type<vec3d>::create(const std::string& name)
-{
-	return new attribute(name, SP_FLOAT_64, 3);
-}
-
-template<>
-inline bool attribute_type<vec3d>::operator()(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_64)
-		return false;
-	if (attribute_.size != 3)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute* attribute_type<vec4d>::create(const std::string& name)
-{
-	return new attribute(name, SP_FLOAT_64, 4);
-}
-
-template<>
-inline bool attribute_type<vec4d>::operator()(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_64)
-		return false;
-	if (attribute_.size != 4)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute*
-attribute_type<vec4ub>::create(const std::string& name)
-{
-	return new attribute(name, SP_UINT_8, 4);
-}
-
-template<>
-inline bool attribute_type<vec4ub>::operator()(const attribute& attribute_)
-{
-	if (attribute_.type != SP_UINT_8)
-		return false;
-	if (attribute_.size != 4)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute*
-attribute_type<mat3f>::create(const std::string& name)
-{
-	return new attribute(name, SP_FLOAT_32, 9);
-}
-
-template<>
-inline bool attribute_type<mat3f>::operator()(const attribute& attribute_)
+inline bool attribute_type<mat3f>::test(const attribute& attribute_)
 {
 	if (attribute_.type != SP_FLOAT_32)
 		return false;
@@ -377,14 +206,13 @@ inline bool attribute_type<mat3f>::operator()(const attribute& attribute_)
 }
 
 template<>
-inline attribute*
-attribute_type<mat4f>::create(const std::string& name)
+inline attribute attribute_type<mat4f>::create(const std::string& name)
 {
-	return new attribute(name, SP_FLOAT_32, 16);
+	return attribute(name, SP_FLOAT_32, 16, 0);
 }
 
 template<>
-inline bool attribute_type<mat4f>::operator()(const attribute& attribute_)
+inline bool attribute_type<mat4f>::test(const attribute& attribute_)
 {
 	if (attribute_.type != SP_FLOAT_32)
 		return false;
@@ -394,14 +222,13 @@ inline bool attribute_type<mat4f>::operator()(const attribute& attribute_)
 }
 
 template<>
-inline attribute*
-attribute_type<mat3d>::create(const std::string& name)
+inline attribute attribute_type<mat3d>::create(const std::string& name)
 {
-	return new attribute(name, SP_FLOAT_64, 9);
+	return attribute(name, SP_FLOAT_64, 9, 0);
 }
 
 template<>
-inline bool attribute_type<mat3d>::operator()(const attribute& attribute_)
+inline bool attribute_type<mat3d>::test(const attribute& attribute_)
 {
 	if (attribute_.type != SP_FLOAT_64)
 		return false;
@@ -411,13 +238,13 @@ inline bool attribute_type<mat3d>::operator()(const attribute& attribute_)
 }
 
 template<>
-inline attribute* attribute_type<mat4d>::create(const std::string& name)
+inline attribute attribute_type<mat4d>::create(const std::string& name)
 {
-	return new attribute(name, SP_FLOAT_64, 16);
+	return attribute(name, SP_FLOAT_64, 16, 0);
 }
 
 template<>
-inline bool attribute_type<mat4d>::operator()(const attribute& attribute_)
+inline bool attribute_type<mat4d>::test(const attribute& attribute_)
 {
 	if (attribute_.type != SP_FLOAT_64)
 		return false;
@@ -427,27 +254,9 @@ inline bool attribute_type<mat4d>::operator()(const attribute& attribute_)
 }
 
 template<typename T>
-attribute& element::create_attribute(const std::string& name,
-		size_t array_size)
+void create_attribute(element& e, const std::string& name)
 {
-	attribute_type<T> attribute_type_;
-	attribute* attr = 0;
-
-	try
-	{
-		if (array_size == 0)
-			attr = attribute_type_.create(name);
-		else
-			attr = attribute_type_.create(name, array_size);
-		assert(attr);
-		attributes.push_back(*attr);
-	} catch (...)
-	{
-		delete attr;
-		throw;
-	}
-
-	return *attr;
+	e.attributes.push_back(attribute_type<T>::create(name));
 }
 
 class header
@@ -506,7 +315,7 @@ public:
 		super::iterator it_end = elements.end();
 		for (; it != it_end; ++it)
 		{
-			it->update();
+			compute_offsets(*it);
 		}
 	}
 
@@ -524,8 +333,14 @@ inline element& header::get_element(const std::string& name)
 {
 	if (elements.empty())
 	{
-		elements.push_back(element("vertex"));
-		elements.push_back(element("face"));
+		element vertex;
+		vertex.name = "vertex";
+		elements.push_back(vertex);
+
+		element face;
+		face.name = "face";
+		elements.push_back(face);
+
 		update();
 	}
 
@@ -542,8 +357,14 @@ inline const element& header::get_element(const std::string& name) const
 {
 	if (elements.empty())
 	{
-		elements.push_back(element("vertex"));
-		elements.push_back(element("face"));
+		element vertex;
+		vertex.name = "vertex";
+		elements.push_back(vertex);
+
+		element face;
+		face.name = "face";
+		elements.push_back(face);
+
 		update();
 	}
 
@@ -559,35 +380,23 @@ inline const element& header::get_element(const std::string& name) const
 bool load_header(const std::string& filename, header& h);
 bool save_header(const std::string& filename, const header& h);
 
-} // namespace junkload
+} // namespace junk
 
-BOOST_FUSION_ADAPT_STRUCT(junkload::attribute,
-		(std::string, name)
-		(junkload::type_id, type)
-		(std::size_t, size)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(junkload::element,
-		(std::string, name)
-		(std::size_t, size)
-		(std::vector<junkload::attribute>, attributes)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(junkload::header,
-		(junkload::mat4d, transform)
-		(junkload::vec3d, min)
-		(junkload::vec3d, max)
+BOOST_FUSION_ADAPT_STRUCT(junk::header,
+		(junk::mat4d, transform)
+		(junk::vec3d, min)
+		(junk::vec3d, max)
 		(bool, big_endian)
-		(std::vector<junkload::element>, elements)
+		(std::vector<junk::element>, elements)
 )
 
-BOOST_FUSION_ADAPT_STRUCT(junkload::vec3d,
+BOOST_FUSION_ADAPT_STRUCT(junk::vec3d,
 		(double, array[0])
 		(double, array[1])
 		(double, array[2])
 )
 
-BOOST_FUSION_ADAPT_STRUCT(junkload::mat4d,
+BOOST_FUSION_ADAPT_STRUCT(junk::mat4d,
 		(double, array[0])
 		(double, array[1])
 		(double, array[2])
@@ -608,7 +417,7 @@ BOOST_FUSION_ADAPT_STRUCT(junkload::mat4d,
 
 namespace stream_process
 {
-	using namespace junkload;
+	using namespace junk;
 }
 
 #endif /* JUNKLOAD_TYPES_HPP */

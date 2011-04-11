@@ -21,12 +21,12 @@ namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 namespace classic = boost::spirit::classic;
 
-namespace junkload
+namespace junk
 {
 namespace parser
 {
 
-struct scalar_symbols: qi::symbols<char, type_id>
+struct scalar_symbols: qi::symbols<char, typid>
 {
 	scalar_symbols()
 	{
@@ -166,6 +166,6 @@ bool load_header(const std::string& filename, header& h)
 	}
 }
 
-} // namespace junkload
+} // namespace junk
 
 #endif /* JUNKLOAD_SPIRIT_QI_HPP */

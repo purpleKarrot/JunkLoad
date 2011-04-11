@@ -16,10 +16,10 @@ static void _apply_optimal_transform(const std::string& filename,
 		bool full_optimal_transform)
 {
 	sp::mapped_data_set data_set_(filename);
-	bool has_faces = ! data_set_.get_header().face().empty();
+	bool has_faces = data_set_.get_header().face().size != 0;
 
 	sp::attribute_accessor<sp::vec3f> get_position(
-			data_set_.get_vertex_element().get_attribute("position").offset);
+			get_attribute(data_set_.get_vertex_element(), "position").offset);
 
 	const sp::header& h = data_set_.get_header();
 
@@ -29,7 +29,7 @@ static void _apply_optimal_transform(const std::string& filename,
 				<< std::endl;
 
 		sp::attribute_accessor<sp::vec3f> get_position(
-				data_set_.get_vertex_element().get_attribute("position").offset);
+				get_attribute(data_set_.get_vertex_element(), "position").offset);
 
 		sp::optimal_transform<sp::vec3f, sp::attribute_accessor<sp::vec3f>,
 				sp::mapped_data_element> ot;
@@ -70,7 +70,7 @@ static void _apply_optimal_transform(const std::string& filename,
 	}
 
 	data_set_.compute_aabb();
-	junkload::save_header(filename, data_set_.get_header());
+	junk::save_header(filename, data_set_.get_header());
 }
 
 int main(int argc, char* argv[])
@@ -109,13 +109,13 @@ int main(int argc, char* argv[])
 	}
 
 	sp::mapped_data_set data_set_(unsorted);
-	if (!data_set_.get_header().face().empty())
+	if (data_set_.get_header().face().size != 0)
 	{
 		const sp::header& h = data_set_.get_header();
 		const sp::element& fs = h.face();
 		const size_t num_faces = h.face().size;
 
-		const sp::attribute& attr = fs.get_attribute("vertex_indices");
+		const sp::attribute& attr = get_attribute(fs, "vertex_indices");
 
 		sp::reindex_faces::params ri_params;
 		ri_params.faces_file = unsorted + ".faces";

@@ -4,21 +4,21 @@
 #define __VMML_VECTOR_TRAITS_HPP__
 
 #include <vmmlib/vector.hpp>
-#include <boost/la/vector_traits.hpp>
+#include <boost/qvm/v_traits.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/assert.hpp>
 
 namespace boost
 {
-namespace la
+namespace qvm
 {
 
 template<size_t M, typename T>
-struct vector_traits<vmml::vector<M, T> >
+struct v_traits<vmml::vector<M, T> >
 {
-	typedef vmml::vector<M, T> vector_type;
-
-	static const int dim = M;
-
 	typedef T scalar_type;
+	typedef vmml::vector<M, T> vector_type;
+	static const int dim = M;
 
 	template<int I>
 	static scalar_type r(const vector_type& v)
@@ -51,7 +51,7 @@ struct vector_traits<vmml::vector<M, T> >
 	}
 };
 
-} // namespace la
+} // namespace qvm
 } // namespace boost
 
 #endif /* VMML_VECTOR_TRAITS_HPP */

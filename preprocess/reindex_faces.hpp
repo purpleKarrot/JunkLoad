@@ -23,8 +23,8 @@ public:
 	{
 		std::string faces_file;
 		std::string reindex_map;
-		size_t number_of_faces;
-		type_id index_type;
+		std::size_t number_of_faces;
+		junk::typid index_type;
 	};
 
 	reindex_faces(const params& params_);

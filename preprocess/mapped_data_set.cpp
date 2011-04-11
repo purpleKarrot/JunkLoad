@@ -16,7 +16,7 @@ mapped_data_set::mapped_data_set(const std::string& filename, bool new_file) :
 {
 	if (!new_file)
 	{
-		junkload::load_header(filename, _header);
+		junk::load_header(filename, _header);
 		_setup(false);
 	}
 }
@@ -62,7 +62,7 @@ void mapped_data_set::_setup(bool new_file)
 			throw std::runtime_error("opening vertex file failed.");
 		}
 
-		if (new_file || !_header.face().empty())
+		if (new_file || _header.face().size != 0)
 		{
 			_face_map = new mapped_data_element(_faces, _filename, new_file);
 			if (!_vertex_map->is_open())
@@ -94,7 +94,7 @@ void mapped_data_set::_setup(bool new_file)
 void mapped_data_set::compute_aabb()
 {
 	element& vs = _header.vertex();
-	const attribute& position = vs.get_attribute("position");
+	const attribute& position = get_attribute(vs, "position");
 
 	switch (position.type)
 	{

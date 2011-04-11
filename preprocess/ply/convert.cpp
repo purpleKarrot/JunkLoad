@@ -27,7 +27,7 @@ static struct
 
 	// ply-reader related members
 	std::vector<std::pair<std::string, size_t> > _other_properties;
-	std::vector<type_id> _ply_sp_type_map;
+	std::vector<typid> _ply_sp_type_map;
 
 	PlyProperty _create_ply_property(const std::string& name,
 			int internal_type, int offset, int count_internal = 0,
@@ -133,17 +133,17 @@ static void _setup_header_from_vertex_properties(header& header)
 		if (name == "x" || name == "y" || name == "z")
 		{
 			++position_comps;
-			if (position_comps == 3 && !vs.has_attribute("position"))
+			if (position_comps == 3 && !has_attribute(vs, "position"))
 			{
-				vs.create_attribute("position", SP_FLOAT_32, 3);
+				create_attribute(vs, "position", SP_FLOAT_32, 3);
 			}
 		}
 		else if (name == "nx" || name == "ny" || name == "nz")
 		{
 			++normal_comps;
-			if (normal_comps == 3 && !vs.has_attribute("normal"))
+			if (normal_comps == 3 && !has_attribute(vs, "normal"))
 			{
-				vs.create_attribute("normal", SP_FLOAT_32, 3);
+				create_attribute(vs, "normal", SP_FLOAT_32, 3);
 			}
 		}
 		else if (name == "r" || name == "red")
@@ -174,7 +174,7 @@ static void _setup_header_from_vertex_properties(header& header)
 
 	if (has_color)
 	{
-		vs.create_attribute("color", SP_UINT_8, 4);
+		create_attribute(vs, "color", SP_UINT_8, 4);
 	}
 
 	std::vector<std::pair<std::string, size_t> >::iterator opit =
@@ -184,13 +184,13 @@ static void _setup_header_from_vertex_properties(header& header)
 	{
 		std::pair<std::string, size_t> &prop_ref = *opit;
 		PlyProperty* prop = _static._vertex_properties[prop_ref.second];
-		vs.create_attribute(prop_ref.first, // name
+		create_attribute(vs, prop_ref.first, // name
 				_static._ply_sp_type_map[prop->external_type], // type
 				1 // array size
 		);
 	}
 
-	vs.compute_offsets();
+	junk::compute_offsets(vs);
 }
 
 static void _setup_header_from_face_properties(header& header)
@@ -212,13 +212,13 @@ static void _setup_header_from_face_properties(header& header)
 
 		if (index_name == prop->name)
 		{
-			fs.create_attribute("vertex_indices", SP_UINT_32, // TODO make configable, or uint64_t?
+			create_attribute(fs, "vertex_indices", SP_UINT_32, // TODO make configable, or uint64_t?
 					3 // triangles only
 			);
 		}
 	}
 
-	fs.compute_offsets();
+	junk::compute_offsets(fs);
 }
 
 static void _read_vertex_data()
@@ -231,9 +231,9 @@ static void _read_vertex_data()
 
 	std::vector<const char*> names;
 
-	if (vs.has_attribute("position"))
+	if (has_attribute(vs, "position"))
 	{
-		const attribute& attr = vs.get_attribute("position");
+		const attribute& attr = get_attribute(vs, "position");
 
 		size_t offset = attr.offset;
 
@@ -244,9 +244,9 @@ static void _read_vertex_data()
 		ply_props.push_back(_create_ply_property("z", Float32, offset));
 	}
 
-	if (vs.has_attribute("normal"))
+	if (has_attribute(vs, "normal"))
 	{
-		const attribute& attr = vs.get_attribute("normal");
+		const attribute& attr = get_attribute(vs, "normal");
 
 		size_t offset = attr.offset;
 
@@ -257,9 +257,9 @@ static void _read_vertex_data()
 		ply_props.push_back(_create_ply_property("nz", Float32, offset));
 	}
 
-	if (vs.has_attribute("color"))
+	if (has_attribute(vs, "color"))
 	{
-		const attribute& attr = vs.get_attribute("color");
+		const attribute& attr = get_attribute(vs, "color");
 
 		size_t offset = attr.offset;
 
@@ -285,7 +285,7 @@ static void _read_vertex_data()
 	for (; opit != opit_end; ++opit)
 	{
 		std::pair<std::string, size_t> &prop_ref = *opit;
-		const attribute& attr = vs.get_attribute(opit->first);
+		const attribute& attr = get_attribute(vs, opit->first);
 		ply_props.push_back(
 				_create_ply_property(
 						attr.name,
@@ -336,7 +336,7 @@ static void _read_face_data()
 
 	ply_get_property(g_ply, "face", &face_property);
 
-	const attribute& vertex_indices = fs.get_attribute("vertex_indices");
+	const attribute& vertex_indices = get_attribute(fs, "vertex_indices");
 
 	attribute_accessor<vec3ui> get_indices(vertex_indices.offset);
 
@@ -429,7 +429,7 @@ void ply_convert(const char* source_file, const std::string& target_file)
 
 	_static._data_set->compute_aabb();
 
-	junkload::save_header(target_file, _static._data_set->get_header());
+	junk::save_header(target_file, _static._data_set->get_header());
 
 	delete _static._data_set;
 	_static._data_set = 0;

@@ -7,10 +7,10 @@
 
 #include "types.hpp"
 
-namespace junkload
+namespace junk
 {
 
-std::size_t size_in_bytes(type_id type)
+std::size_t size_in_bytes(typid type)
 {
 	static std::size_t type_sizes[] =
 	{
@@ -29,4 +29,4 @@ std::size_t size_in_bytes(type_id type)
 	return type_sizes[type];
 }
 
-} // namespace junkload
+} // namespace junk
