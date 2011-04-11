@@ -3,16 +3,24 @@ project(stream_process)
 
 include(CMakeParseArguments)
 
+add_executable(ply_convert
+  ply/main.cpp
+  ply/ply_io.c
+  )
+
+target_link_libraries(ply_convert
+  junkload
+  )
+
+boost_link_libraries(ply_convert STATIC
+  iostreams
+  filesystem
+  )
+
 add_executable(stream_process
   main.cpp
-  mapped_data_element.cpp
-  mapped_data_set.cpp
   reindex_faces.cpp
   sort_data_set.cpp
-
-  # TODO: make this a library
-  ply/convert.cpp
-  ply/ply_io.c
   )
 
 boost_link_libraries(stream_process STATIC

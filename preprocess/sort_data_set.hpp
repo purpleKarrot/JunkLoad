@@ -129,7 +129,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 	for (sort_ref* it = begin; it != end; ++it, ++index, ++sit)
 	{
 		sort_ref& ref = *it;
-		const stream_data* point = *sit;
+		const char* point = *sit;
 
 		ref.value = accessor(point);
 		ref.index = index;
@@ -165,7 +165,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 	for (sort_ref* it = begin; it != end; ++it, out_data += in_point_size)
 	{
 		sort_ref& sr = *it;
-		const stream_data* src = source_map[sr.index];
+		const char* src = source_map[sr.index];
 
 		memcpy(out_data, src, in_point_size);
 	}

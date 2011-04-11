@@ -7,4 +7,7 @@ add_library(junkload
   parser.cpp
 
   stream_structure.cpp
+  
+  mapped_data_element.cpp
+  mapped_data_set.cpp
   )

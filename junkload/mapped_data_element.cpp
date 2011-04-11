@@ -32,7 +32,8 @@ void mapped_data_element::open(const std::string& filename_base,
 	try
 	{
 		_mapped_file.open(params_);
-	} catch (std::exception& e)
+	}
+	catch (std::exception& e)
 	{
 		_mapped_file.close();
 	}

@@ -3,7 +3,6 @@
 
 #include "types.hpp"
 #include "mapped_data_element.hpp"
-#include "stream_data.hpp"
 #include "stream_data_iterators.hpp"
 #include "attribute_accessor.hpp"
 
@@ -40,8 +39,8 @@ public:
 
 	// note: using iterators for sequential access will faster than
 	// using get_x() all the time.
-	inline stream_data* get_vertex(size_t index);
-	inline const stream_data* get_vertex(size_t index) const;
+	inline char* get_vertex(size_t index);
+	inline const char* get_vertex(size_t index) const;
 
 	inline iterator vbegin();
 	inline iterator vend();
@@ -49,8 +48,8 @@ public:
 	inline const_iterator vbegin() const;
 	inline const_iterator vend() const;
 
-	inline stream_data* get_face(size_t index);
-	inline const stream_data* get_face(size_t index) const;
+	inline char* get_face(size_t index);
+	inline const char* get_face(size_t index) const;
 
 	inline iterator fbegin();
 	inline iterator fend();
@@ -128,26 +127,22 @@ void mapped_data_set::_compute_aabb()
 	_header.max = aabb_max;
 }
 
-inline stream_data*
-mapped_data_set::get_vertex(size_t index)
+inline char* mapped_data_set::get_vertex(size_t index)
 {
 	return _vertex_map->operator[](index);
 }
 
-inline const stream_data*
-mapped_data_set::get_vertex(size_t index) const
+inline const char* mapped_data_set::get_vertex(size_t index) const
 {
 	return _vertex_map->operator[](index);
 }
 
-inline stream_data*
-mapped_data_set::get_face(size_t index)
+inline char* mapped_data_set::get_face(size_t index)
 {
 	return _face_map->operator[](index);
 }
 
-inline const stream_data*
-mapped_data_set::get_face(size_t index) const
+inline const char* mapped_data_set::get_face(size_t index) const
 {
 	return _face_map->operator[](index);
 }

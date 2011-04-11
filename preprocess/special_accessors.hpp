@@ -16,7 +16,7 @@ public:
 	{
 	}
 
-	inline const T& operator()(const stream_data* d) const
+	inline const T& operator()(const char* d) const
 	{
 		const vec_type& v = get_attribute(d);
 		return v.find_min();

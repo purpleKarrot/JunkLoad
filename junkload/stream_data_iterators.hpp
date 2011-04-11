@@ -1,15 +1,13 @@
 #ifndef __STREAM_PROCESS__STREAM_DATA_ITERATORS__HPP__
 #define __STREAM_PROCESS__STREAM_DATA_ITERATORS__HPP__
 
-#include "stream_data.hpp"
-
 #include <iterator>
 
 namespace stream_process
 {
 
 class stream_data_iterator: public std::iterator<
-		std::bidirectional_iterator_tag, stream_data*>
+		std::bidirectional_iterator_tag, char*>
 {
 public:
 	stream_data_iterator(char* data, const size_t size_in_bytes) :
@@ -17,9 +15,9 @@ public:
 	{
 	}
 
-	stream_data* operator*() const
+	char* operator*() const
 	{
-		return reinterpret_cast<stream_data*> (_data);
+		return _data;
 	}
 
 	stream_data_iterator& operator++()
@@ -81,7 +79,7 @@ private:
 };
 
 class stream_data_const_iterator: public std::iterator<
-		std::bidirectional_iterator_tag, const stream_data*>
+		std::bidirectional_iterator_tag, const char*>
 {
 public:
 	stream_data_const_iterator(const char* data, const size_t size_in_bytes) :
@@ -89,9 +87,9 @@ public:
 	{
 	}
 
-	const stream_data* operator*() const
+	const char* operator*() const
 	{
-		return reinterpret_cast<const stream_data*> (_data);
+		return _data;
 	}
 
 	stream_data_const_iterator& operator++()

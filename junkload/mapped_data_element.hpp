@@ -35,10 +35,8 @@ public:
 
 	inline size_t size() const;
 
-	// note: using iterators for sequential access is faster and preferred to
-	// using operator[]
-	inline stream_data* operator[](size_t index);
-	inline const stream_data* operator[](size_t index) const;
+	char* operator[](std::size_t index);
+	const char* operator[](std::size_t index) const;
 
 	void open(const std::string& filename_base, bool create_new_file = false);
 	inline void close();
@@ -58,22 +56,18 @@ protected:
 }; // class mapped_data_element
 
 
-inline stream_data*
-mapped_data_element::operator[](size_t index)
+inline char* mapped_data_element::operator[](size_t index)
 {
 	assert(index < _element.size);
 	assert(_mapped_file.data());
-	return reinterpret_cast<stream_data*> (data() + index
-			* size_in_bytes(_element));
+	return data() + index * size_in_bytes(_element);
 }
 
-inline const stream_data*
-mapped_data_element::operator[](size_t index) const
+inline const char* mapped_data_element::operator[](size_t index) const
 {
 	assert(index < _element.size);
 	assert(_mapped_file.data());
-	return reinterpret_cast<const stream_data*> (data() + index
-			* size_in_bytes(_element));
+	return data() + index * size_in_bytes(_element);
 }
 
 inline mapped_data_element::iterator mapped_data_element::begin()
