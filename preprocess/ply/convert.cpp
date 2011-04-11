@@ -191,8 +191,6 @@ static void _setup_header_from_vertex_properties(header& header)
 	}
 
 	vs.compute_offsets();
-
-	std::cout << vs.to_header_string() << std::endl;
 }
 
 static void _setup_header_from_face_properties(header& header)
@@ -221,8 +219,6 @@ static void _setup_header_from_face_properties(header& header)
 	}
 
 	fs.compute_offsets();
-
-	std::cout << fs.to_header_string() << std::endl;
 }
 
 static void _read_vertex_data()

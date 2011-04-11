@@ -9,7 +9,7 @@ namespace stream_process
 void header::read_from_file(const std::string& filename_base)
 {
 	data_set_header_io io;
-	io.read_from_file(filename_base, *this);
+	io.load(filename_base, *this);
 
 	for (super::iterator it = elements.begin(), it_end = elements.end(); it != it_end; ++it)
 	{
@@ -20,7 +20,7 @@ void header::read_from_file(const std::string& filename_base)
 void header::write_to_file(const std::string& filename_base) const
 {
 	data_set_header_io io;
-	io.write_to_file(filename_base, *this);
+	io.save(filename_base, *this);
 }
 
 void header::update() const

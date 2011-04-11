@@ -140,37 +140,6 @@ void element::compute_offsets()
 	}
 }
 
-std::string element::to_string_() const
-{
-	std::string structure_string;
-	for (std::vector<attribute>::const_iterator it = attributes_.begin(), it_end = attributes_.end(); it != it_end; ++it)
-	{
-		const attribute& attr = *it;
-		structure_string += attr.to_string();
-	}
-	return structure_string;
-}
-
-std::string element::to_header_string_() const
-{
-	std::string structure_string = "";
-	structure_string += "# element, attribute-identifier, name, type, ";
-	structure_string += " array_size, size_in_bytes, flags\n";
-
-	for (std::vector<attribute>::const_iterator it = attributes_.begin(), it_end = attributes_.end(); it != it_end; ++it)
-	{
-		const attribute& attr = *it;
-		if (attr.is_output())
-			structure_string += attr.to_header_string("");
-	}
-	return structure_string;
-}
-
-void element::print(std::ostream& os) const
-{
-	os << to_string() << std::endl;
-}
-
 std::string element::get_name() const
 {
 	return std::string();

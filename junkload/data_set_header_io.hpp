@@ -10,26 +10,11 @@
 namespace stream_process
 {
 
-class data_set_header_io
+struct data_set_header_io
 {
-public:
-	void read_from_file(const std::string& filename_base,
-			header& hdr_);
+	void load(const std::string& filename, header& h);
 
-	void write_to_file(const std::string& filename_base,
-			const header& hdr_);
-
-protected:
-	void _open_file(const std::string& filename, std::fstream::openmode mode_);
-	void _parse_header(header& _working_copy);
-	bool _parse_line(std::deque<std::string>& tokens,
-			header& _working_copy);
-
-	std::string _filename;
-	std::fstream _fstream;
-
-	size_t _input_offset;
-	size_t _input_face_offset;
+	void save(const std::string& filename, const header& h);
 };
 
 } // namespace stream_process
