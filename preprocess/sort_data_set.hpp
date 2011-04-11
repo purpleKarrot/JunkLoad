@@ -80,7 +80,7 @@ void sort_data_set::_sort_faces()
 	const element& fs = in_header.face();
 	const attribute& sort_attr = fs.get_attribute(_params.sort_attribute);
 
-	size_t size = in_header.face().size();
+	size_t size = in_header.face().size;
 
 	accessor_type get_attr(sort_attr.offset);
 
@@ -147,7 +147,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 
 	// setup result file
 	boost::iostreams::mapped_file_params out_params;
-	out_params.path = source.get_filename(_params.out_name);
+	out_params.path = _params.out_name + '.' + source.name;
 	out_params.mode = std::ios_base::in | std::ios_base::out;
 	out_params.new_file_size = file_size_in_bytes(source);
 
@@ -190,7 +190,7 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 		boost::filesystem::remove(tmp_params.path);
 	}
 
-	_input.get_header().write_to_file(_params.out_name);
+	junkload::save_header(_params.out_name, _input.get_header());
 }
 
 } // namespace stream_process

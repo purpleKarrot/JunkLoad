@@ -9,23 +9,24 @@
 #define JUNKLOAD_SPIRIT_QI_HPP
 
 #define FUSION_MAX_VECTOR_SIZE 16
+
+#include <fstream>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/support_multi_pass.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
 
-#include "adapted.hpp"
-#include "../data_types.hpp"
+#include "types.hpp"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 namespace classic = boost::spirit::classic;
 
-namespace stream_process
+namespace junkload
 {
 namespace parser
 {
 
-struct scalar_symbols: qi::symbols<char, data_type_id>
+struct scalar_symbols: qi::symbols<char, type_id>
 {
 	scalar_symbols()
 	{
@@ -127,17 +128,18 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 
 } // namespace parser
 
-bool load_header(std::istream& in, header& h)
+bool load_header(const std::string& filename, header& h)
 {
 	typedef std::istreambuf_iterator<char> input_iterator;
 	typedef boost::spirit::multi_pass<input_iterator> forward_iterator;
 	typedef classic::position_iterator2<forward_iterator> iterator;
 
-	input_iterator input(in);
+	std::ifstream file(filename.c_str());
+	input_iterator input(file);
 	forward_iterator forward = boost::spirit::make_default_multi_pass(input);
 	forward_iterator forward_end;
 
-	iterator iter(forward, forward_end, "junkfile");
+	iterator iter(forward, forward_end, filename);
 	iterator end;
 
 	BOOST_AUTO(comment, '#' >> *(ascii::char_ - qi::eol) >> qi::eol);
@@ -164,6 +166,6 @@ bool load_header(std::istream& in, header& h)
 	}
 }
 
-} // namespace stream_process
+} // namespace junkload
 
 #endif /* JUNKLOAD_SPIRIT_QI_HPP */

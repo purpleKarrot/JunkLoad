@@ -8,17 +8,17 @@
 #ifndef JUNKLOAD_SPIRIT_GENERATOR_HPP
 #define JUNKLOAD_SPIRIT_GENERATOR_HPP
 
+#include <fstream>
 #include <boost/spirit/include/karma.hpp>
-#include "adapted.hpp"
-#include "../data_types.hpp"
+#include "types.hpp"
 
 namespace karma = boost::spirit::karma;
 namespace ascii = boost::spirit::ascii;
 
-namespace stream_process
+namespace junkload
 {
 
-struct scalar_symbols: karma::symbols<data_type_id, const char*>
+struct scalar_symbols: karma::symbols<type_id, const char*>
 {
 	scalar_symbols()
 	{
@@ -98,14 +98,16 @@ struct header_grammar: karma::grammar<Iterator, header(), Skipper>
 	karma::bool_generator<bool, endian_policy> endian;
 };
 
-bool save_header(std::ostream& out, const header& h)
+bool save_header(const std::string& filename, const header& h)
 {
 	typedef std::ostream_iterator<char> sink_type;
-	sink_type sink(out);
+
+	std::ofstream file(filename.c_str());
+	sink_type sink(file);
 	header_grammar<sink_type, ascii::space_type> g;
 	return karma::generate_delimited(sink, g, ascii::space, h);
 }
 
-} // namespace stream_process
+} // namespace junkload
 
 #endif /* JUNKLOAD_SPIRIT_GENERATOR_HPP */

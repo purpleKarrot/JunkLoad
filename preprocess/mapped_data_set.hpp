@@ -1,7 +1,7 @@
 #ifndef __STREAM_PROCESS__MAPPED_DATA_SET__HPP__
 #define __STREAM_PROCESS__MAPPED_DATA_SET__HPP__
 
-#include "data_set_header.hpp"
+#include "types.hpp"
 #include "mapped_data_element.hpp"
 #include "stream_data.hpp"
 #include "stream_data_iterators.hpp"
@@ -186,26 +186,26 @@ inline mapped_data_set::const_iterator mapped_data_set::vend() const
 
 inline mapped_data_set::iterator mapped_data_set::fbegin()
 {
-	assert(_face_map && _header.face().size()!=0);
+	assert(_face_map && _header.face().size !=0);
 	return _face_map->begin();
 }
 
 inline mapped_data_set::iterator mapped_data_set::fend()
 {
-	assert(_face_map && _header.face().size()!=0);
+	assert(_face_map && _header.face().size !=0);
 	return _face_map->end();
 }
 
 inline mapped_data_set::const_iterator mapped_data_set::fbegin() const
 {
-	assert(_face_map && _header.face().size()!=0);
+	assert(_face_map && _header.face().size !=0);
 	const mapped_data_element* fm = _face_map;
 	return fm->begin();
 }
 
 inline mapped_data_set::const_iterator mapped_data_set::fend() const
 {
-	assert(_face_map && _header.face().size()!=0);
+	assert(_face_map && _header.face().size !=0);
 	const mapped_data_element* fm = _face_map;
 	return fm->end();
 }

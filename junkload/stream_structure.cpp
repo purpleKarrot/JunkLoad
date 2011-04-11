@@ -1,9 +1,9 @@
-#include "element.hpp"
+#include "types.hpp"
 
 #include <boost/range/algorithm/find_if.hpp>
 using boost::range::find_if;
 
-namespace stream_process
+namespace junkload
 {
 
 struct match_name
@@ -23,29 +23,13 @@ struct match_name
 
 bool element::has_attribute(const std::string& name) const
 {
-	return find_if(attributes_, match_name(name)) != attributes_.end();
-}
-
-bool element::has_attribute(const std::string& name, data_type_id id_,
-		size_t array_size) const
-{
-	const attribute* attr_ptr = find(name);
-
-	if (!attr_ptr)
-		return false;
-
-	if (attr_ptr->type == id_ && attr_ptr->size == array_size)
-	{
-		return true;
-	}
-
-	return false;
+	return find_if(attributes, match_name(name)) != attributes.end();
 }
 
 attribute& element::get_attribute(const std::string& name)
 {
-	std::vector<attribute>::iterator it = find_if(attributes_, match_name(name));
-	if (it == attributes_.end())
+	std::vector<attribute>::iterator it = find_if(attributes, match_name(name));
+	if (it == attributes.end())
 	{
 		throw std::runtime_error(
 				std::string("could not find attribute with name ") + name + ".");
@@ -56,8 +40,8 @@ attribute& element::get_attribute(const std::string& name)
 
 const attribute& element::get_attribute(const std::string& name) const
 {
-	std::vector<attribute>::const_iterator it = find_if(attributes_, match_name(name));
-	if (it == attributes_.end())
+	std::vector<attribute>::const_iterator it = find_if(attributes, match_name(name));
+	if (it == attributes.end())
 	{
 		throw std::runtime_error(
 				std::string("could not find attribute with name ") + name + ".");
@@ -67,72 +51,17 @@ const attribute& element::get_attribute(const std::string& name) const
 }
 
 // creates an empty attribute with the specified name
-attribute& element::create_attribute(const std::string& name,
-		data_type_id data_type_id_, size_t array_size)
+void element::create_attribute(const std::string& name, type_id type,
+		size_t size)
 {
-	attribute* new_attr = new attribute(name, data_type_id_, array_size);
-
-	try
-	{
-		_add_attribute(*new_attr);
-	} catch (...)
-	{
-		delete new_attr;
-		throw;
-	}
-
-	return *new_attr;
-}
-
-void element::create_attribute(const attribute& attr)
-{
-	if (attr.name.empty())
-	{
-		throw std::runtime_error(
-				std::string("attempt to add uninitialized attribute to ")
-						+ " point structure failed.");
-	}
-
-	attribute* new_attr = new attribute(attr);
-
-	try
-	{
-		_add_attribute(*new_attr);
-	} catch (...)
-	{
-		delete new_attr;
-		throw;
-	}
-}
-
-void element::_add_attribute(attribute& attr)
-{
-	const std::string& name = attr.name;
-
-	if (has_attribute(name))
-	{
-		throw std::runtime_error(
-				std::string("could not create attribute with name ") + name
-						+ " - name is already taken.");
-	}
-
-	attributes_.push_back(attr);
-}
-
-const attribute* element::find(const std::string& name) const
-{
-	std::vector<attribute>::const_iterator it = find_if(attributes_, match_name(name));
-	if (it != attributes_.end())
-		return &(*it);
-	else
-		return 0;
+	attributes.push_back(attribute(name, type, size));
 }
 
 void element::compute_offsets()
 {
 	size_t offset = 0;
-	for (std::vector<attribute>::iterator it = attributes_.begin(), it_end =
-			attributes_.end(); it != it_end; ++it)
+	for (std::vector<attribute>::iterator it = attributes.begin(), it_end =
+			attributes.end(); it != it_end; ++it)
 	{
 		attribute& attr = *it;
 		attr.offset = offset;
@@ -140,14 +69,4 @@ void element::compute_offsets()
 	}
 }
 
-std::string element::get_name() const
-{
-	return std::string();
-}
-
-size_t element::get_number_of_attributes() const
-{
-	return attributes_.size();
-}
-
-} // namespace stream_process
+} // namespace junkload

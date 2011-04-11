@@ -27,7 +27,7 @@ static struct
 
 	// ply-reader related members
 	std::vector<std::pair<std::string, size_t> > _other_properties;
-	std::vector<data_type_id> _ply_sp_type_map;
+	std::vector<type_id> _ply_sp_type_map;
 
 	PlyProperty _create_ply_property(const std::string& name,
 			int internal_type, int offset, int count_internal = 0,
@@ -113,7 +113,7 @@ static void _read_meta_data()
 
 static void _setup_header_from_vertex_properties(header& header)
 {
-	header.vertex().size(_static._vertex_count);
+	header.vertex().size = _static._vertex_count;
 
 	size_t position_comps = 0;
 	size_t normal_comps = 0;
@@ -198,7 +198,7 @@ static void _setup_header_from_face_properties(header& header)
 	if (_static._face_property_count == 0)
 		return;
 
-	header.face().size(_static._face_count);
+	header.face().size = _static._face_count;
 
 	// atm only triangle support is implemented.
 
@@ -224,8 +224,6 @@ static void _setup_header_from_face_properties(header& header)
 static void _read_vertex_data()
 {
 	const element& vs = _static._data_set->get_header().vertex();
-
-	const data_type_helper& dth = data_type_helper::get_singleton();
 
 	// we have to build the required PlyProperties that allow
 	// data extraction from the ply
@@ -431,7 +429,7 @@ void ply_convert(const char* source_file, const std::string& target_file)
 
 	_static._data_set->compute_aabb();
 
-	_static._data_set->get_header().write_to_file(target_file);
+	junkload::save_header(target_file, _static._data_set->get_header());
 
 	delete _static._data_set;
 	_static._data_set = 0;

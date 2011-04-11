@@ -20,7 +20,7 @@ void mapped_data_element::open(const std::string& filename_base,
 		bool create_new_file)
 {
 	mapped_file_params params_;
-	params_.path = _element.get_filename(filename_base);
+	params_.path = filename_base + '.' + _element.name;
 	params_.mode = std::ios_base::in | std::ios_base::out;
 
 	if (create_new_file)

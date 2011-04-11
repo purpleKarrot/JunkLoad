@@ -1,7 +1,5 @@
 #include "mapped_data_set.hpp"
 
-#include "file_suffix_helper.hpp"
-
 #include <iostream>
 
 namespace stream_process
@@ -18,7 +16,7 @@ mapped_data_set::mapped_data_set(const std::string& filename, bool new_file) :
 {
 	if (!new_file)
 	{
-		_header.read_from_file(filename);
+		junkload::load_header(filename, _header);
 		_setup(false);
 	}
 }

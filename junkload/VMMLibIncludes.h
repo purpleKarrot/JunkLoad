@@ -15,7 +15,7 @@
 #include <vmmlib/jacobi_solver.hpp>
 #include <boost/cstdint.hpp>
 
-namespace stream_process
+namespace junkload
 {
 
 typedef vmml::vector<2, unsigned char> vec2ub;
@@ -41,6 +41,6 @@ typedef vmml::matrix<3, 3, double> mat3d;
 typedef vmml::matrix<4, 4, float> mat4f;
 typedef vmml::matrix<4, 4, double> mat4d;
 
-}
+} // namespace junkload
 
 #endif

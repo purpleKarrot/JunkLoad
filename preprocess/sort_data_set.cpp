@@ -15,7 +15,7 @@ sort_data_set::sort_data_set(const params& params_) :
 	{
 		const element& ps = in_header.vertex();
 		attr = &ps.get_attribute(sort_attr_name);
-		data_type_id id_ = attr->type;
+		type_id id_ = attr->type;
 		switch (id_)
 		{
 		case SP_FLOAT_32:
@@ -34,7 +34,7 @@ sort_data_set::sort_data_set(const params& params_) :
 	{
 		const element& fs = in_header.face();
 		attr = &fs.get_attribute(sort_attr_name);
-		data_type_id id_ = attr->type;
+		type_id id_ = attr->type;
 		switch (id_)
 		{
 		case SP_UINT_32:

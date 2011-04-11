@@ -70,7 +70,7 @@ static void _apply_optimal_transform(const std::string& filename,
 	}
 
 	data_set_.compute_aabb();
-	data_set_.get_header().write_to_file(filename);
+	junkload::save_header(filename, data_set_.get_header());
 }
 
 int main(int argc, char* argv[])
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 	{
 		const sp::header& h = data_set_.get_header();
 		const sp::element& fs = h.face();
-		const size_t num_faces = h.face().size();
+		const size_t num_faces = h.face().size;
 
 		const sp::attribute& attr = fs.get_attribute("vertex_indices");
 
