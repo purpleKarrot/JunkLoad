@@ -10,11 +10,14 @@
 #include "../attribute_accessor.hpp"
 
 #include <boost/algorithm/string.hpp>
+#include <boost/shared_ptr.hpp>
 
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 
 namespace stream_process
 {
+
+static PlyFile* g_ply;
 
 static struct
 {
@@ -30,8 +33,6 @@ static struct
 			int internal_type, int offset, int count_internal = 0,
 			int count_offset = 0);
 
-	PlyFile* _ply_file;
-
 	PlyProperty** _vertex_properties;
 	int _vertex_count;
 	int _vertex_property_count;
@@ -40,8 +41,8 @@ static struct
 	int _face_count;
 	int _face_property_count;
 
-	int _element_count;
-	char** _element_names;
+//	int _element_count;
+//	char** _element_names;
 	int _file_type; // file type, either ascii or binary
 	float _version;
 } _static;
@@ -102,17 +103,17 @@ static void _init_ply_sp_type_map()
 static void _read_meta_data()
 {
 	// get vertex information
-	_static._vertex_properties = get_element_description_ply(_static._ply_file,
+	_static._vertex_properties = get_element_description_ply(g_ply,
 			"vertex", &_static._vertex_count, &_static._vertex_property_count);
 
 	// get face information
-	_static._face_properties = get_element_description_ply(_static._ply_file,
+	_static._face_properties = get_element_description_ply(g_ply,
 			"face", &_static._face_count, &_static._face_property_count);
 }
 
 static void _setup_header_from_vertex_properties(header& header)
 {
-	header.set_number_of_vertices(_static._vertex_count);
+	header.vertex().size(_static._vertex_count);
 
 	size_t position_comps = 0;
 	size_t normal_comps = 0;
@@ -120,7 +121,7 @@ static void _setup_header_from_vertex_properties(header& header)
 	bool has_color = false;
 	_static._color_names.resize(3);
 
-	element& vs = header.get_vertex_structure();
+	element& vs = header.vertex();
 
 	for (int index = 0; index < _static._vertex_property_count; ++index)
 	{
@@ -199,11 +200,11 @@ static void _setup_header_from_face_properties(header& header)
 	if (_static._face_property_count == 0)
 		return;
 
-	header.set_number_of_faces(_static._face_count);
+	header.face().size(_static._face_count);
 
 	// atm only triangle support is implemented.
 
-	element& fs = header.get_face_structure();
+	element& fs = header.face();
 
 	std::string index_name = "vertex_indices";
 
@@ -226,8 +227,7 @@ static void _setup_header_from_face_properties(header& header)
 
 static void _read_vertex_data()
 {
-	const element& vs =
-			_static._data_set->get_header().get_vertex_structure();
+	const element& vs = _static._data_set->get_header().vertex();
 
 	const data_type_helper& dth = data_type_helper::get_singleton();
 
@@ -241,7 +241,7 @@ static void _read_vertex_data()
 	{
 		const attribute& attr = vs.get_attribute("position");
 
-		size_t offset = attr.offset();
+		size_t offset = attr.offset;
 
 		ply_props.push_back(_create_ply_property("x", Float32, offset));
 		offset += sizeof(float);
@@ -254,7 +254,7 @@ static void _read_vertex_data()
 	{
 		const attribute& attr = vs.get_attribute("normal");
 
-		size_t offset = attr.offset();
+		size_t offset = attr.offset;
 
 		ply_props.push_back(_create_ply_property("nx", Float32, offset));
 		offset += sizeof(float);
@@ -267,7 +267,7 @@ static void _read_vertex_data()
 	{
 		const attribute& attr = vs.get_attribute("color");
 
-		size_t offset = attr.offset();
+		size_t offset = attr.offset;
 
 		ply_props.push_back(
 				_create_ply_property(_static._color_names[0], Uint8, offset));
@@ -294,9 +294,9 @@ static void _read_vertex_data()
 		const attribute& attr = vs.get_attribute(opit->first);
 		ply_props.push_back(
 				_create_ply_property(
-						attr.name(),
+						attr.name,
 						_static._vertex_properties[opit->second]->external_type,
-						attr.offset()));
+						attr.offset));
 	}
 
 	std::vector<PlyProperty>::iterator it = ply_props.begin(), it_end =
@@ -304,7 +304,7 @@ static void _read_vertex_data()
 	for (; it != it_end; ++it)
 	{
 		// register the properties that interest us with the ply reader
-		ply_get_property(_static._ply_file, "vertex", &(*it));
+		ply_get_property(g_ply, "vertex", &(*it));
 	}
 
 	mapped_data_set::iterator vit = _static._data_set->vbegin();
@@ -312,7 +312,7 @@ static void _read_vertex_data()
 	for (; vit != vit_end; ++vit)
 	{
 		// read object data into memory map
-		ply_get_element(_static._ply_file, *vit);
+		ply_get_element(g_ply, *vit);
 	}
 
 	// clean up (delete c-string char arrays)
@@ -328,7 +328,7 @@ static void _read_face_data()
 	// data extraction from the ply
 
 	const header& header = _static._data_set->get_header();
-	const element& fs = header.get_face_structure();
+	const element& fs = header.face();
 
 	struct tmp_face
 	{
@@ -340,18 +340,18 @@ static void _read_face_data()
 	{ "vertex_indices", Int32, Int32, offsetof(tmp_face, vertices), 1, Uint8,
 			Uint8, offsetof(tmp_face, number_of_vertices) };
 
-	ply_get_property(_static._ply_file, "face", &face_property);
+	ply_get_property(g_ply, "face", &face_property);
 
 	const attribute& vertex_indices = fs.get_attribute("vertex_indices");
 
-	attribute_accessor<vec3ui> get_indices(vertex_indices.offset());
+	attribute_accessor<vec3ui> get_indices(vertex_indices.offset);
 
 	mapped_data_set::iterator fit = _static._data_set->fbegin(), fit_end =
 			_static._data_set->fend();
 	for (; fit != fit_end; ++fit)
 	{
 		// read object data into memory map
-		ply_get_element(_static._ply_file, &tmp_face_);
+		ply_get_element(g_ply, &tmp_face_);
 		if (tmp_face_.number_of_vertices == 3)
 		{
 			vec3ui& indices = get_indices(*fit);
@@ -372,7 +372,7 @@ void ply_convert(const char* source_file, const std::string& target_file)
 	_init_ply_sp_type_map();
 
 	// open file
-	FILE* file = fopen(source_file, "r");
+	boost::shared_ptr<FILE> file(fopen(source_file, "r"), fclose);
 	if (!file)
 	{
 		std::string msg = "opening file ";
@@ -385,8 +385,8 @@ void ply_convert(const char* source_file, const std::string& target_file)
 //			const_cast<char *> (source_file.c_str()), &_static._element_count,
 //			&_static._element_names, &_static._file_type, &_static._version);
 
-	_static._ply_file = read_ply(file);
-	if (!_static._ply_file)
+	g_ply = read_ply(file.get());
+	if (!g_ply)
 	{
 		std::string msg = "opening file ";
 		msg += source_file;
@@ -397,11 +397,11 @@ void ply_convert(const char* source_file, const std::string& target_file)
 	// check for vertex and face element ( MUST HAVE )
 	bool has_vertex_element = false;
 	bool has_face_element = false;
-	for (ssize_t index = 0; index < _static._element_count; ++index)
+	for (int index = 0; index < g_ply->num_elem_types; ++index)
 	{
-		if (std::string(_static._element_names[index]) == "vertex")
+		if (std::string(g_ply->elems[index]->name) == "vertex")
 			has_vertex_element = true;
-		if (std::string(_static._element_names[index]) == "face")
+		if (std::string(g_ply->elems[index]->name) == "face")
 			has_face_element = true;
 	}
 

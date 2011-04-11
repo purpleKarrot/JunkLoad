@@ -15,7 +15,7 @@ struct match_name
 
 	bool operator()(const attribute& attr)
 	{
-		return attr.name() == name;
+		return attr.name == name;
 	}
 
 	const std::string& name;
@@ -34,11 +34,11 @@ bool element::has_attribute(const std::string& name, data_type_id id_,
 	if (!attr_ptr)
 		return false;
 
-	if (attr_ptr->type() == id_ && attr_ptr->get_number_of_elements()
-			== array_size)
+	if (attr_ptr->type == id_ && attr_ptr->size == array_size)
 	{
 		return true;
 	}
+
 	return false;
 }
 
@@ -86,7 +86,7 @@ attribute& element::create_attribute(const std::string& name,
 
 void element::create_attribute(const attribute& attr)
 {
-	if (attr.name() == "uninitialized")
+	if (attr.name.empty())
 	{
 		throw std::runtime_error(
 				std::string("attempt to add uninitialized attribute to ")
@@ -107,7 +107,7 @@ void element::create_attribute(const attribute& attr)
 
 void element::_add_attribute(attribute& attr)
 {
-	const std::string& name = attr.name();
+	const std::string& name = attr.name;
 
 	if (has_attribute(name))
 	{
@@ -128,34 +128,6 @@ const attribute* element::find(const std::string& name) const
 		return 0;
 }
 
-size_t element::compute_size_in_bytes() const
-{
-	size_t size_in_bytes = 0;
-	std::vector<attribute>::const_iterator it = attributes_.begin();
-	std::vector<attribute>::const_iterator it_end = attributes_.end();
-
-	for (; it != it_end; ++it)
-	{
-		size_in_bytes += it->get_size_in_bytes();
-	}
-
-	return size_in_bytes;
-}
-
-size_t element::compute_out_size_in_bytes() const
-{
-	size_t size_in_bytes = 0;
-	std::vector<attribute>::const_iterator it = attributes_.begin(), it_end = attributes_.end();
-	for (; it != it_end; ++it)
-	{
-		const attribute& attr = *it;
-		if (attr.is_output())
-			size_in_bytes += (it)->get_size_in_bytes();
-	}
-
-	return size_in_bytes;
-}
-
 void element::compute_offsets()
 {
 	size_t offset = 0;
@@ -163,8 +135,8 @@ void element::compute_offsets()
 			attributes_.end(); it != it_end; ++it)
 	{
 		attribute& attr = *it;
-		attr.offset(offset);
-		offset += attr.get_size_in_bytes();
+		attr.offset = offset;
+		offset += size_in_bytes(attr);
 	}
 }
 

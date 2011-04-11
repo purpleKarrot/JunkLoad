@@ -12,6 +12,7 @@ add_library(junkload
   data_set_header.cpp
   data_set_header_io.hpp
   data_set_header_io.cpp
-  
+
   spirit/generator.cpp
+  spirit/parser.cpp
   )

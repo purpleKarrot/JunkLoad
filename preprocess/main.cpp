@@ -16,10 +16,10 @@ static void _apply_optimal_transform(const std::string& filename,
 		bool full_optimal_transform)
 {
 	sp::mapped_data_set data_set_(filename);
-	bool has_faces = data_set_.get_header().has_faces();
+	bool has_faces = ! data_set_.get_header().face().empty();
 
 	sp::attribute_accessor<sp::vec3f> get_position(
-			data_set_.get_vertex_element().get_attribute("position").offset());
+			data_set_.get_vertex_element().get_attribute("position").offset);
 
 	const sp::header& h = data_set_.get_header();
 
@@ -29,7 +29,7 @@ static void _apply_optimal_transform(const std::string& filename,
 				<< std::endl;
 
 		sp::attribute_accessor<sp::vec3f> get_position(
-				data_set_.get_vertex_element().get_attribute("position").offset());
+				data_set_.get_vertex_element().get_attribute("position").offset);
 
 		sp::optimal_transform<sp::vec3f, sp::attribute_accessor<sp::vec3f>,
 				sp::mapped_data_element> ot;
@@ -38,7 +38,7 @@ static void _apply_optimal_transform(const std::string& filename,
 		ot.analyze(data_set_.get_vertex_map());
 		ot.apply(data_set_.get_vertex_map());
 
-		data_set_.get_header().set_transform(ot.get_transformation_matrix());
+		data_set_.get_header().transform = ot.get_transformation_matrix();
 
 		std::cout << "transform " << ot.get_transformation_matrix()
 				<< std::endl;
@@ -47,8 +47,8 @@ static void _apply_optimal_transform(const std::string& filename,
 	{
 		std::cout << "preprocessor: no optimal transform step." << std::endl;
 
-		sp::vec3f min = h.get_aabb_min<float> ();
-		sp::vec3f max = h.get_aabb_max<float> ();
+		sp::vec3f min = h.min;
+		sp::vec3f max = h.max;
 
 		sp::vec3f diag = max - min;
 		size_t index = diag.find_max_index();
@@ -109,11 +109,11 @@ int main(int argc, char* argv[])
 	}
 
 	sp::mapped_data_set data_set_(unsorted);
-	if (data_set_.get_header().has_faces())
+	if (!data_set_.get_header().face().empty())
 	{
 		const sp::header& h = data_set_.get_header();
-		const sp::element& fs = h.get_face_structure();
-		const size_t num_faces = h.get_number_of_faces();
+		const sp::element& fs = h.face();
+		const size_t num_faces = h.face().size();
 
 		const sp::attribute& attr = fs.get_attribute("vertex_indices");
 
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
 		ri_params.faces_file = unsorted + ".faces";
 		ri_params.reindex_map = reindex_map;
 		ri_params.number_of_faces = num_faces;
-		ri_params.index_type = attr.type();
+		ri_params.index_type = attr.type;
 
 		sp::reindex_faces rif(ri_params);
 

@@ -27,55 +27,9 @@ public:
 	attribute(const std::string& name_, data_type_id data_type_id_,
 			size_t number_of_elements = 1);
 
-	const std::string& name() const
-	{
-		return name_;
-	}
-
-	const data_type_id& type() const
-	{
-		return type_;
-	}
-
-	void type(data_type_id value)
-	{
-		type_ = value;
-	}
-
-	size_t get_element_size_in_bytes() const
-	{
-		const data_type_helper& dth = data_type_helper::get_singleton();
-		return dth.get_size_in_bytes(type_);
-	}
-
-	size_t get_number_of_elements() const
-	{
-		return size_;
-	}
-
-	size_t get_size_in_bytes() const
-	{
-		return size_ * get_element_size_in_bytes();
-	}
-
-	size_t offset() const
-	{
-		return offset_;
-	}
-
-	void offset(std::size_t value)
-	{
-		offset_ = value;
-	}
-
 	bool is_array() const
 	{
-		return size_ > 1;
-	}
-
-	void set_number_of_elements(size_t value)
-	{
-		size_ = value;
+		return size > 1;
 	}
 
 	bool is_high_precision() const
@@ -98,11 +52,18 @@ public:
 	std::string to_header_string(const std::string& identifier) const;
 
 public:
-	std::string name_;
-	data_type_id type_;
-	std::size_t size_;
-	std::size_t offset_;
+	std::string name;
+	data_type_id type;
+	std::size_t size;
+	std::size_t offset;
 };
+
+inline std::size_t size_in_bytes(const attribute& a)
+{
+	const data_type_helper& dth = data_type_helper::get_singleton();
+	std::size_t element_size = dth.get_size_in_bytes(a.type);
+	return a.size * element_size;
+}
 
 template<typename container_t>
 bool attribute::from_header_strings(const container_t& tokens)
@@ -138,9 +99,9 @@ bool attribute::from_header_strings(const container_t& tokens)
 		flags = boost::lexical_cast<size_t>(tokens[5]);
 	}
 
-	name_ = name;
-	type_ = type;
-	size_ = number_of_elements;
+	this->name = name;
+	this->type = type;
+	this->size = number_of_elements;
 
 	return true;
 }

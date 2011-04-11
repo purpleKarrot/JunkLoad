@@ -100,10 +100,10 @@ void mapped_data_set::_compute_aabb()
 {
 	typedef vmml::vector<3, T> vector_type;
 
-	const element& vs = _header.get_vertex_structure();
+	const element& vs = _header.vertex();
 
 	const attribute& position = vs.get_attribute("position");
-	attribute_accessor<vector_type> get_position(position.offset());
+	attribute_accessor<vector_type> get_position(position.offset);
 
 	vector_type aabb_min(std::numeric_limits<T>::max());
 	vector_type aabb_max(-std::numeric_limits<T>::max());
@@ -124,9 +124,8 @@ void mapped_data_set::_compute_aabb()
 		}
 	}
 
-	_header.set_aabb_min(aabb_min);
-	_header.set_aabb_max(aabb_max);
-
+	_header.min = aabb_min;
+	_header.max = aabb_max;
 }
 
 inline stream_data*
@@ -187,26 +186,26 @@ inline mapped_data_set::const_iterator mapped_data_set::vend() const
 
 inline mapped_data_set::iterator mapped_data_set::fbegin()
 {
-	assert(_face_map && _header.has_faces());
+	assert(_face_map && _header.face().size()!=0);
 	return _face_map->begin();
 }
 
 inline mapped_data_set::iterator mapped_data_set::fend()
 {
-	assert(_face_map && _header.has_faces());
+	assert(_face_map && _header.face().size()!=0);
 	return _face_map->end();
 }
 
 inline mapped_data_set::const_iterator mapped_data_set::fbegin() const
 {
-	assert(_face_map && _header.has_faces());
+	assert(_face_map && _header.face().size()!=0);
 	const mapped_data_element* fm = _face_map;
 	return fm->begin();
 }
 
 inline mapped_data_set::const_iterator mapped_data_set::fend() const
 {
-	assert(_face_map && _header.has_faces());
+	assert(_face_map && _header.face().size()!=0);
 	const mapped_data_element* fm = _face_map;
 	return fm->end();
 }
@@ -214,4 +213,3 @@ inline mapped_data_set::const_iterator mapped_data_set::fend() const
 } // namespace stream_process
 
 #endif
-

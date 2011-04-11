@@ -13,9 +13,9 @@ sort_data_set::sort_data_set(const params& params_) :
 	const attribute* attr;
 	if (sort_attr_name == "position")
 	{
-		const element& ps = in_header.get_vertex_structure();
+		const element& ps = in_header.vertex();
 		attr = &ps.get_attribute(sort_attr_name);
-		data_type_id id_ = attr->type();
+		data_type_id id_ = attr->type;
 		switch (id_)
 		{
 		case SP_FLOAT_32:
@@ -32,9 +32,9 @@ sort_data_set::sort_data_set(const params& params_) :
 	}
 	else if (sort_attr_name == "vertex_indices")
 	{
-		const element& fs = in_header.get_face_structure();
+		const element& fs = in_header.face();
 		attr = &fs.get_attribute(sort_attr_name);
-		data_type_id id_ = attr->type();
+		data_type_id id_ = attr->type;
 		switch (id_)
 		{
 		case SP_UINT_32:

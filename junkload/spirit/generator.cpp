@@ -12,13 +12,15 @@
 #include "adapted.hpp"
 #include "../data_types.hpp"
 
+namespace karma = boost::spirit::karma;
+namespace ascii = boost::spirit::ascii;
+
 namespace stream_process
 {
 
-struct scalar_symbols_generator:
-	boost::spirit::karma::symbols<data_type_id, const char*>
+struct scalar_symbols: karma::symbols<data_type_id, const char*>
 {
-	scalar_symbols_generator()
+	scalar_symbols()
 	{
 		this->add
 			(SP_INT_8,    "int8"   )
@@ -35,7 +37,74 @@ struct scalar_symbols_generator:
 	}
 };
 
+struct endian_policy: karma::bool_policies<>
+{
+    template <typename CharEncoding, typename Tag, typename OutputIterator>
+    static bool generate_true(OutputIterator& sink, bool b)
+    {
+        return karma::string_inserter<CharEncoding, Tag>::call(sink, "big_endian");
+    }
 
+    template<typename CharEncoding, typename Tag, typename OutputIterator>
+	static bool generate_false(OutputIterator& sink, bool b)
+	{
+		return karma::string_inserter<CharEncoding, Tag>::call(sink, "little_endian");
+	}
+};
+
+template<typename Iterator, typename Skipper>
+struct header_grammar: karma::grammar<Iterator, header(), Skipper>
+{
+	header_grammar() :
+		header_grammar::base_type(start)
+	{
+		start
+			%= "transform" << mat4d_ << karma::eol
+			<< "min" << vec3d_ << karma::eol
+			<< "max" << vec3d_ << karma::eol
+			<< "byteorder" << endian << karma::eol
+			<< karma::eol
+			<< element_ % karma::eol
+			;
+
+		element_
+			%= karma::string
+			<< karma::uint_
+			<< karma::eol << '{' << karma::eol
+			<< attribute_ % karma::eol
+			<< karma::eol << '}' << karma::eol
+			;
+
+		attribute_
+			%= karma::string << scalar_ << karma::uint_ << ';'
+			;
+
+		vec3d_
+			%= '[' << karma::repeat(3)[karma::double_] << ']'
+			;
+
+		mat4d_
+			%= '[' << karma::repeat(16)[karma::double_] << ']'
+			;
+	}
+
+	karma::rule<Iterator, header(), Skipper> start;
+	karma::rule<Iterator, element(), Skipper> element_;
+	karma::rule<Iterator, attribute(), Skipper> attribute_;
+	karma::rule<Iterator, vec3d(), Skipper> vec3d_;
+	karma::rule<Iterator, mat4d(), Skipper> mat4d_;
+
+	scalar_symbols scalar_;
+	karma::bool_generator<bool, endian_policy> endian;
+};
+
+bool save_header(std::ostream& out, const header& h)
+{
+	typedef std::ostream_iterator<char> sink_type;
+	sink_type sink(out);
+	header_grammar<sink_type, ascii::space_type> g;
+	return karma::generate_delimited(sink, g, ascii::space, h);
+}
 
 } // namespace stream_process
 

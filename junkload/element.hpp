@@ -19,7 +19,7 @@ namespace stream_process
 class element
 {
 public:
-	element(const std::string& name) :
+	element(const std::string& name = std::string()) :
 		_name(name), _size(0)
 	{
 	}
@@ -120,10 +120,6 @@ public:
 		return os << ds.to_string() << std::endl;
 	}
 
-	std::size_t compute_size_in_bytes() const;
-
-	size_t compute_out_size_in_bytes() const;
-
 	void compute_offsets();
 
 	void _add_attribute(attribute& attr);
@@ -144,7 +140,7 @@ inline std::size_t size_in_bytes(const element& e)
 
 	for (; it != it_end; ++it)
 	{
-		size += it->get_size_in_bytes();
+		size += size_in_bytes(*it);
 	}
 
 	return size;

@@ -11,8 +11,8 @@ namespace stream_process
 mapped_data_set::mapped_data_set(const std::string& filename, bool new_file) :
 	_filename(filename),
 	_header(),
-	_vertices(_header.get_vertex_element()),
-	_faces(_header.get_face_element()),
+	_vertices(_header.vertex()),
+	_faces(_header.face()),
 	_vertex_map(0),
 	_face_map(0)
 {
@@ -64,7 +64,7 @@ void mapped_data_set::_setup(bool new_file)
 			throw std::runtime_error("opening vertex file failed.");
 		}
 
-		if (new_file || _header.has_faces())
+		if (new_file || !_header.face().empty())
 		{
 			_face_map = new mapped_data_element(_faces, _filename, new_file);
 			if (!_vertex_map->is_open())
@@ -95,10 +95,10 @@ void mapped_data_set::_setup(bool new_file)
 
 void mapped_data_set::compute_aabb()
 {
-	element& vs = _header.get_vertex_structure();
+	element& vs = _header.vertex();
 	const attribute& position = vs.get_attribute("position");
 
-	switch (position.type())
+	switch (position.type)
 	{
 	case SP_FLOAT_32:
 		_compute_aabb<float> ();

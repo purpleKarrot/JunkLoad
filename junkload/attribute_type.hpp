@@ -53,9 +53,9 @@ attribute_type<vec2f>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec2f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_32)
+	if (attribute_.type != SP_FLOAT_32)
 		return false;
-	if (attribute_.get_number_of_elements() != 2)
+	if (attribute_.size != 2)
 		return false;
 	return true;
 }
@@ -70,9 +70,9 @@ attribute_type<vec3f>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec3f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_32)
+	if (attribute_.type != SP_FLOAT_32)
 		return false;
-	if (attribute_.get_number_of_elements() != 3)
+	if (attribute_.size != 3)
 		return false;
 	return true;
 }
@@ -86,9 +86,9 @@ inline attribute* attribute_type<vec3ui>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec3ui>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_UINT_32)
+	if (attribute_.type != SP_UINT_32)
 		return false;
-	if (attribute_.get_number_of_elements() != 3)
+	if (attribute_.size != 3)
 		return false;
 	return true;
 }
@@ -103,9 +103,9 @@ attribute_type<vec4f>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec4f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_32)
+	if (attribute_.type != SP_FLOAT_32)
 		return false;
-	if (attribute_.get_number_of_elements() != 4)
+	if (attribute_.size != 4)
 		return false;
 	return true;
 }
@@ -119,9 +119,9 @@ inline attribute* attribute_type<vec2d>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec2d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_64)
+	if (attribute_.type != SP_FLOAT_64)
 		return false;
-	if (attribute_.get_number_of_elements() != 2)
+	if (attribute_.size != 2)
 		return false;
 	return true;
 }
@@ -136,9 +136,9 @@ attribute_type<vec3d>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec3d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_64)
+	if (attribute_.type != SP_FLOAT_64)
 		return false;
-	if (attribute_.get_number_of_elements() != 3)
+	if (attribute_.size != 3)
 		return false;
 	return true;
 }
@@ -152,9 +152,9 @@ inline attribute* attribute_type<vec4d>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec4d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_64)
+	if (attribute_.type != SP_FLOAT_64)
 		return false;
-	if (attribute_.get_number_of_elements() != 4)
+	if (attribute_.size != 4)
 		return false;
 	return true;
 }
@@ -169,9 +169,9 @@ attribute_type<vec4ub>::create(const std::string& name)
 template<>
 inline bool attribute_type<vec4ub>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_UINT_8)
+	if (attribute_.type != SP_UINT_8)
 		return false;
-	if (attribute_.get_number_of_elements() != 4)
+	if (attribute_.size != 4)
 		return false;
 	return true;
 }
@@ -186,9 +186,9 @@ attribute_type<mat3f>::create(const std::string& name)
 template<>
 inline bool attribute_type<mat3f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_32)
+	if (attribute_.type != SP_FLOAT_32)
 		return false;
-	if (attribute_.get_number_of_elements() != 9)
+	if (attribute_.size != 9)
 		return false;
 	return true;
 }
@@ -203,9 +203,9 @@ attribute_type<mat4f>::create(const std::string& name)
 template<>
 inline bool attribute_type<mat4f>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_32)
+	if (attribute_.type != SP_FLOAT_32)
 		return false;
-	if (attribute_.get_number_of_elements() != 16)
+	if (attribute_.size != 16)
 		return false;
 	return true;
 }
@@ -220,9 +220,9 @@ attribute_type<mat3d>::create(const std::string& name)
 template<>
 inline bool attribute_type<mat3d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_64)
+	if (attribute_.type != SP_FLOAT_64)
 		return false;
-	if (attribute_.get_number_of_elements() != 9)
+	if (attribute_.size != 9)
 		return false;
 	return true;
 }
@@ -237,9 +237,9 @@ attribute_type<mat4d>::create(const std::string& name)
 template<>
 inline bool attribute_type<mat4d>::operator()(const attribute& attribute_)
 {
-	if (attribute_.type() != SP_FLOAT_64)
+	if (attribute_.type != SP_FLOAT_64)
 		return false;
-	if (attribute_.get_number_of_elements() != 16)
+	if (attribute_.size != 16)
 		return false;
 	return true;
 }

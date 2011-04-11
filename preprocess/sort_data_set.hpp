@@ -64,7 +64,7 @@ void sort_data_set::_sort_vertices(size_t index)
 	const element& vs = vertices; //.get_structure();
 	const attribute& sort_attr = vs.get_attribute(_params.sort_attribute);
 
-	size_t base_offset = sort_attr.offset();
+	size_t base_offset = sort_attr.offset;
 	base_offset += index * sizeof(value_t);
 
 	accessor_type get_attr(base_offset);
@@ -77,12 +77,12 @@ void sort_data_set::_sort_faces()
 	typedef smallest_component_accessor<3, value_t> accessor_type;
 
 	const header& in_header = _input.get_header();
-	const element& fs = in_header.get_face_structure();
+	const element& fs = in_header.face();
 	const attribute& sort_attr = fs.get_attribute(_params.sort_attribute);
 
-	size_t size = in_header.get_number_of_faces();
+	size_t size = in_header.face().size();
 
-	accessor_type get_attr(sort_attr.offset());
+	accessor_type get_attr(sort_attr.offset);
 
 	_sort_file<value_t, index_t, accessor_type> (_input.get_face_map(),
 			get_attr);

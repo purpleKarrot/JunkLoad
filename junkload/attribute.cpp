@@ -10,12 +10,12 @@ namespace stream_process
 {
 
 attribute::attribute() :
-	name_("uninitialized"), type_(SP_INT_8), size_(1), offset_(0)
+	type(SP_INT_8), size(1), offset(0)
 {
 }
 
 attribute::attribute(const std::string& name, data_type_id type, size_t size) :
-	name_(name), type_(type), size_(size), offset_(0)
+	name(name), type(type), size(size), offset(0)
 {
 }
 
@@ -65,9 +65,9 @@ bool attribute::from_header_string_vector(
 		flags = boost::lexical_cast<size_t>(tokens[5]);
 	}
 
-	name_ = name;
-	type_ = type;
-	size_ = number_of_elements;
+	this->name = name;
+	this->type = type;
+	this->size = number_of_elements;
 
 	return true;
 }
@@ -78,19 +78,19 @@ std::string attribute::to_string() const
 
 	std::string result;
 
-	result = name_;
+	result = name;
 	while (result.size() < 16)
 		result += " ";
 
-	result += dth.get_default_name(type_);
+	result += dth.get_default_name(type);
 	while (result.size() < 32)
 		result += " ";
 
-	result += boost::lexical_cast<std::string>(size_);
+	result += boost::lexical_cast<std::string>(size);
 	while (result.size() < 40)
 		result += " ";
 
-	result += boost::lexical_cast<std::string>(offset_);
+	result += boost::lexical_cast<std::string>(offset);
 	while (result.size() < 48)
 		result += " ";
 
@@ -113,15 +113,15 @@ std::string attribute::to_header_string(const std::string& identifier) const
 
 	std::string result;
 
-	result = name_;
+	result = name;
 	while (result.size() < 16)
 		result += " ";
 
-	result += dth.get_default_name(type_);
+	result += dth.get_default_name(type);
 	while (result.size() < 32)
 		result += " ";
 
-	result += boost::lexical_cast<std::string>(size_);
+	result += boost::lexical_cast<std::string>(size);
 	while (result.size() < 40)
 		result += " ";
 

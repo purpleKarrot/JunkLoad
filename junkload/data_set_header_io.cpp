@@ -7,6 +7,9 @@
 namespace stream_process
 {
 
+bool load_header(std::istream& in, header& h);
+bool save_header(std::ostream& out, const header& h);
+
 void data_set_header_io::read_from_file(const std::string& filename_base,
 		header& hdr_)
 {
@@ -25,31 +28,55 @@ void data_set_header_io::read_from_file(const std::string& filename_base,
 void data_set_header_io::write_to_file(const std::string& filename_base,
 		const header& hdr_)
 {
+	// self test
+	{
+		save_header(std::cout, hdr_);
+
+		{
+			std::ofstream file("temp.junk");
+			if (!save_header(file, hdr_))
+				std::cout << "\n\nerror saving header\n" << std::endl;
+		}
+
+		{
+			header h;
+
+			std::ifstream file("temp.junk");
+			if (!load_header(file, h))
+				std::cout << "\n\nerror loading header\n" << std::endl;
+
+			std::cout << "######################" << std::endl;
+
+			std::cout << h.elements.size() << std::endl;
+//			std::cout << h.elements[1].name() << std::endl;
+
+			save_header(std::cerr, h);
+		}
+	}
+
 	_open_file(filename_base, std::fstream::out | std::fstream::trunc);
 
 	_fstream << "# stream_process data set header\n\n";
 
 	_fstream << "# == " << "globals" << " ==\n\n";
 
-	vec3d aabb = hdr_.get_aabb_min<double> ();
+	vec3d aabb = hdr_.min;
 	_fstream << "min ";
 	for (size_t index = 0; index < 3; ++index)
 	{
-		_fstream << boost::lexical_cast<std::string, double>(aabb[index])
-				<< " ";
+		_fstream << aabb[index] << " ";
 	}
 	_fstream << "\n";
 
-	aabb = hdr_.get_aabb_max<double> ();
+	aabb = hdr_.max;
 	_fstream << "max ";
 	for (size_t index = 0; index < 3; ++index)
 	{
-		_fstream << boost::lexical_cast<std::string, double>(aabb[index])
-				<< " ";
+		_fstream << aabb[index] << " ";
 	}
 	_fstream << "\n\n";
 
-	const mat4d& transform_ = hdr_.get_transform<double> ();
+	const mat4d& transform_ = hdr_.transform;
 	if (transform_ != mat4d::IDENTITY)
 	{
 		_fstream << "\ntransform ";
@@ -57,8 +84,7 @@ void data_set_header_io::write_to_file(const std::string& filename_base,
 		{
 			for (size_t col = 0; col < 4; ++col)
 			{
-				_fstream << boost::lexical_cast<std::string, double>(
-						transform_(row, col)) << " ";
+				_fstream << transform_(row, col) << " ";
 			}
 		}
 		_fstream << "\n\n";
@@ -140,13 +166,13 @@ bool data_set_header_io::_parse_line(std::deque<std::string>& tokens, header& _w
 		if (tokens[0] == "vertex")
 		{
 			tokens.pop_front();
-			_working_copy.get_vertex_element().set_from_strings(tokens);
+			_working_copy.vertex().set_from_strings(tokens);
 		}
 
 		if (tokens[0] == "face")
 		{
 			tokens.pop_front();
-			_working_copy.get_face_element().set_from_strings(tokens);
+			_working_copy.face().set_from_strings(tokens);
 		}
 
 		if (tokens[0] == "min")
@@ -160,7 +186,7 @@ bool data_set_header_io::_parse_line(std::deque<std::string>& tokens, header& _w
 				aabb[index] = boost::lexical_cast<double>(tokens[index + 1]);
 			}
 
-			_working_copy.set_aabb_min(aabb);
+			_working_copy.min = aabb;
 			return true;
 		}
 		if (tokens[0] == "max")
@@ -172,7 +198,7 @@ bool data_set_header_io::_parse_line(std::deque<std::string>& tokens, header& _w
 			{
 				aabb[index] = boost::lexical_cast<double>(tokens[index + 1]);
 			}
-			_working_copy.set_aabb_max(aabb);
+			_working_copy.max = aabb;
 			return true;
 		}
 		if (tokens[0] == "transform")
@@ -188,7 +214,7 @@ bool data_set_header_io::_parse_line(std::deque<std::string>& tokens, header& _w
 							tokens[index]);
 				}
 			}
-			_working_copy.set_transform(transform_);
+			_working_copy.transform = transform_;
 			return true;
 		}
 		if (tokens[0] == "endian")
@@ -200,9 +226,9 @@ bool data_set_header_io::_parse_line(std::deque<std::string>& tokens, header& _w
 			boost::algorithm::to_lower(endianess);
 
 			if (endianess == "big")
-				_working_copy.set_data_is_big_endian(true);
+				_working_copy.big_endian = true;
 			else
-				_working_copy.set_data_is_big_endian(false);
+				_working_copy.big_endian = false;
 			return true;
 		}
 		// ignore other tokens
