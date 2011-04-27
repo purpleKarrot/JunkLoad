@@ -45,14 +45,7 @@ LocalInitData::LocalInitData()
         , _color( true )
         , _isResident( false )
 {
-    _filenames.push_back( "examples/eqPly/" );
-    _filenames.push_back( "../examples/eqPly/" );
-    _filenames.push_back( "./../../../examples/eqPly" ); 
-    _filenames.push_back( "../../../../examples/eqPly" );
-    _filenames.push_back( "../share/data/" );
-    _filenames.push_back( "/opt/local/share/data/" );
-    _filenames.push_back( "/usr/local/share/data/" );
-    _filenames.push_back( "/usr/share/data/" );
+    _filenames.push_back("/usr/share/Equalizer/data");
 }
 
 const LocalInitData& LocalInitData::operator = ( const LocalInitData& from )

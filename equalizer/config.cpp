@@ -47,7 +47,6 @@ Config::Config( co::base::RefPtr< eq::Server > parent )
         , _currentCanvas( 0 )
         , _messageTime( 0 )
         , _redraw( true )
-        , _freeze( false )
         , _useIdleAA( true )
         , _numFramesAA( 0 )
 {
@@ -55,15 +54,13 @@ Config::Config( co::base::RefPtr< eq::Server > parent )
 
 Config::~Config()
 {
-    for( Models::const_iterator i = _models.begin(); 
-         i != _models.end(); ++i )
+    for( ModelsCIter i = _models.begin(); i != _models.end(); ++i )
     {
         delete *i;
     }
     _models.clear();
 
-    for( ModelDists::const_iterator i = _modelDist.begin(); 
-         i != _modelDist.end(); ++i )
+    for( ModelDistsCIter i = _modelDist.begin(); i != _modelDist.end(); ++i )
     {
         EQASSERT( !(*i)->isAttached() );
         delete *i;
@@ -190,7 +187,7 @@ void Config::_loadModels()
                 const eq::Strings subFiles =
                     co::base::searchDirectory( filename, "*" );
 
-                for( eq::Strings::const_iterator i = subFiles.begin();
+                for( eq::StringsCIter i = subFiles.begin();
                      i != subFiles.end(); ++i )
                 {
                     filenames.push_back( filename + '/' + *i );
@@ -236,8 +233,7 @@ void Config::_registerModels()
 
 void Config::_deregisterData()
 {
-    for( ModelDists::const_iterator i = _modelDist.begin(); 
-         i != _modelDist.end(); ++i )
+    for( ModelDistsCIter i = _modelDist.begin(); i != _modelDist.end(); ++i )
     {
         ModelDist* modelDist = *i;
         if( !modelDist->isAttached() ) // already done
@@ -274,8 +270,7 @@ bool Config::mapData( const eq::uint128_t& initDataID )
 
 void Config::unmapData()
 {
-    for( ModelDists::const_iterator i = _modelDist.begin(); 
-         i != _modelDist.end(); ++i )
+    for( ModelDistsCIter i = _modelDist.begin(); i != _modelDist.end(); ++i )
     {
         ModelDist* modelDist = *i;
         if( !modelDist->isAttached( )) // already done
@@ -415,7 +410,7 @@ bool Config::handleEvent( const eq::ConfigEvent* event )
             const eq::View* view = find< eq::View > ( viewID );
             const eq::Layout* layout = view->getLayout();
             const eq::Canvases& canvases = getCanvases();
-            for( eq::Canvases::const_iterator i = canvases.begin();
+            for( eq::CanvasesCIter i = canvases.begin();
                  i != canvases.end(); ++i )
             {
                 eq::Canvas* canvas = *i;
@@ -597,9 +592,11 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
             return true;
             
         case 'f':
+            _freezeLoadBalancing( true );
+            return true;
+
         case 'F':
-            _freeze = !_freeze;
-            freezeLoadBalancing( _freeze );
+            _freezeLoadBalancing( false );
             return true;
 
         case eq::KC_F1:
@@ -754,6 +751,25 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
             return true;
         }
 
+        case '+':
+            _changeFocusDistance( .1f );
+            return true;
+
+        case '-':
+            _changeFocusDistance( -.1f );
+            return true;
+
+        case '1':
+            _setFocusMode( eq::FOCUSMODE_FIXED );
+            return true;
+
+        case '2':
+            _setFocusMode( eq::FOCUSMODE_RELATIVE_TO_ORIGIN );
+            return true;
+
+        case '3':
+            _setFocusMode( eq::FOCUSMODE_RELATIVE_TO_OBSERVER );
+            return true;
         default:
             return false;
     }
@@ -781,7 +797,7 @@ void Config::_switchCanvas()
         return;
     }
 
-    eq::Canvases::const_iterator i = stde::find( canvases, _currentCanvas );
+    eq::CanvasesCIter i = stde::find( canvases, _currentCanvas );
     EQASSERT( i != canvases.end( ));
 
     ++i;
@@ -815,8 +831,7 @@ void Config::_switchView()
         return;
     }
 
-    eq::Views::const_iterator i = std::find( views.begin(), views.end(),
-                                             current );
+    eq::ViewsCIter i = std::find( views.begin(), views.end(), current );
     if( i != views.end( ))
         ++i;
     if( i == views.end( ))
@@ -837,7 +852,7 @@ void Config::_switchModel()
                                view->getModelID() : _frameData.getModelID();
 
     // next model
-    ModelDists::const_iterator i;
+    ModelDistsCIter i;
     for( i = _modelDist.begin(); i != _modelDist.end(); ++i )
     {
         if( (*i)->getID() != currentID )
@@ -883,6 +898,14 @@ void Config::_switchViewMode()
     }
 }
 
+void Config::_freezeLoadBalancing( const bool onOff )
+{
+    const eq::uint128_t& viewID = _frameData.getCurrentViewID();
+    eq::View* view = find< eq::View >( viewID );
+    if ( view )
+        view->freezeLoadBalancing( onOff );
+}
+
 void Config::_switchLayout( int32_t increment )
 {
     if( !_currentCanvas )
@@ -919,11 +942,16 @@ void Config::_switchLayout( int32_t increment )
 void Config::_setHeadMatrix( const eq::Matrix4f& matrix )
 {
     const eq::Observers& observers = getObservers();
-    for( eq::Observers::const_iterator i = observers.begin();
-         i != observers.end(); ++i )
+    for( eq::ObserversCIter i = observers.begin(); i != observers.end(); ++i )
     {
         (*i)->setHeadMatrix( matrix );
     }
+
+    eq::Vector3f trans;
+    matrix.get_translation( trans );
+    std::ostringstream stream;
+    stream << "Observer at " << trans;
+    _setMessage( stream.str( ));
 }
 
 const eq::Matrix4f& Config::_getHeadMatrix() const
@@ -933,6 +961,30 @@ const eq::Matrix4f& Config::_getHeadMatrix() const
         return eq::Matrix4f::IDENTITY;
 
     return observers[0]->getHeadMatrix();
+}
+
+void Config::_changeFocusDistance( const float delta )
+{
+    const eq::Observers& observers = getObservers();
+    for( eq::ObserversCIter i = observers.begin(); i != observers.end(); ++i )
+    {
+        eq::Observer* observer = *i;
+        observer->setFocusDistance( observer->getFocusDistance() + delta );
+        std::ostringstream stream;
+        stream << "Set focus distance to " << observer->getFocusDistance();
+        _setMessage( stream.str( ));
+    }
+}
+
+void Config::_setFocusMode( const eq::FocusMode mode )
+{
+    const eq::Observers& observers = getObservers();
+    for( eq::ObserversCIter i = observers.begin(); i != observers.end(); ++i )
+        (*i)->setFocusMode( mode );
+
+    std::ostringstream stream;
+    stream << "Set focus mode to " << mode;
+    _setMessage( stream.str( ));
 }
 
 void Config::_setMessage( const std::string& message )
