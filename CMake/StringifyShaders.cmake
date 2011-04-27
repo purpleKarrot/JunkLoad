@@ -4,7 +4,8 @@
 
 set(stringify_shaders_script "${CMAKE_CURRENT_LIST_FILE}")
 
-function(stringify_shaders sources)
+function(stringify_shaders source_var)
+  set(sources)
   foreach(file ${ARGN})
     set(input ${CMAKE_CURRENT_SOURCE_DIR}/${file})
     set(output ${CMAKE_CURRENT_BINARY_DIR}/${file})
@@ -15,8 +16,9 @@ function(stringify_shaders sources)
         -P ${stringify_shaders_script}
       DEPENDS ${input}
       )
-    set(${sources} ${${sources}} ${output_files} PARENT_SCOPE)
+    list(APPEND sources ${output_files})
   endforeach(file)
+  set(${source_var} ${sources} PARENT_SCOPE)
 endfunction(stringify_shaders)
 
 if(NOT STRINGIFY_SHADERS_PROCESSING_MODE)
