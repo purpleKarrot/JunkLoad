@@ -14,7 +14,6 @@
 
 #include <vmmlib/matrix.hpp>
 
-#include <vmmlib/jacobi_solver.hpp>
 #include <boost/cstdint.hpp>
 
 namespace junk

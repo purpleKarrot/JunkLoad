@@ -7,70 +7,9 @@
 
 #include "sort_data_set.hpp"
 #include "reindex_faces.hpp"
-#include "find_optimal_transform.hpp"
 
 namespace sp = stream_process;
 
-static void _apply_optimal_transform(const std::string& filename,
-		bool full_optimal_transform)
-{
-	sp::mapped_data_set data_set_(filename);
-	bool has_faces = data_set_.get_header().face().size != 0;
-
-	sp::attribute_accessor<sp::vec3f> get_position(
-			get_attribute(data_set_.get_vertex_element(), "position").offset);
-
-	const sp::header& h = data_set_.get_header();
-
-	if (full_optimal_transform)
-	{
-		std::cout << "preprocessor: optimal transform in progress..."
-				<< std::endl;
-
-		sp::attribute_accessor<sp::vec3f> get_position(
-				get_attribute(data_set_.get_vertex_element(), "position").offset);
-
-		sp::optimal_transform<sp::vec3f, sp::attribute_accessor<sp::vec3f>,
-				sp::mapped_data_element> ot;
-
-		ot.set_accessor(get_position);
-		ot.analyze(data_set_.get_vertex_map());
-		ot.apply(data_set_.get_vertex_map());
-
-		data_set_.get_header().transform = ot.get_transformation_matrix();
-
-		std::cout << "transform " << ot.get_transformation_matrix()
-				<< std::endl;
-	}
-	else
-	{
-		std::cout << "preprocessor: no optimal transform step." << std::endl;
-
-		sp::vec3f min = h.min;
-		sp::vec3f max = h.max;
-
-		sp::vec3f diag = max - min;
-		size_t index = diag.find_max_index();
-
-		if (index != 2)
-		{
-			std::cout << "swapping axes " << index << " and 2 " << std::endl;
-			sp::mapped_data_element& vertices = data_set_.get_vertex_map();
-			sp::mapped_data_element::iterator vit = vertices.begin(), vit_end =
-					vertices.end();
-			for (; vit != vit_end; ++vit)
-			{
-				sp::vec3f& v = get_position(*vit);
-				//std::cout << "pre  " << v << std::endl;
-				std::swap(v[index], v[2]);
-				//std::cout << "post " << v << std::endl;
-			}
-		}
-	}
-
-	data_set_.compute_aabb();
-	junk::save_header(filename, data_set_.get_header());
-}
 
 int main(int argc, char* argv[])
 {
@@ -83,16 +22,7 @@ int main(int argc, char* argv[])
 
 	std::string unsorted = input;
 
-//	// if source is ply, convert...
-//	if (boost::algorithm::iends_with(input, ".ply"))
-//	{
-//		unsorted = output + ".unsorted";
-//		sp::ply_convert(input.c_str(), unsorted);
-//	}
-
 	std::string reindex_map = output + ".reindex_map";
-
-	_apply_optimal_transform(unsorted, true);
 
 	// sort file
 	{

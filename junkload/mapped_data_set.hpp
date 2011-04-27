@@ -22,12 +22,7 @@ public:
 	typedef stream_data_iterator iterator;
 	typedef stream_data_const_iterator const_iterator;
 
-	// ctor that loads an existing data set
 	mapped_data_set(const std::string& filename, bool new_file = false);
-
-//	// ctor that prepares a new data set according to the header
-//	mapped_data_set(const data_set_header& header_,
-//					const std::string& filename);
 
 	~mapped_data_set();
 
@@ -84,15 +79,12 @@ protected:
 	void _compute_aabb();
 
 	header _header;
-	element& _vertices;
-	element& _faces;
 	mapped_data_element* _vertex_map;
 	mapped_data_element* _face_map;
 
 	std::string _filename;
 
-}; // class mapped_data_set
-
+};
 
 template<typename T>
 void mapped_data_set::_compute_aabb()

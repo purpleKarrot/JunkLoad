@@ -3,6 +3,8 @@ project(stream_process)
 
 include(CMakeParseArguments)
 
+#
+
 add_executable(ply_convert
   ply/main.cpp
   ply/ply_io.c
@@ -16,6 +18,23 @@ boost_link_libraries(ply_convert STATIC
   iostreams
   filesystem
   )
+
+#
+
+add_executable(optimize
+  optimize/main.cpp
+  )
+
+target_link_libraries(optimize
+  junkload
+  )
+
+boost_link_libraries(optimize STATIC
+  iostreams
+  filesystem
+  )
+
+#
 
 add_executable(stream_process
   main.cpp

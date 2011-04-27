@@ -5,12 +5,9 @@
 namespace stream_process
 {
 
-// ctor that loads an existing data set
 mapped_data_set::mapped_data_set(const std::string& filename, bool new_file) :
 	_filename(filename),
 	_header(),
-	_vertices(_header.vertex()),
-	_faces(_header.face()),
 	_vertex_map(0),
 	_face_map(0)
 {
@@ -20,19 +17,6 @@ mapped_data_set::mapped_data_set(const std::string& filename, bool new_file) :
 		_setup(false);
 	}
 }
-
-//// ctor that prepares a new data set according to the header
-//mapped_data_set::mapped_data_set(const data_set_header& header_,
-//		const std::string& filename) :
-//	_header(header_),
-//	_vertices(_header.get_vertex_element()),
-//	_faces(_header.get_face_element()),
-//	_vertex_map(0),
-//	_face_map(0),
-//	_filename(filename)
-//{
-//	_setup(true);
-//}
 
 mapped_data_set::~mapped_data_set()
 {
@@ -54,7 +38,7 @@ void mapped_data_set::_setup(bool new_file)
 {
 	try
 	{
-		_vertex_map = new mapped_data_element(_vertices);
+		_vertex_map = new mapped_data_element(_header.vertex());
 		_vertex_map->open(_filename, new_file);
 
 		if (!_vertex_map->is_open())
@@ -64,7 +48,7 @@ void mapped_data_set::_setup(bool new_file)
 
 		if (new_file || _header.face().size != 0)
 		{
-			_face_map = new mapped_data_element(_faces, _filename, new_file);
+			_face_map = new mapped_data_element(_header.face(), _filename, new_file);
 			if (!_vertex_map->is_open())
 			{
 				throw std::runtime_error("opening face file failed.");
@@ -111,32 +95,32 @@ void mapped_data_set::compute_aabb()
 
 element& mapped_data_set::get_vertex_element()
 {
-	return _vertices;
+	return _header.vertex();
 }
 
 const element& mapped_data_set::get_vertex_element() const
 {
-	return _vertices;
+	return _header.vertex();
 }
 
 const element& mapped_data_set::get_vertex_structure() const
 {
-	return _vertices; //.get_structure();
+	return _header.vertex();
 }
 
 element& mapped_data_set::get_face_element()
 {
-	return _faces;
+	return _header.face();
 }
 
 const element& mapped_data_set::get_face_element() const
 {
-	return _faces;
+	return _header.face();
 }
 
 const element& mapped_data_set::get_face_structure() const
 {
-	return _faces; //.get_structure();
+	return _header.face();
 }
 
 mapped_data_element& mapped_data_set::get_vertex_map()
@@ -165,12 +149,12 @@ const mapped_data_element& mapped_data_set::get_face_map() const
 
 size_t mapped_data_set::get_vertex_size_in_bytes() const
 {
-	return size_in_bytes(_vertices);
+	return size_in_bytes(_header.vertex());
 }
 
 size_t mapped_data_set::get_face_size_in_bytes() const
 {
-	return size_in_bytes(_faces);
+	return size_in_bytes(_header.face());
 }
 
 } // namespace stream_process
