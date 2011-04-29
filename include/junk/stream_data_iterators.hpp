@@ -3,7 +3,7 @@
 
 #include <iterator>
 
-namespace stream_process
+namespace junk
 {
 
 class stream_data_iterator: public std::iterator<
@@ -150,6 +150,6 @@ private:
 	}
 };
 
-} // namespace stream_process
+} // namespace junk
 
 #endif

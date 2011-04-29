@@ -1,8 +1,8 @@
 //
 
-#include "VMMLibIncludes.h"
-#include "mapped_data_set.hpp"
-#include "jacobi_solver.hpp"
+#include <junk/VMMLibIncludes.h>
+#include <junk/mapped_data_set.hpp>
+#include <vmmlib/jacobi_solver.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -12,10 +12,10 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	stream_process::mapped_data_set data_set_(argv[1]);
-	stream_process::mapped_data_element& mesh_ = data_set_.get_vertex_map();
+	junk::mapped_data_set data_set_(argv[1]);
+	junk::mapped_data_element& mesh_ = data_set_.get_vertex_map();
 
-	stream_process::attribute_accessor<junk::vec3f> get_position(
+	junk::attribute_accessor<junk::vec3f> get_position(
 			get_attribute(data_set_.get_vertex_element(), "position").offset);
 
 	junk::mat3d _covariance;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
 			junk::vec3d v, product, cov_cross_product;
 
-			typename stream_process::mapped_data_element::iterator it =
+			typename junk::mapped_data_element::iterator it =
 					mesh_.begin(), it_end = mesh_.end();
 			for (; it != it_end; ++it)
 			{
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 	{
 		junk::mat4f t = _transform;
 
-		typedef stream_process::mapped_data_element::iterator it_t;
+		typedef junk::mapped_data_element::iterator it_t;
 		it_t it = mesh_.begin(), it_end = mesh_.end();
 
 		for (; it != it_end; ++it)

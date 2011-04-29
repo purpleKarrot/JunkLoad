@@ -8,8 +8,6 @@
 #include "sort_data_set.hpp"
 #include "reindex_faces.hpp"
 
-namespace sp = stream_process;
-
 
 int main(int argc, char* argv[])
 {
@@ -26,7 +24,7 @@ int main(int argc, char* argv[])
 
 	// sort file
 	{
-		sp::sort_data_set::params sort_params;
+		junk::sort_data_set::params sort_params;
 		sort_params.in_name = unsorted;
 		sort_params.out_name = output;
 		sort_params.tmp_name = reindex_map;
@@ -34,27 +32,27 @@ int main(int argc, char* argv[])
 		sort_params.number_of_threads = number_of_threads;
 		sort_params.sort_attribute = "position";
 
-		sp::sort_data_set sort(sort_params);
+		junk::sort_data_set sort(sort_params);
 	}
 
-	sp::mapped_data_set data_set_(unsorted);
+	junk::mapped_data_set data_set_(unsorted);
 	if (data_set_.get_header().face().size != 0)
 	{
-		const sp::header& h = data_set_.get_header();
-		const sp::element& fs = h.face();
+		const junk::header& h = data_set_.get_header();
+		const junk::element& fs = h.face();
 		const size_t num_faces = h.face().size;
 
-		const sp::attribute& attr = get_attribute(fs, "vertex_indices");
+		const junk::attribute& attr = get_attribute(fs, "vertex_indices");
 
-		sp::reindex_faces::params ri_params;
+		junk::reindex_faces::params ri_params;
 		ri_params.faces_file = unsorted + ".faces";
 		ri_params.reindex_map = reindex_map;
 		ri_params.number_of_faces = num_faces;
 		ri_params.index_type = attr.type;
 
-		sp::reindex_faces rif(ri_params);
+		junk::reindex_faces rif(ri_params);
 
-		sp::sort_data_set::params sort_params;
+		junk::sort_data_set::params sort_params;
 		sort_params.in_name = unsorted;
 		sort_params.out_name = output;
 		sort_params.tmp_name = unsorted + ".tmp";
@@ -62,6 +60,6 @@ int main(int argc, char* argv[])
 		sort_params.number_of_threads = number_of_threads;
 		sort_params.sort_attribute = "vertex_indices";
 
-		sp::sort_data_set sort(sort_params);
+		junk::sort_data_set sort(sort_params);
 	}
 }

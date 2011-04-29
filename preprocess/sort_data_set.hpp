@@ -1,7 +1,7 @@
 #ifndef __STREAM_PROCESS__SORT_DATA_SET__HPP__
 #define __STREAM_PROCESS__SORT_DATA_SET__HPP__
 
-#include "mapped_data_set.hpp"
+#include <junk/mapped_data_set.hpp>
 #include "intro_sort.hpp"
 #include "preprocess_types.hpp"
 #include "special_accessors.hpp"
@@ -12,7 +12,7 @@
 #include <string>
 #include <cstddef>
 
-namespace stream_process
+namespace junk
 {
 
 class sort_data_set
@@ -193,6 +193,6 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 	junk::save_header(_params.out_name, _input.get_header());
 }
 
-} // namespace stream_process
+} // namespace junk
 
 #endif

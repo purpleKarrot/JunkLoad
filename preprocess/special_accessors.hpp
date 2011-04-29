@@ -1,10 +1,10 @@
 #ifndef __STREAM_PROCESS__SPECIAL_ACCESSORS__HPP__
 #define __STREAM_PROCESS__SPECIAL_ACCESSORS__HPP__
 
-#include "VMMLibIncludes.h"
-#include "attribute_accessor.hpp"
+#include <junk/VMMLibIncludes.h>
+#include <junk/attribute_accessor.hpp>
 
-namespace stream_process
+namespace junk
 {
 
 template<std::size_t M, typename T>
@@ -27,6 +27,6 @@ private:
 	attribute_accessor<vec_type> get_attribute;
 };
 
-} // namespace stream_process
+} // namespace junk
 
 #endif

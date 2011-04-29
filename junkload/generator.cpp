@@ -10,7 +10,7 @@
 
 #include <fstream>
 #include <boost/spirit/include/karma.hpp>
-#include "types.hpp"
+#include <junk/types.hpp>
 
 namespace karma = boost::spirit::karma;
 namespace ascii = boost::spirit::ascii;

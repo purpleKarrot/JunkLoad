@@ -1,6 +1,6 @@
-#include "mapped_data_element.hpp"
+#include <junk/mapped_data_element.hpp>
 
-namespace stream_process
+namespace junk
 {
 
 mapped_data_element::mapped_data_element(element& element_) :
@@ -67,4 +67,4 @@ const char* mapped_data_element::data() const
 	return _mapped_file.data();
 }
 
-} // namespace stream_process
+} // namespace junk

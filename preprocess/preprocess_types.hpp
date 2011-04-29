@@ -1,9 +1,8 @@
 #ifndef __STREAM_PROCESS__PREPROCESS_TYPES__HPP__
 #define __STREAM_PROCESS__PREPROCESS_TYPES__HPP__
 
-namespace stream_process
+namespace junk
 {
-
 namespace preprocess
 {
 
@@ -37,7 +36,6 @@ struct index_reference
 };
 
 } // namespace preprocess
-
-} // namespace stream_process
+} // namespace junk
 
 #endif

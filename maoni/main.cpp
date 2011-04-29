@@ -25,12 +25,20 @@ class JunkModel: public Model
 public:
 	JunkModel(const char* filename, int myrank, int ranks);
 
+	virtual ~JunkModel();
+
 private:
 	void draw() const;
+
+	GLuint vao;
+	GLuint vbuffer;
+	GLuint ibuffer;
 };
 
 MESH_LOADER(junk, Junk Files)
 {
+	std::cout << glGetError() << std::endl;
+
 	model.reset(new JunkModel(filename, myrank, ranks));
 }
 
@@ -39,10 +47,93 @@ MESH_LOADER(junk, Junk Files)
 //	model.draw();
 //}
 
+struct MyVertex
+{
+	//! position
+	float x, y, z;
+
+	//! normal
+	float nx, ny, nz;
+
+	//! texture coordinates
+	float s, t;
+};
+
 JunkModel::JunkModel(const char* filename, int myrank, int ranks)
+{
+	MyVertex vertex[3];
+
+	vertex[0].x = 0.0;
+	vertex[0].y = 0.0;
+	vertex[0].z = 0.0;
+	vertex[0].nx = 0.0;
+	vertex[0].ny = 0.0;
+	vertex[0].nz = 1.0;
+	vertex[0].s = 0.0;
+	vertex[0].t = 0.0;
+
+	vertex[1].x = 1.0;
+	vertex[1].y = 0.0;
+	vertex[1].z = 0.0;
+	vertex[1].nx = 0.0;
+	vertex[1].ny = 0.0;
+	vertex[1].nz = 1.0;
+	vertex[1].s = 1.0;
+	vertex[1].t = 0.0;
+
+	vertex[2].x = 0.0;
+	vertex[2].y = 1.0;
+	vertex[2].z = 0.0;
+	vertex[2].nx = 0.0;
+	vertex[2].ny = 0.0;
+	vertex[2].nz = 1.0;
+	vertex[2].s = 0.0;
+	vertex[2].t = 1.0;
+
+	ushort index[3];
+	index[0] = 0;
+	index[1] = 1;
+	index[2] = 2;
+
+	std::cout << glGetError() << std::endl;
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	std::cout << glGetError() << std::endl;
+
+	glGenBuffers(1, &vbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(MyVertex) * 3, &vertex[0].x, GL_STATIC_DRAW);
+
+	std::cout << glGetError() << std::endl;
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, x));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, nx));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, s));
+
+	std::cout << glGetError() << std::endl;
+
+	glGenBuffers(1, &ibuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * 3, index, GL_STATIC_DRAW);
+
+	std::cout << glGetError() << std::endl;
+
+	glBindVertexArray(0);
+
+	std::cout << glGetError() << std::endl;
+}
+
+JunkModel::~JunkModel()
 {
 }
 
 void JunkModel::draw() const
 {
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, (void*) 0);
 }

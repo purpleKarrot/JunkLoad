@@ -1,16 +1,16 @@
 #ifndef __STREAM_PROCESS__MAPPED_DATA_SET__HPP__
 #define __STREAM_PROCESS__MAPPED_DATA_SET__HPP__
 
-#include "types.hpp"
-#include "mapped_data_element.hpp"
-#include "stream_data_iterators.hpp"
-#include "attribute_accessor.hpp"
+#include <junk/types.hpp>
+#include <junk/mapped_data_element.hpp>
+#include <junk/stream_data_iterators.hpp>
+#include <junk/attribute_accessor.hpp>
 
 #include <boost/iostreams/device/mapped_file.hpp>
 
 #include <string>
 
-namespace stream_process
+namespace junk
 {
 
 class mapped_data_set
@@ -197,6 +197,6 @@ inline mapped_data_set::const_iterator mapped_data_set::fend() const
 	return fm->end();
 }
 
-} // namespace stream_process
+} // namespace junk
 
 #endif

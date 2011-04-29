@@ -4,7 +4,7 @@
 #define __VMML_MATRIX_TRAITS_HPP__
 
 #include <vmmlib/matrix.hpp>
-#include <boost/la/matrix_traits.hpp>
+#include <boost/qvm/m_traits.hpp>
 
 namespace boost
 {

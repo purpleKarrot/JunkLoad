@@ -1,6 +1,6 @@
 #include "reindex_faces.hpp"
 
-namespace stream_process
+namespace junk
 {
 
 reindex_faces::reindex_faces(const params& params_) :
@@ -29,4 +29,4 @@ reindex_faces::reindex_faces(const params& params_) :
 	}
 }
 
-} // namespace stream_process
+} // namespace junk

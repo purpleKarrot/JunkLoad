@@ -3,14 +3,14 @@
 
 #include "preprocess_types.hpp"
 #include "special_accessors.hpp"
-#include "types.hpp"
+#include <junk/types.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 
 #include <string>
 
-namespace stream_process
+namespace junk
 {
 
 namespace io = boost::iostreams;
@@ -69,6 +69,6 @@ void reindex_faces::_reindex()
 	}
 }
 
-} // namespace stream_process
+} // namespace junk
 
 #endif

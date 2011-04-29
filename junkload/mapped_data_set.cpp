@@ -1,8 +1,8 @@
-#include "mapped_data_set.hpp"
+#include <junk/mapped_data_set.hpp>
 
 #include <iostream>
 
-namespace stream_process
+namespace junk
 {
 
 mapped_data_set::mapped_data_set(const std::string& filename, bool new_file) :
@@ -157,4 +157,4 @@ size_t mapped_data_set::get_face_size_in_bytes() const
 	return size_in_bytes(_header.face());
 }
 
-} // namespace stream_process
+} // namespace junk

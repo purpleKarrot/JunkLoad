@@ -7,7 +7,7 @@
 
 #include <boost/iostreams/device/mapped_file.hpp>
 
-namespace stream_process
+namespace junk
 {
 
 class mapped_data_element
@@ -115,7 +115,7 @@ inline size_t mapped_data_element::size() const
 	return _element.size;
 }
 
-} // namespace stream_process
+} // namespace junk
 
 #endif
 

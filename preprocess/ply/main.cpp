@@ -4,17 +4,12 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "attribute_accessor.hpp"
-#include "mapped_data_set.hpp"
+#include <junk/attribute_accessor.hpp>
+#include <junk/mapped_data_set.hpp>
 
 #include "ply_io.h"
 
 #pragma GCC diagnostic ignored "-Wwrite-strings"
-
-namespace junk
-{
-using namespace stream_process;
-}
 
 std::vector<std::string> _color_names;
 

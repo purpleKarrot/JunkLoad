@@ -1,15 +1,15 @@
-#ifndef __STREAM_PROCESS__ATTRIBUTE_ACCESSOR__HPP__
-#define __STREAM_PROCESS__ATTRIBUTE_ACCESSOR__HPP__
+#ifndef JUNK_ATTRIBUTE_ACCESSOR_HPP
+#define JUNK_ATTRIBUTE_ACCESSOR_HPP
 
-namespace stream_process
+namespace junk
 {
 
 template<typename T>
 class attribute_accessor
 {
 public:
-	attribute_accessor(std::size_t offset = 0) :
-		offset(offset)
+	attribute_accessor(std::ptrdiff_t offset = 0) :
+			offset(offset)
 	{
 	}
 
@@ -24,9 +24,9 @@ public:
 	}
 
 private:
-	std::size_t offset;
+	std::ptrdiff_t offset;
 };
 
-} // namespace stream_process
+} // namespace junk
 
-#endif
+#endif /* JUNK_ATTRIBUTE_ACCESSOR_HPP */

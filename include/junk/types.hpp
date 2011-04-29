@@ -12,7 +12,7 @@
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/adapted/struct/define_struct.hpp>
 
-#include "VMMLibIncludes.h"
+#include <junk/VMMLibIncludes.h>
 
 namespace junk
 {
@@ -414,10 +414,5 @@ BOOST_FUSION_ADAPT_STRUCT(junk::mat4d,
 		(double, array[14])
 		(double, array[15])
 )
-
-namespace stream_process
-{
-	using namespace junk;
-}
 
 #endif /* JUNKLOAD_TYPES_HPP */

@@ -1,6 +1,6 @@
 #include "sort_data_set.hpp"
 
-namespace stream_process
+namespace junk
 {
 
 sort_data_set::sort_data_set(const params& params_) :
@@ -54,4 +54,4 @@ sort_data_set::sort_data_set(const params& params_) :
 	}
 }
 
-} // namespace stream_process
+} // namespace junk
