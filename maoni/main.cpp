@@ -20,14 +20,10 @@
 
 #include <Maoni.hpp>
 
-class JunkModel: public Model
+struct JunkModel:   Model
 {
-public:
 	JunkModel(const char* filename, int myrank, int ranks);
 
-	virtual ~JunkModel();
-
-private:
 	void draw() const;
 
 	GLuint vao;
@@ -35,17 +31,19 @@ private:
 	GLuint ibuffer;
 };
 
-MESH_LOADER(junk, Junk Files)
-{
-	std::cout << glGetError() << std::endl;
-
-	model.reset(new JunkModel(filename, myrank, ranks));
-}
-
-//RENDER_ALGORITHM(JunkRender, )
+//MESH_LOADER(junk, Junk Files)
 //{
-//	model.draw();
+//	std::cout << glGetError() << std::endl;
+//
+//	model.reset(new JunkModel(filename, myrank, ranks));
 //}
+
+RENDER_ALGORITHM(JunkRender, )
+{
+	static const JunkModel m(0, 0, 0);
+
+	m.draw();
+}
 
 struct MyVertex
 {
@@ -95,41 +93,28 @@ JunkModel::JunkModel(const char* filename, int myrank, int ranks)
 	index[1] = 1;
 	index[2] = 2;
 
-	std::cout << glGetError() << std::endl;
-
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-
-	std::cout << glGetError() << std::endl;
 
 	glGenBuffers(1, &vbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(MyVertex) * 3, &vertex[0].x, GL_STATIC_DRAW);
 
-	std::cout << glGetError() << std::endl;
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(MyVertex), (void*) offsetof(MyVertex, x));
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, x));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, nx));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, s));
-
-	std::cout << glGetError() << std::endl;
+//	glEnableVertexAttribArray(0);
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, x));
+//	glEnableVertexAttribArray(1);
+//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, nx));
+//	glEnableVertexAttribArray(2);
+//	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(MyVertex), (void*) offsetof(MyVertex, s));
 
 	glGenBuffers(1, &ibuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * 3, index, GL_STATIC_DRAW);
 
-	std::cout << glGetError() << std::endl;
-
 	glBindVertexArray(0);
-
-	std::cout << glGetError() << std::endl;
-}
-
-JunkModel::~JunkModel()
-{
 }
 
 void JunkModel::draw() const
