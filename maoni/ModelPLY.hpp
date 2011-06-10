@@ -19,9 +19,24 @@
  */
 
 #include <Maoni.hpp>
-#include "ModelPLY.hpp"
 
-RENDER_ALGORITHM(JunkRender, (ModelPLY, model, "../data/bunny.ply"))
+class ModelPLY: public Path
 {
-	model.draw(myrank, ranks);
-}
+public:
+	ModelPLY(const char* filename);
+
+	virtual ~ModelPLY();
+
+	void draw(int myrank, int ranks) const;
+
+private:
+	void reset();
+	const char* const filter() const;
+
+	void read_file() const;
+
+private:
+	mutable std::size_t faces;
+	mutable GLuint vbuffer;
+	mutable GLuint ibuffer;
+};

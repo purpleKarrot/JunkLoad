@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
 			junk::vec3d v, product, cov_cross_product;
 
-			typename junk::mapped_data_element::iterator it =
+			junk::mapped_data_element::iterator it =
 					mesh_.begin(), it_end = mesh_.end();
 			for (; it != it_end; ++it)
 			{
