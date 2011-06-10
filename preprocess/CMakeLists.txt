@@ -7,7 +7,7 @@ include(CMakeParseArguments)
 
 add_executable(ply_convert
   ply/main.cpp
-  ply/ply_io.c
+  ply/ply.cpp
   )
 
 target_link_libraries(ply_convert

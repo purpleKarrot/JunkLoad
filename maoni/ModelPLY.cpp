@@ -32,6 +32,7 @@ struct Vertex
 {
 	float position[3];
 	float normal[3];
+	unsigned char color[3];
 };
 
 static void readVertices(PlyFile* file, std::vector<Vertex>& vertices)
@@ -41,9 +42,12 @@ static void readVertices(PlyFile* file, std::vector<Vertex>& vertices)
 		{ (char*) "x", Float32, Float32, offsetof(Vertex, position[0]), 0, 0, 0, 0 },
 		{ (char*) "y", Float32, Float32, offsetof(Vertex, position[1]), 0, 0, 0, 0 },
 		{ (char*) "z", Float32, Float32, offsetof(Vertex, position[2]), 0, 0, 0, 0 },
+		{ (char*) "red", Uint8, Uint8, offsetof(Vertex, color[0]), 0, 0, 0, 0 },
+		{ (char*) "green", Uint8, Uint8, offsetof(Vertex, color[1]), 0, 0, 0, 0 },
+		{ (char*) "blue", Uint8, Uint8, offsetof(Vertex, color[2]), 0, 0, 0, 0 },
 	};
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 6; ++i)
 		setup_property_ply(file, &vertexProps[i]);
 
 	for (std::vector<Vertex>::iterator v = vertices.begin(); v != vertices.end(); ++v)
@@ -55,12 +59,12 @@ static void readTriangles(PlyFile* file, std::vector<unsigned int>& indices)
 	struct Face
 	{
 		unsigned char size;
-		unsigned int* vertices;
+		int* vertices;
 	} face;
 
 	PlyProperty faceProps[] =
 	{
-		{ (char*) "vertex_indices", Uint32, Uint32, offsetof(Face, vertices), 1, Uint8, Uint8, offsetof(Face, size) }
+		{ (char*) "vertex_indices", Int32, Int32, offsetof(Face, vertices), 1, Uint8, Uint8, offsetof(Face, size) }
 	};
 
 	ply_get_property(file, (char*) "face", &faceProps[0]);
@@ -77,6 +81,8 @@ static void readTriangles(PlyFile* file, std::vector<unsigned int>& indices)
 		indices[k++] = face.vertices[0];
 		indices[k++] = face.vertices[1];
 		indices[k++] = face.vertices[2];
+
+		//std::cout << face.vertices[0] << " " << face.vertices[1] << " " << face.vertices[2] << std::endl;
 
 		free(face.vertices);
 	}

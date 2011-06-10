@@ -18,6 +18,9 @@ add_subdirectory(junkload)
 # preprocessor
 add_subdirectory(preprocess)
 
+# data
+add_subdirectory(data)
+
 # viewers
 add_subdirectory(equalizer)
 add_subdirectory(maoni)

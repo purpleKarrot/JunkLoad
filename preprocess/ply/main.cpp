@@ -7,7 +7,7 @@
 #include <junk/attribute_accessor.hpp>
 #include <junk/mapped_data_set.hpp>
 
-#include "ply_io.h"
+#include "ply.h"
 
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 
@@ -175,11 +175,11 @@ void _read_vertex_data(PlyFile* g_ply, junk::mapped_data_set& _data_set)
 
 		size_t offset = attr.offset;
 
-		ply_props.push_back(_create_ply_property("x", Float32, offset));
+		ply_props.push_back(_create_ply_property("x", PLY_FLOAT, offset));
 		offset += sizeof(float);
-		ply_props.push_back(_create_ply_property("y", Float32, offset));
+		ply_props.push_back(_create_ply_property("y", PLY_FLOAT, offset));
 		offset += sizeof(float);
-		ply_props.push_back(_create_ply_property("z", Float32, offset));
+		ply_props.push_back(_create_ply_property("z", PLY_FLOAT, offset));
 	}
 
 	if (has_attribute(vs, "normal"))
@@ -188,11 +188,11 @@ void _read_vertex_data(PlyFile* g_ply, junk::mapped_data_set& _data_set)
 
 		size_t offset = attr.offset;
 
-		ply_props.push_back(_create_ply_property("nx", Float32, offset));
+		ply_props.push_back(_create_ply_property("nx", PLY_FLOAT, offset));
 		offset += sizeof(float);
-		ply_props.push_back(_create_ply_property("ny", Float32, offset));
+		ply_props.push_back(_create_ply_property("ny", PLY_FLOAT, offset));
 		offset += sizeof(float);
-		ply_props.push_back(_create_ply_property("nz", Float32, offset));
+		ply_props.push_back(_create_ply_property("nz", PLY_FLOAT, offset));
 	}
 
 	if (has_attribute(vs, "color"))
@@ -310,25 +310,24 @@ int main(int argc, char* argv[])
 
 	_init_ply_sp_type_map();
 
+    int nelems;
+	char** elem_names;
+	int file_type;
+	float version;
+
 	// open file
-	boost::shared_ptr<FILE> file(fopen(source_file, "r"), fclose);
-	if (!file)
+	boost::shared_ptr<PlyFile> g_ply(ply_open_for_reading((char*) source_file,
+			&nelems, &elem_names, &file_type, &version), ply_close);
+	if (!g_ply)
 	{
 		std::cerr << "opening file " << source_file << " failed." << std::endl;
 		return -1;
 	}
 
-	boost::shared_ptr<PlyFile> g_ply(read_ply(file.get()), free_ply);
-	if (!g_ply)
-	{
-		std::cerr << "opening file " << source_file << " failed." << std::endl;
-		return -2;
-	}
-
 	// check for vertex and face element ( MUST HAVE )
 	bool has_vertex_element = false;
 	bool has_face_element = false;
-	for (int index = 0; index < g_ply->num_elem_types; ++index)
+	for (int index = 0; index < nelems; ++index)
 	{
 		if (std::string(g_ply->elems[index]->name) == "vertex")
 			has_vertex_element = true;
@@ -347,11 +346,11 @@ int main(int argc, char* argv[])
 	}
 
 	// get vertex information
-	_vertex_properties = get_element_description_ply(g_ply.get(), "vertex",
+	_vertex_properties = ply_get_element_description(g_ply.get(), "vertex",
 			&_vertex_count, &_vertex_property_count);
 
 	// get face information
-	_face_properties = get_element_description_ply(g_ply.get(), "face", &_face_count,
+	_face_properties = ply_get_element_description(g_ply.get(), "face", &_face_count,
 			&_face_property_count);
 
 	junk::mapped_data_set _data_set(target_file, true);

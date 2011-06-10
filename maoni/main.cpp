@@ -21,7 +21,12 @@
 #include <Maoni.hpp>
 #include "ModelPLY.hpp"
 
-RENDER_ALGORITHM(JunkRender, (ModelPLY, model, "../data/bunny.ply"))
+//RENDER_ALGORITHM(PLY, (ModelPLY, model, "data/trico.ply"))
+//{
+//	model.draw(myrank, ranks);
+//}
+
+RENDER_ALGORITHM(Junk, (ModelPLY, model, "data/screwdriver.ply"))
 {
 	model.draw(myrank, ranks);
 }

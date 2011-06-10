@@ -134,6 +134,11 @@ void VertexData::readTriangles( PlyFile* file, const int nFaces )
             throw MeshException( "Error reading PLY file. Encountered a "
                                  "face which does not have three vertices." );
         }
+
+        assert(face.vertices[0] < vertices.size());
+        assert(face.vertices[1] < vertices.size());
+        assert(face.vertices[2] < vertices.size());
+
         triangles.push_back( Triangle( face.vertices[ind1], 
                                        face.vertices[1],
                                        face.vertices[ind3] ) );
