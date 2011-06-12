@@ -31,7 +31,7 @@ PlyProperty _create_ply_property(const std::string& name, int internal_type,
 {
 	PlyProperty ply_property;
 	ply_property.name = new char[name.size()];
-	strcpy(ply_property.name, name.c_str());
+	strcpy((char*) ply_property.name, name.c_str());
 	ply_property.internal_type = internal_type;
 	ply_property.offset = offset;
 	ply_property.count_internal = count_internal;
@@ -41,18 +41,22 @@ PlyProperty _create_ply_property(const std::string& name, int internal_type,
 
 void _init_ply_sp_type_map()
 {
-	_ply_sp_type_map.resize(EndType + 1, junk::SP_INT_8);
+	_ply_sp_type_map.resize(PLY_END_TYPE + 1, junk::SP_INT_8);
 
-	_ply_sp_type_map[Int8] = junk::SP_INT_8;
-	_ply_sp_type_map[Int16] = junk::SP_INT_16;
-	_ply_sp_type_map[Int32] = junk::SP_INT_32;
+	_ply_sp_type_map[PLY_CHAR] = junk::SP_INT_8;
+	_ply_sp_type_map[PLY_SHORT] = junk::SP_INT_16;
+	_ply_sp_type_map[PLY_INT] = junk::SP_INT_32;
 
-	_ply_sp_type_map[Uint8] = junk::SP_UINT_8;
-	_ply_sp_type_map[Uint16] = junk::SP_UINT_16;
-	_ply_sp_type_map[Uint32] = junk::SP_UINT_32;
+	_ply_sp_type_map[PLY_UCHAR] = junk::SP_UINT_8;
+	_ply_sp_type_map[PLY_USHORT] = junk::SP_UINT_16;
+	_ply_sp_type_map[PLY_UINT] = junk::SP_UINT_32;
 
-	_ply_sp_type_map[Float32] = junk::SP_FLOAT_32;
-	_ply_sp_type_map[Float64] = junk::SP_FLOAT_64;
+	_ply_sp_type_map[PLY_FLOAT] = junk::SP_FLOAT_32;
+	_ply_sp_type_map[PLY_DOUBLE] = junk::SP_FLOAT_64;
+
+	_ply_sp_type_map[PLY_FLOAT32] = junk::SP_FLOAT_32;
+	_ply_sp_type_map[PLY_UINT8] = junk::SP_UINT_8;
+	_ply_sp_type_map[PLY_INT32] = junk::SP_INT_32;
 }
 
 void _setup_header_from_vertex_properties(junk::header& header)
@@ -202,18 +206,18 @@ void _read_vertex_data(PlyFile* g_ply, junk::mapped_data_set& _data_set)
 		size_t offset = attr.offset;
 
 		ply_props.push_back(
-				_create_ply_property(_color_names[0], Uint8, offset));
+				_create_ply_property(_color_names[0], PLY_UCHAR, offset));
 		offset += sizeof(uint8_t);
 		ply_props.push_back(
-				_create_ply_property(_color_names[1], Uint8, offset));
+				_create_ply_property(_color_names[1], PLY_UCHAR, offset));
 		offset += sizeof(uint8_t);
 		ply_props.push_back(
-				_create_ply_property(_color_names[2], Uint8, offset));
+				_create_ply_property(_color_names[2], PLY_UCHAR, offset));
 		if (_color_names.size() == 4)
 		{
 			offset += sizeof(uint8_t);
 			ply_props.push_back(
-					_create_ply_property(_color_names[3], Uint8, offset));
+					_create_ply_property(_color_names[3], PLY_UCHAR, offset));
 		}
 	}
 
@@ -266,9 +270,10 @@ void _read_face_data(PlyFile* g_ply, junk::mapped_data_set& _data_set)
 		uint8_t number_of_vertices;
 	} tmp_face_;
 
-	PlyProperty face_property =
-	{ "vertex_indices", Int32, Int32, offsetof(tmp_face, vertices), 1, Uint8,
-			Uint8, offsetof(tmp_face, number_of_vertices) };
+	PlyProperty face_property = {
+		"vertex_indices", PLY_INT, PLY_INT, offsetof(tmp_face, vertices),
+		1, PLY_UCHAR, PLY_UCHAR, offsetof(tmp_face, number_of_vertices)
+		};
 
 	ply_get_property(g_ply, "face", &face_property);
 
@@ -287,6 +292,7 @@ void _read_face_data(PlyFile* g_ply, junk::mapped_data_set& _data_set)
 			junk::vec3ui& indices = get_indices(*fit);
 			for (size_t index = 0; index < 3; ++index)
 			{
+				assert(tmp_face_.vertices[index] < _vertex_count);
 				indices[index] = tmp_face_.vertices[index];
 			}
 		}

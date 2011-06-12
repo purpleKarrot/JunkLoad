@@ -19,15 +19,27 @@
  */
 
 #include <Maoni.hpp>
-#include "Model.hpp"
-#include "ModelPLY.hpp"
+#include <junk/mapped_data_set.hpp>
+#include <boost/scoped_ptr.hpp>
 
-RENDER_ALGORITHM(Junk, (Model, model, "data/bunny.junk"))
+class Model: public Path
 {
-	model.draw(myrank, ranks);
-}
+public:
+	Model(const char* filename);
 
-RENDER_ALGORITHM(PLY, (ModelPLY, model, "data/trico.ply"))
-{
-	model.draw(myrank, ranks);
-}
+	virtual ~Model();
+
+	void draw(int myrank, int ranks) const;
+
+private:
+	void reset();
+	const char* const filter() const;
+
+	void read_file() const;
+
+private:
+	mutable boost::scoped_ptr<junk::mapped_data_set> data_set;
+	mutable std::size_t faces;
+	mutable GLuint vbuffer;
+	mutable GLuint ibuffer;
+};

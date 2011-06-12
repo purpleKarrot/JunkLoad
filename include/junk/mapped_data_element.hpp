@@ -47,6 +47,11 @@ public:
 	char* data();
 	const char* data() const;
 
+	std::size_t data_size() const
+	{
+		return _mapped_file.size();
+	}
+
 protected:
 	void _update();
 

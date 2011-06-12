@@ -50,6 +50,7 @@ namespace junk
 {
 
 std::size_t size_in_bytes(typid type);
+unsigned int gl_type(typid type);
 
 inline std::size_t size_in_bytes(const attribute& a)
 {

@@ -6,6 +6,7 @@
  */
 
 #include <junk/types.hpp>
+#include <GL/gl.h>
 
 namespace junk
 {
@@ -27,6 +28,25 @@ std::size_t size_in_bytes(typid type)
 	};
 
 	return type_sizes[type];
+}
+
+unsigned int gl_type(typid type)
+{
+	static unsigned int types[] =
+	{
+		GL_BYTE,
+		GL_SHORT,
+		GL_INT,
+		0, // GL_INT64,
+		GL_UNSIGNED_BYTE,
+		GL_UNSIGNED_SHORT,
+		GL_UNSIGNED_INT,
+		0, // GL_UNSIGNED_INT64,
+		GL_FLOAT,
+		GL_DOUBLE
+	};
+
+	return types[type];
 }
 
 } // namespace junk
