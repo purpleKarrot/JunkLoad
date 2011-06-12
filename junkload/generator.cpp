@@ -26,11 +26,9 @@ struct scalar_symbols: karma::symbols<typid, const char*>
 			(SP_INT_8,    "int8"   )
 			(SP_INT_16,   "int16"  )
 			(SP_INT_32,   "int32"  )
-			(SP_INT_64,   "int64"  )
 			(SP_UINT_8,   "uint8"  )
 			(SP_UINT_16,  "uint16" )
 			(SP_UINT_32,  "uint32" )
-			(SP_UINT_64,  "uint64" )
 			(SP_FLOAT_32, "float32")
 			(SP_FLOAT_64, "float64")
 		;

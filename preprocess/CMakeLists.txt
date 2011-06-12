@@ -5,22 +5,6 @@ include(CMakeParseArguments)
 
 #
 
-add_executable(ply_convert
-  ply/main.cpp
-  ply/ply.cpp
-  )
-
-target_link_libraries(ply_convert
-  junkload
-  )
-
-boost_link_libraries(ply_convert STATIC
-  iostreams
-  filesystem
-  )
-
-#
-
 add_executable(optimize
   optimize/main.cpp
   )

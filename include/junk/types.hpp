@@ -22,11 +22,9 @@ enum typid
 	SP_INT_8,
 	SP_INT_16,
 	SP_INT_32,
-	SP_INT_64,
 	SP_UINT_8,
 	SP_UINT_16,
 	SP_UINT_32,
-	SP_UINT_64,
 	SP_FLOAT_32,
 	SP_FLOAT_64,
 };
@@ -143,18 +141,6 @@ template<>
 struct get_typid_from_type<uint32_t>
 {
 	static const typid value = SP_UINT_32;
-};
-
-template<>
-struct get_typid_from_type<int64_t>
-{
-	static const typid value = SP_INT_64;
-};
-
-template<>
-struct get_typid_from_type<uint64_t>
-{
-	static const typid value = SP_UINT_64;
 };
 
 template<typename T, class Enable = void>

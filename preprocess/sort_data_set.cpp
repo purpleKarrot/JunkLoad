@@ -40,8 +40,6 @@ sort_data_set::sort_data_set(const params& params_) :
 		case SP_UINT_32:
 			_sort_faces<uint32_t, uint32_t> ();
 			break;
-		case SP_UINT_64:
-			_sort_faces<uint64_t, uint64_t> ();
 		default:
 			// FIXME
 			assert(!"NOT IMPLEMENTED YET.");

@@ -21,9 +21,6 @@ reindex_faces::reindex_faces(const params& params_) :
 	case SP_UINT_32:
 		_reindex<3, uint32_t> (); // triangles only atm
 		break;
-	case SP_UINT_64:
-		_reindex<3, uint64_t> (); // triangles only atm
-		break;
 	default:
 		throw std::runtime_error("NOT IMPLEMENTED YET.");
 	}

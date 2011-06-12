@@ -1,12 +1,22 @@
 
-add_executable(fix_scale
+function(add_tool name)
+  add_executable(${name}
+    ${ARGN}
+    )
+  target_link_libraries(${name}
+    junkload
+    )
+  boost_link_libraries(${name} STATIC
+    iostreams
+    )
+endfunction(add_tool)
+
+
+add_tool(fix_scale
   fix_scale.cpp
   )
 
-target_link_libraries(fix_scale
-  junkload
-  )
-
-boost_link_libraries(fix_scale STATIC
-  iostreams
+add_tool(ply_convert
+  ply/main.cpp
+  ply/ply.cpp
   )
