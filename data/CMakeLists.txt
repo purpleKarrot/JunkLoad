@@ -1,5 +1,5 @@
 
-set(models_output)
+set(data_output)
 
 foreach(model bunny rockerArm screwdriver trico)
   set(ply_input   "${CMAKE_CURRENT_SOURCE_DIR}/${model}.ply")
@@ -23,7 +23,21 @@ foreach(model bunny rockerArm screwdriver trico)
   list(APPEND models_output ${ply_output} ${junk_output})
 endforeach(model)
 
-add_custom_target(models ALL
+foreach(shader color)
+  set(shader_input   "${CMAKE_CURRENT_SOURCE_DIR}/${shader}.shader")
+  set(shader_output  "${CMAKE_CURRENT_BINARY_DIR}/${shader}.shader")
+  
+  add_custom_command(OUTPUT ${shader_output}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy ${shader_input} ${shader_output}
+    DEPENDS
+      ${shader_input}
+    )
+
+  list(APPEND data_output ${shader_output})
+endforeach(shader)
+
+add_custom_target(data ALL
   DEPENDS
-    ${models_output}
+    ${data_output}
   )

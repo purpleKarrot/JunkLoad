@@ -20,14 +20,14 @@
 
 #include <Maoni.hpp>
 #include "Model.hpp"
-#include "ModelPLY.hpp"
+#include "Shader.hpp"
 
-RENDER_ALGORITHM(Junk, (Model, model, "data/bunny.junk"))
+RENDER_ALGORITHM(Junk,
+	(Model, model, "data/bunny.junk")
+	(Shader, shader, "data/color.shader")
+	)
 {
+	shader.bind();
 	model.draw(myrank, ranks);
-}
-
-RENDER_ALGORITHM(PLY, (ModelPLY, model, "data/trico.ply"))
-{
-	model.draw(myrank, ranks);
+	shader.unbind();
 }

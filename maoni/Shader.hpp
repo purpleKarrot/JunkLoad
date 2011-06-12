@@ -20,14 +20,15 @@
 
 #include <Maoni.hpp>
 
-class ModelPLY: public Path
+class Shader: public Path
 {
 public:
-	ModelPLY(const char* filename);
+	Shader(const char* filename);
 
-	virtual ~ModelPLY();
+	virtual ~Shader();
 
-	void draw(int myrank, int ranks) const;
+	void bind() const;
+	void unbind() const;
 
 private:
 	void reset();
@@ -36,7 +37,5 @@ private:
 	void read_file() const;
 
 private:
-	mutable std::size_t faces;
-	mutable GLuint vbuffer;
-	mutable GLuint ibuffer;
+	mutable GLuint name;
 };
