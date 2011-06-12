@@ -57,10 +57,7 @@ struct header_grammar: karma::grammar<Iterator, header(), Skipper>
 		header_grammar::base_type(start)
 	{
 		start
-			%= "transform" << mat4d_ << karma::eol
-			<< "min" << vec3d_ << karma::eol
-			<< "max" << vec3d_ << karma::eol
-			<< "byteorder" << endian << karma::eol
+			%= "byteorder" << endian << karma::eol
 			<< karma::eol
 			<< element_ % karma::eol
 			;
@@ -76,21 +73,11 @@ struct header_grammar: karma::grammar<Iterator, header(), Skipper>
 		attribute_
 			%= karma::string << scalar_ << karma::uint_ << ';'
 			;
-
-		vec3d_
-			%= '[' << karma::repeat(3)[karma::double_] << ']'
-			;
-
-		mat4d_
-			%= '[' << karma::repeat(16)[karma::double_] << ']'
-			;
 	}
 
 	karma::rule<Iterator, header(), Skipper> start;
 	karma::rule<Iterator, element(), Skipper> element_;
 	karma::rule<Iterator, attribute(), Skipper> attribute_;
-	karma::rule<Iterator, vec3d(), Skipper> vec3d_;
-	karma::rule<Iterator, mat4d(), Skipper> mat4d_;
 
 	scalar_symbols scalar_;
 	karma::bool_generator<bool, endian_policy> endian;

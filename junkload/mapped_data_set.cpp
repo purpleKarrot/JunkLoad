@@ -75,24 +75,6 @@ void mapped_data_set::_setup(bool new_file)
 #endif
 }
 
-void mapped_data_set::compute_aabb()
-{
-	element& vs = _header.vertex();
-	const attribute& position = get_attribute(vs, "position");
-
-	switch (position.type)
-	{
-	case SP_FLOAT_32:
-		_compute_aabb<float> ();
-		break;
-	case SP_FLOAT_64:
-		_compute_aabb<double> ();
-		break;
-	default:
-		throw std::runtime_error("invalid type for computing aabb.");
-	}
-}
-
 element& mapped_data_set::get_vertex_element()
 {
 	return _header.vertex();

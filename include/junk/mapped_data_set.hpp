@@ -52,8 +52,6 @@ public:
 	inline const_iterator fbegin() const;
 	inline const_iterator fend() const;
 
-	void compute_aabb();
-
 	element& get_vertex_element();
 	const element& get_vertex_element() const;
 	const element& get_vertex_structure() const;
@@ -75,9 +73,6 @@ public:
 	void _setup(bool new_file);
 
 protected:
-	template<typename T>
-	void _compute_aabb();
-
 	header _header;
 	mapped_data_element* _vertex_map;
 	mapped_data_element* _face_map;
@@ -85,39 +80,6 @@ protected:
 	std::string _filename;
 
 };
-
-template<typename T>
-void mapped_data_set::_compute_aabb()
-{
-	typedef vmml::vector<3, T> vector_type;
-
-	const element& vs = _header.vertex();
-
-	const attribute& position = get_attribute(vs, "position");
-	attribute_accessor<vector_type> get_position(position.offset);
-
-	vector_type aabb_min(std::numeric_limits<T>::max());
-	vector_type aabb_max(-std::numeric_limits<T>::max());
-
-	for (iterator it = vbegin(), it_end = vend(); it != it_end; ++it)
-	{
-		const vector_type& v = get_position(*it);
-		for (size_t index = 0; index < 3; ++index)
-		{
-			const T& v_ = v[index];
-			T& min_ = aabb_min[index];
-			T& max_ = aabb_max[index];
-
-			if (v_ < min_)
-				min_ = v_;
-			if (v_ > max_)
-				max_ = v_;
-		}
-	}
-
-	_header.min = aabb_min;
-	_header.max = aabb_max;
-}
 
 inline char* mapped_data_set::get_vertex(size_t index)
 {

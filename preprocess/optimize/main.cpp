@@ -150,8 +150,5 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	data_set_.get_header().transform = _transform;
-
-	data_set_.compute_aabb();
 	junk::save_header(argv[1], data_set_.get_header());
 }

@@ -75,9 +75,6 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 		grammar::base_type(start)
 	{
 		start %= qi::eps
-			> "transform" > mat4d_
-			> "min" > vec3d_
-			> "max" > vec3d_
 			> "byteorder" > endian
 			> *element_
 			> qi::eoi
@@ -95,19 +92,6 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 			%= string_ > scalar_ > qi::uint_ > ';'
 			;
 
-		vec3d_
-			%= '[' > qi::double_ > qi::double_ > qi::double_ > ']'
-			;
-
-		mat4d_
-			%= '['
-			> qi::double_ > qi::double_ > qi::double_ > qi::double_
-			> qi::double_ > qi::double_ > qi::double_ > qi::double_
-			> qi::double_ > qi::double_ > qi::double_ > qi::double_
-			> qi::double_ > qi::double_ > qi::double_ > qi::double_
-			> ']'
-			;
-
 		string_
 			%= qi::lexeme[+(ascii::alnum | '_')]
 			;
@@ -116,8 +100,6 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 	qi::rule<Iterator, header(), Skipper> start;
 	qi::rule<Iterator, element(), Skipper> element_;
 	qi::rule<Iterator, attribute(), Skipper> attribute_;
-	qi::rule<Iterator, vec3d(), Skipper> vec3d_;
-	qi::rule<Iterator, mat4d(), Skipper> mat4d_;
 	qi::rule<Iterator, std::string(), Skipper> string_;
 
 	scalar_symbols scalar_;

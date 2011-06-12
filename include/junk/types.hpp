@@ -250,9 +250,6 @@ class header
 {
 public:
 	header():
-		transform(mat4d::IDENTITY),
-		min(-std::numeric_limits<double>::max()),
-		max(std::numeric_limits<double>::max()),
 	#ifdef __BIG_ENDIAN__
 		big_endian(true)
 	#else
@@ -262,8 +259,7 @@ public:
 	}
 
 	header(const header& other) :
-		transform(other.transform), min(other.min), max(other.max),
-				big_endian(other.big_endian), elements(other.elements)
+		big_endian(other.big_endian), elements(other.elements)
 	{
 	}
 
@@ -307,13 +303,10 @@ public:
 	}
 
 public:
-	mat4d transform;
-	vec3d min;
-	vec3d max;
 	bool big_endian;
 
 	typedef std::vector<element> super;
-mutable	super elements;
+	mutable	super elements;
 };
 
 inline element& header::get_element(const std::string& name)
@@ -370,36 +363,8 @@ bool save_header(const std::string& filename, const header& h);
 } // namespace junk
 
 BOOST_FUSION_ADAPT_STRUCT(junk::header,
-		(junk::mat4d, transform)
-		(junk::vec3d, min)
-		(junk::vec3d, max)
 		(bool, big_endian)
 		(std::vector<junk::element>, elements)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(junk::vec3d,
-		(double, array[0])
-		(double, array[1])
-		(double, array[2])
-)
-
-BOOST_FUSION_ADAPT_STRUCT(junk::mat4d,
-		(double, array[0])
-		(double, array[1])
-		(double, array[2])
-		(double, array[3])
-		(double, array[4])
-		(double, array[5])
-		(double, array[6])
-		(double, array[7])
-		(double, array[8])
-		(double, array[9])
-		(double, array[10])
-		(double, array[11])
-		(double, array[12])
-		(double, array[13])
-		(double, array[14])
-		(double, array[15])
 )
 
 #endif /* JUNKLOAD_TYPES_HPP */
