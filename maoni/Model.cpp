@@ -20,6 +20,7 @@
 
 #include <Maoni/glew.h>
 #include "Model.hpp"
+#include <boost/foreach.hpp>
 
 Model::Model(const char* filename) :
 		Path(filename), vbuffer(0), ibuffer(0)
@@ -61,28 +62,44 @@ void Model::draw(int myrank, int ranks) const
 
 	junk::header& header = data_set->get_header();
 	junk::element& vertex = header.get_element("vertex");
-	junk::attribute& position = vertex.attributes[0];
-	assert(position.name == "position");
-	assert(position.size == 3); // x, y, z
-	assert(gl_type(position.type) == GL_FLOAT);
-	assert(position.offset == 0);
+
+	bool vertex_array = false;
+	bool normal_array = false;
+	bool color_array = false;
+
+	BOOST_FOREACH(junk::attribute& attr, vertex.attributes)
+	{
+		if (attr.name == "position")
+		{
+			vertex_array = true;
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glVertexPointer(attr.size, gl_type(attr.type), size_in_bytes(vertex), (const GLvoid*) attr.offset);
+		}
+		else if (attr.name == "normal")
+		{
+			normal_array = true;
+			glEnableClientState(GL_NORMAL_ARRAY);
+			glNormalPointer(gl_type(attr.type), size_in_bytes(vertex), (const GLvoid*) attr.offset);
+		}
+		else if (attr.name == "color")
+		{
+			color_array = true;
+			glEnableClientState(GL_COLOR_ARRAY);
+			glColorPointer(attr.size, gl_type(attr.type), size_in_bytes(vertex), (const GLvoid*) 12 /*attr.offset*/);
+		}
+	}
 
 	faces = header.get_element("face").size;
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(position.size, gl_type(position.type), size_in_bytes(vertex), (const GLvoid*) position.offset);
-
-//	glEnableClientState(GL_NORMAL_ARRAY);
-//	glNormalPointer(GL_FLOAT, sizeof(Vertex), (const GLvoid*) offsetof(Vertex, normal));
-
-//	glEnableClientState(GL_COLOR_ARRAY);
-//	glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), (const GLvoid*) offsetof(Vertex, r));
-
 	glDrawRangeElements(GL_TRIANGLES, 0, faces * 3 - 1, faces * 3, GL_UNSIGNED_INT, 0);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
-//	glDisableClientState(GL_NORMAL_ARRAY);
-//	glDisableClientState(GL_COLOR_ARRAY);
+	if (vertex_array)
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+	if (normal_array)
+		glDisableClientState(GL_NORMAL_ARRAY);
+
+	if (color_array)
+		glDisableClientState(GL_COLOR_ARRAY);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
