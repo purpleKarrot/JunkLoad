@@ -4,13 +4,13 @@
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_QVM_FORCEINLINE
-#	if defined(_MSC_VER)
-#		define BOOST_QVM_FORCEINLINE __forceinline
-#	elif defined(__GNUC__) && __GNUC__>3
-#		define BOOST_QVM_FORCEINLINE inline __attribute__ ((always_inline))
-#	else
-#		define BOOST_QVM_FORCEINLINE inline
-#	endif
+#   if defined(_MSC_VER)
+#       define BOOST_QVM_FORCEINLINE __forceinline
+#   elif defined(__GNUC__) && __GNUC__>3
+#       define BOOST_QVM_FORCEINLINE inline __attribute__ ((always_inline))
+#   else
+#       define BOOST_QVM_FORCEINLINE inline
+#   endif
 #endif
 
 #ifndef BOOST_QVM_INLINE

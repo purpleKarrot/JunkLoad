@@ -13,61 +13,61 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		template <class Scalar>
-		struct
-		s_traits
-			{
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			Scalar
-			value( int v )
-				{
-				return Scalar(v);
-				}
-			};
+    {
+    namespace
+    qvm
+        {
+        template <class Scalar>
+        struct
+        s_traits
+            {
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            Scalar
+            value( int v )
+                {
+                return Scalar(v);
+                }
+            };
 
-		namespace
-		qvm_detail
-			{
-			template <class A,bool M=is_m<A>::value,bool Q=is_q<A>::value,bool V=is_v<A>::value>
-			struct
-			scalar_impl
-				{
-				};
+        namespace
+        qvm_detail
+            {
+            template <class A,bool M=is_m<A>::value,bool Q=is_q<A>::value,bool V=is_v<A>::value>
+            struct
+            scalar_impl
+                {
+                };
 
-			template <class A>
-			struct
-			scalar_impl<A,true,false,false>
-				{
-				typedef typename m_traits<A>::scalar_type type;
-				};
+            template <class A>
+            struct
+            scalar_impl<A,true,false,false>
+                {
+                typedef typename m_traits<A>::scalar_type type;
+                };
 
-			template <class A>
-			struct
-			scalar_impl<A,false,true,false>
-				{
-				typedef typename q_traits<A>::scalar_type type;
-				};
+            template <class A>
+            struct
+            scalar_impl<A,false,true,false>
+                {
+                typedef typename q_traits<A>::scalar_type type;
+                };
 
-			template <class A>
-			struct
-			scalar_impl<A,false,false,true>
-				{
-				typedef typename v_traits<A>::scalar_type type;
-				};
-			}
+            template <class A>
+            struct
+            scalar_impl<A,false,false,true>
+                {
+                typedef typename v_traits<A>::scalar_type type;
+                };
+            }
 
-		template <class A>
-		struct
-		scalar
-			{
-			typedef typename qvm_detail::scalar_impl<A>::type type;
-			};
-		}
-	}
+        template <class A>
+        struct
+        scalar
+            {
+            typedef typename qvm_detail::scalar_impl<A>::type type;
+            };
+        }
+    }
 
 #endif

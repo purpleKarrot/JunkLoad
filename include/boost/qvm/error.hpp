@@ -11,29 +11,29 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		struct
-		error:
-			virtual boost::exception,
-			virtual std::exception
-			{
-			char const *
-			what() const throw()
-				{
-				return "Boost QVM error";
-				}
+    {
+    namespace
+    qvm
+        {
+        struct
+        error:
+            virtual boost::exception,
+            virtual std::exception
+            {
+            char const *
+            what() const throw()
+                {
+                return "Boost QVM error";
+                }
 
-			~error() throw()
-				{
-				}
-			};
+            ~error() throw()
+                {
+                }
+            };
 
-		struct zero_determinant_error: virtual error { };
-		struct zero_magnitude_error: virtual error { };
-		}
-	}
+        struct zero_determinant_error: virtual error { };
+        struct zero_magnitude_error: virtual error { };
+        }
+    }
 
 #endif

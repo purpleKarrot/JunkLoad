@@ -13,90 +13,90 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		template <class T,int M,int N>
-		struct
-		v_traits<T[M][N]>
-			{
-			static int const dim=0;
-			typedef void scalar_type;
-			};
+    {
+    namespace
+    qvm
+        {
+        template <class T,int M,int N>
+        struct
+        v_traits<T[M][N]>
+            {
+            static int const dim=0;
+            typedef void scalar_type;
+            };
 
-		template <class T,int Dim>
-		struct
-		v_traits<T[Dim]>
-			{
-			typedef T this_vector[Dim];
-			typedef typename qvm_detail::remove_const<T>::type scalar_type;
-			static int const dim=Dim;
+        template <class T,int Dim>
+        struct
+        v_traits<T[Dim]>
+            {
+            typedef T this_vector[Dim];
+            typedef typename qvm_detail::remove_const<T>::type scalar_type;
+            static int const dim=Dim;
 
-			template <int I>
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type
-			r( this_vector const & x )
-				{
-				BOOST_QVM_STATIC_ASSERT(I>=0);
-				BOOST_QVM_STATIC_ASSERT(I<Dim);
-				return x[I];
-				}
+            template <int I>
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type
+            r( this_vector const & x )
+                {
+                BOOST_QVM_STATIC_ASSERT(I>=0);
+                BOOST_QVM_STATIC_ASSERT(I<Dim);
+                return x[I];
+                }
 
-			template <int I>
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type &
-			w( this_vector & x )
-				{
-				BOOST_QVM_STATIC_ASSERT(I>=0);
-				BOOST_QVM_STATIC_ASSERT(I<Dim);
-				return x[I];
-				}
+            template <int I>
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type &
+            w( this_vector & x )
+                {
+                BOOST_QVM_STATIC_ASSERT(I>=0);
+                BOOST_QVM_STATIC_ASSERT(I<Dim);
+                return x[I];
+                }
 
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type
-			ir( int i, this_vector const & x )
-				{
-				BOOST_QVM_ASSERT(i>=0);
-				BOOST_QVM_ASSERT(i<Dim);
-				return x[i];
-				}
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type
+            ir( int i, this_vector const & x )
+                {
+                BOOST_QVM_ASSERT(i>=0);
+                BOOST_QVM_ASSERT(i<Dim);
+                return x[i];
+                }
 
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type &
-			iw( int i, this_vector & x )
-				{
-				BOOST_QVM_ASSERT(i>=0);
-				BOOST_QVM_ASSERT(i<Dim);
-				return x[i];
-				}
-			};
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type &
+            iw( int i, this_vector & x )
+                {
+                BOOST_QVM_ASSERT(i>=0);
+                BOOST_QVM_ASSERT(i<Dim);
+                return x[i];
+                }
+            };
 
-		template <class T,int Dim,int D>
-		struct
-		deduce_v<T[Dim],D>
-			{
-			typedef vec<T,D> type;
-			};
+        template <class T,int Dim,int D>
+        struct
+        deduce_v<T[Dim],D>
+            {
+            typedef vec<T,D> type;
+            };
 
-		template <class T,int Dim,int D>
-		struct
-		deduce_v<T const[Dim],D>
-			{
-			typedef vec<T,D> type;
-			};
+        template <class T,int Dim,int D>
+        struct
+        deduce_v<T const[Dim],D>
+            {
+            typedef vec<T,D> type;
+            };
 
-		template <class T1,class T2,int Dim,int D>
-		struct
-		deduce_v2<T1[Dim],T2[Dim],D>
-			{
-			typedef vec<typename deduce_s<T1,T2>::type,D> type;
-			};
-		}
-	}
+        template <class T1,class T2,int Dim,int D>
+        struct
+        deduce_v2<T1[Dim],T2[Dim],D>
+            {
+            typedef vec<typename deduce_s<T1,T2>::type,D> type;
+            };
+        }
+    }
 
 #endif

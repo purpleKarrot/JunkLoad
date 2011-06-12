@@ -8,42 +8,42 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		template <class Q>
-		struct
-		q_traits
-			{
-			typedef void scalar_type;
-			};
+    {
+    namespace
+    qvm
+        {
+        template <class Q>
+        struct
+        q_traits
+            {
+            typedef void scalar_type;
+            };
 
-		namespace
-		is_quaternion_detail
-			{
-			template <class>
-			struct
-			is_void
-				{
-				static bool const value=false;
-				};
+        namespace
+        is_quaternion_detail
+            {
+            template <class>
+            struct
+            is_void
+                {
+                static bool const value=false;
+                };
 
-			template <>
-			struct
-			is_void<void>
-				{
-				static bool const value=true;
-				};
-			}
+            template <>
+            struct
+            is_void<void>
+                {
+                static bool const value=true;
+                };
+            }
 
-		template <class T>
-		struct
-		is_q
-			{
-			static bool const value=!is_quaternion_detail::is_void<typename q_traits<T>::scalar_type>::value;
-			};
-		}
-	}
+        template <class T>
+        struct
+        is_q
+            {
+            static bool const value=!is_quaternion_detail::is_void<typename q_traits<T>::scalar_type>::value;
+            };
+        }
+    }
 
 #endif

@@ -12,79 +12,79 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		////////////////////////////////////////////////
+    {
+    namespace
+    qvm
+        {
+        ////////////////////////////////////////////////
 
-		namespace
-		qvm_detail
-			{
-			template <int M,int N>
-			struct
-			mul_mv_defined
-				{
-				static bool const value=false;
-				};
-			}
+        namespace
+        qvm_detail
+            {
+            template <int M,int N>
+            struct
+            mul_mv_defined
+                {
+                static bool const value=false;
+                };
+            }
 
-		template <class A,class B>
-		BOOST_QVM_INLINE_OPERATIONS
-		typename lazy_enable_if_c<
-			is_m<A>::value && is_v<B>::value &&
-			m_traits<A>::cols==v_traits<B>::dim &&
-			!qvm_detail::mul_mv_defined<m_traits<A>::rows,m_traits<A>::cols>::value,
-			deduce_v2<A,B,m_traits<A>::rows> >::type
-		operator*( A const & a, B const & b )
-			{
-			typedef typename deduce_v2<A,B,m_traits<A>::rows>::type R;
-			R r;
-			for( int i=0; i<m_traits<A>::rows; ++i )
-				{
-				typedef typename v_traits<R>::scalar_type Tr;
-				Tr x(s_traits<Tr>::value(0));
-				for( int j=0; j<m_traits<A>::cols; ++j )
-					x += m_traits<A>::ir(i,j,a)*v_traits<B>::ir(j,b);
-				v_traits<R>::iw(i,r) = x;
-				}
-			return r;
-			}
+        template <class A,class B>
+        BOOST_QVM_INLINE_OPERATIONS
+        typename lazy_enable_if_c<
+            is_m<A>::value && is_v<B>::value &&
+            m_traits<A>::cols==v_traits<B>::dim &&
+            !qvm_detail::mul_mv_defined<m_traits<A>::rows,m_traits<A>::cols>::value,
+            deduce_v2<A,B,m_traits<A>::rows> >::type
+        operator*( A const & a, B const & b )
+            {
+            typedef typename deduce_v2<A,B,m_traits<A>::rows>::type R;
+            R r;
+            for( int i=0; i<m_traits<A>::rows; ++i )
+                {
+                typedef typename v_traits<R>::scalar_type Tr;
+                Tr x(s_traits<Tr>::value(0));
+                for( int j=0; j<m_traits<A>::cols; ++j )
+                    x += m_traits<A>::ir(i,j,a)*v_traits<B>::ir(j,b);
+                v_traits<R>::iw(i,r) = x;
+                }
+            return r;
+            }
 
-		namespace
-		qvm_detail
-			{
-			template <int M,int N>
-			struct
-			mul_vm_defined
-				{
-				static bool const value=false;
-				};
-			}
+        namespace
+        qvm_detail
+            {
+            template <int M,int N>
+            struct
+            mul_vm_defined
+                {
+                static bool const value=false;
+                };
+            }
 
-		template <class A,class B>
-		BOOST_QVM_INLINE_OPERATIONS
-		typename lazy_enable_if_c<
-			is_v<A>::value && is_m<B>::value &&
-			v_traits<A>::dim==m_traits<B>::rows &&
-			!qvm_detail::mul_vm_defined<m_traits<B>::rows,m_traits<B>::cols>::value,
-			deduce_v2<A,B,m_traits<B>::cols> >::type
-		operator*( A const & a, B const & b )
-			{
-			typedef typename deduce_v2<A,B,m_traits<B>::cols>::type R;
-			R r;
-			for( int i=0; i<m_traits<B>::cols; ++i )
-				{
-				typedef typename v_traits<R>::scalar_type Tr;
-				Tr x(s_traits<Tr>::value(0));
-				for( int j=0; j<m_traits<B>::rows; ++j )
-					x += v_traits<A>::ir(j,a)*m_traits<B>::ir(j,i,b);
-				v_traits<R>::iw(i,r) = x;
-				}
-			return r;
-			}
+        template <class A,class B>
+        BOOST_QVM_INLINE_OPERATIONS
+        typename lazy_enable_if_c<
+            is_v<A>::value && is_m<B>::value &&
+            v_traits<A>::dim==m_traits<B>::rows &&
+            !qvm_detail::mul_vm_defined<m_traits<B>::rows,m_traits<B>::cols>::value,
+            deduce_v2<A,B,m_traits<B>::cols> >::type
+        operator*( A const & a, B const & b )
+            {
+            typedef typename deduce_v2<A,B,m_traits<B>::cols>::type R;
+            R r;
+            for( int i=0; i<m_traits<B>::cols; ++i )
+                {
+                typedef typename v_traits<R>::scalar_type Tr;
+                Tr x(s_traits<Tr>::value(0));
+                for( int j=0; j<m_traits<B>::rows; ++j )
+                    x += v_traits<A>::ir(j,a)*m_traits<B>::ir(j,i,b);
+                v_traits<R>::iw(i,r) = x;
+                }
+            return r;
+            }
 
-		////////////////////////////////////////////////
+        ////////////////////////////////////////////////
 
         template <class A,class B>
         BOOST_QVM_INLINE_OPERATIONS
@@ -151,18 +151,18 @@ boost
             return r;
             }
 
-		////////////////////////////////////////////////
+        ////////////////////////////////////////////////
 
-		namespace
-		sfinae
-			{
-			using ::boost::qvm::operator*;
-			using ::boost::qvm::transform_point;
-			using ::boost::qvm::transform_vector;
-			}
+        namespace
+        sfinae
+            {
+            using ::boost::qvm::operator*;
+            using ::boost::qvm::transform_point;
+            using ::boost::qvm::transform_vector;
+            }
 
-		////////////////////////////////////////////////
-		}
-	}
+        ////////////////////////////////////////////////
+        }
+    }
 
 #endif

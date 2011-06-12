@@ -17,6 +17,7 @@ add_subdirectory(junkload)
 
 # preprocessor
 add_subdirectory(preprocess)
+add_subdirectory(tools)
 
 # data
 add_subdirectory(data)

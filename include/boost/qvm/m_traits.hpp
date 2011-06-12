@@ -8,26 +8,26 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		template <class M>
-		struct
-		m_traits
-			{
-			static int const rows=0;
-			static int const cols=0;
-			typedef void scalar_type;
-			};
+    {
+    namespace
+    qvm
+        {
+        template <class M>
+        struct
+        m_traits
+            {
+            static int const rows=0;
+            static int const cols=0;
+            typedef void scalar_type;
+            };
 
-		template <class T>
-		struct
-		is_m
-			{
-			static bool const value=m_traits<T>::rows>0 && m_traits<T>::cols>0;
-			};
-		}
-	}
+        template <class T>
+        struct
+        is_m
+            {
+            static bool const value=m_traits<T>::rows>0 && m_traits<T>::cols>0;
+            };
+        }
+    }
 
 #endif

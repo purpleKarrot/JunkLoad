@@ -12,78 +12,78 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		template <class T,int D>
-		struct
-		vec
-			{
-			T a[D];
-			template <class R>
-			operator R() const
-				{
-				R r;
-				assign(r,*this);
-				return r;
-				}
-			};
+    {
+    namespace
+    qvm
+        {
+        template <class T,int D>
+        struct
+        vec
+            {
+            T a[D];
+            template <class R>
+            operator R() const
+                {
+                R r;
+                assign(r,*this);
+                return r;
+                }
+            };
 
-		template <class V>
-		struct v_traits;
+        template <class V>
+        struct v_traits;
 
-		template <class T,int Dim>
-		struct
-		v_traits< vec<T,Dim> >
-			{
-			typedef vec<T,Dim> this_vector;
-			typedef T scalar_type;
-			static int const dim=Dim;
+        template <class T,int Dim>
+        struct
+        v_traits< vec<T,Dim> >
+            {
+            typedef vec<T,Dim> this_vector;
+            typedef T scalar_type;
+            static int const dim=Dim;
 
-			template <int I>
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type
-			r( this_vector const & x )
-				{
-				BOOST_QVM_STATIC_ASSERT(I>=0);
-				BOOST_QVM_STATIC_ASSERT(I<dim);
-				return x.a[I];
-				}
+            template <int I>
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type
+            r( this_vector const & x )
+                {
+                BOOST_QVM_STATIC_ASSERT(I>=0);
+                BOOST_QVM_STATIC_ASSERT(I<dim);
+                return x.a[I];
+                }
 
-			template <int I>
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type &
-			w( this_vector & x )
-				{
-				BOOST_QVM_STATIC_ASSERT(I>=0);
-				BOOST_QVM_STATIC_ASSERT(I<dim);
-				return x.a[I];
-				}
+            template <int I>
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type &
+            w( this_vector & x )
+                {
+                BOOST_QVM_STATIC_ASSERT(I>=0);
+                BOOST_QVM_STATIC_ASSERT(I<dim);
+                return x.a[I];
+                }
 
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type
-			ir( int i, this_vector const & x )
-				{
-				BOOST_QVM_ASSERT(i>=0);
-				BOOST_QVM_ASSERT(i<dim);
-				return x.a[i];
-				}
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type
+            ir( int i, this_vector const & x )
+                {
+                BOOST_QVM_ASSERT(i>=0);
+                BOOST_QVM_ASSERT(i<dim);
+                return x.a[i];
+                }
 
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type &
-			iw( int i, this_vector & x )
-				{
-				BOOST_QVM_ASSERT(i>=0);
-				BOOST_QVM_ASSERT(i<dim);
-				return x.a[i];
-				}
-			};
-		}
-	}
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type &
+            iw( int i, this_vector & x )
+                {
+                BOOST_QVM_ASSERT(i>=0);
+                BOOST_QVM_ASSERT(i<dim);
+                return x.a[i];
+                }
+            };
+        }
+    }
 
 #endif

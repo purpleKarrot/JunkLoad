@@ -12,53 +12,53 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		namespace
-		qvm_detail
-			{
-			template <class A>
-			BOOST_QVM_INLINE_OPERATIONS
-			typename deduce_m<A>::type
-			cofactor_impl( A const & a )
-				{
-				BOOST_QVM_STATIC_ASSERT(m_traits<A>::rows==m_traits<A>::cols);
-				int const N=m_traits<A>::rows;
-				typedef typename m_traits<A>::scalar_type T;
-				T c[N-1][N-1];
-				typedef typename deduce_m<A>::type R;
-				R b;
-				for( int j=0; j!=N; ++j )
-					{
-					for( int i=0; i!=N; ++i )
-						{
-						int i1=0;
-						for( int ii=0; ii!=N; ++ii )
-							{
-							if( ii==i )
-								continue;
-							int j1=0;
-							for( int jj=0; jj!=N; ++jj )
-								{
-								if( jj==j )
-									continue;
-								c[i1][j1] = m_traits<A>::ir(ii,jj,a);
-								++j1;
-								}
-							++i1;
-							}
-						T det = determinant_impl(c);
-						if( (i+j)&1 )
-							det=-det;
-						m_traits<R>::iw(i,j,b) = det;
-						}
-					}
-				return b;
-				}
-			}
-		}
-	}
+    {
+    namespace
+    qvm
+        {
+        namespace
+        qvm_detail
+            {
+            template <class A>
+            BOOST_QVM_INLINE_OPERATIONS
+            typename deduce_m<A>::type
+            cofactor_impl( A const & a )
+                {
+                BOOST_QVM_STATIC_ASSERT(m_traits<A>::rows==m_traits<A>::cols);
+                int const N=m_traits<A>::rows;
+                typedef typename m_traits<A>::scalar_type T;
+                T c[N-1][N-1];
+                typedef typename deduce_m<A>::type R;
+                R b;
+                for( int j=0; j!=N; ++j )
+                    {
+                    for( int i=0; i!=N; ++i )
+                        {
+                        int i1=0;
+                        for( int ii=0; ii!=N; ++ii )
+                            {
+                            if( ii==i )
+                                continue;
+                            int j1=0;
+                            for( int jj=0; jj!=N; ++jj )
+                                {
+                                if( jj==j )
+                                    continue;
+                                c[i1][j1] = m_traits<A>::ir(ii,jj,a);
+                                ++j1;
+                                }
+                            ++i1;
+                            }
+                        T det = determinant_impl(c);
+                        if( (i+j)&1 )
+                            det=-det;
+                        m_traits<R>::iw(i,j,b) = det;
+                        }
+                    }
+                return b;
+                }
+            }
+        }
+    }
 
 #endif

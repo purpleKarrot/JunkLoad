@@ -12,57 +12,57 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		template <class T>
-		struct
-		quat
-			{
-			T a[4];
-			template <class R>
-			operator R() const
-				{
-				R r;
-				assign(r,*this);
-				return r;
-				}
-			};
+    {
+    namespace
+    qvm
+        {
+        template <class T>
+        struct
+        quat
+            {
+            T a[4];
+            template <class R>
+            operator R() const
+                {
+                R r;
+                assign(r,*this);
+                return r;
+                }
+            };
 
-		template <class Q>
-		struct q_traits;
+        template <class Q>
+        struct q_traits;
 
-		template <class T>
-		struct
-		q_traits< quat<T> >
-			{
-			typedef quat<T> this_quaternion;
-			typedef T scalar_type;
+        template <class T>
+        struct
+        q_traits< quat<T> >
+            {
+            typedef quat<T> this_quaternion;
+            typedef T scalar_type;
 
-			template <int I>
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type
-			r( this_quaternion const & x )
-				{
-				BOOST_QVM_STATIC_ASSERT(I>=0);
-				BOOST_QVM_STATIC_ASSERT(I<4);
-				return x.a[I];
-				}
+            template <int I>
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type
+            r( this_quaternion const & x )
+                {
+                BOOST_QVM_STATIC_ASSERT(I>=0);
+                BOOST_QVM_STATIC_ASSERT(I<4);
+                return x.a[I];
+                }
 
-			template <int I>
-			static
-			BOOST_QVM_INLINE_CRITICAL
-			scalar_type &
-			w( this_quaternion & x )
-				{
-				BOOST_QVM_STATIC_ASSERT(I>=0);
-				BOOST_QVM_STATIC_ASSERT(I<4);
-				return x.a[I];
-				}
-			};
-		}
-	}
+            template <int I>
+            static
+            BOOST_QVM_INLINE_CRITICAL
+            scalar_type &
+            w( this_quaternion & x )
+                {
+                BOOST_QVM_STATIC_ASSERT(I>=0);
+                BOOST_QVM_STATIC_ASSERT(I<4);
+                return x.a[I];
+                }
+            };
+        }
+    }
 
 #endif

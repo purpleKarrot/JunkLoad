@@ -12,52 +12,52 @@
 
 namespace
 boost
-	{
-	namespace
-	qvm
-		{
-		template <class T>
-		struct quat;
+    {
+    namespace
+    qvm
+        {
+        template <class T>
+        struct quat;
 
-		template <class Q>
-		struct
-		deduce_q
-			{
-			BOOST_QVM_STATIC_ASSERT(is_q<Q>::value);
-			typedef Q type;
-			};
+        template <class Q>
+        struct
+        deduce_q
+            {
+            BOOST_QVM_STATIC_ASSERT(is_q<Q>::value);
+            typedef Q type;
+            };
 
-		namespace
-		qvm_detail
-			{
-			template <class A,class B,
-				bool QA=is_q<A>::value,
-				bool QB=is_q<B>::value>
-			struct
-			deduce_q2_default
-				{
-				typedef quat<
-					typename deduce_s<
-						typename scalar<A>::type,
-						typename scalar<B>::type>::type> type;
-				};
+        namespace
+        qvm_detail
+            {
+            template <class A,class B,
+                bool QA=is_q<A>::value,
+                bool QB=is_q<B>::value>
+            struct
+            deduce_q2_default
+                {
+                typedef quat<
+                    typename deduce_s<
+                        typename scalar<A>::type,
+                        typename scalar<B>::type>::type> type;
+                };
 
-			template <class Q>
-			struct
-			deduce_q2_default<Q,Q,true,true>
-				{
-				typedef Q type;
-				};
-			};
+            template <class Q>
+            struct
+            deduce_q2_default<Q,Q,true,true>
+                {
+                typedef Q type;
+                };
+            };
 
-		template <class A,class B>
-		struct
-		deduce_q2
-			{
-			BOOST_QVM_STATIC_ASSERT(is_q<A>::value || is_q<B>::value);
-			typedef typename qvm_detail::deduce_q2_default<A,B>::type type;
-			};
-		}
-	}
+        template <class A,class B>
+        struct
+        deduce_q2
+            {
+            BOOST_QVM_STATIC_ASSERT(is_q<A>::value || is_q<B>::value);
+            typedef typename qvm_detail::deduce_q2_default<A,B>::type type;
+            };
+        }
+    }
 
 #endif
