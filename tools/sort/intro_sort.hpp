@@ -27,20 +27,20 @@ inline int bsr(int _value)
 	return result;
 }
 
-template<typename T, typename Compare>
-inline T median(const T& begin, const T& center, const T& end, Compare cmp)
+template<typename T>
+inline T median(const T& begin, const T& center, const T& end)
 {
-	if (cmp(center, begin) && cmp(center, end))
-		return cmp(begin, end) ? begin : end;
+	if (center < begin && center < end)
+		return begin < end ? begin : end;
 
-	if (cmp(begin, center) && cmp(end, center))
-		return cmp(begin, end) ? end : begin;
+	if (begin < center && end < center)
+		return begin < end ? end : begin;
 
 	return center;
 }
 
-template<typename Iterator, typename Compare>
-inline void insertion_sort(Iterator begin_, Iterator end_, Compare cmp)
+template<typename Iterator>
+inline void insertion_sort(Iterator begin_, Iterator end_)
 {
 	typedef typename std::iterator_traits<Iterator>::value_type value_t;
 
@@ -57,7 +57,7 @@ inline void insertion_sort(Iterator begin_, Iterator end_, Compare cmp)
 		Iterator j = i;
 		value_t v = *i;
 
-		while (j != begin_ && cmp(v, *(j - 1)))
+		while (j != begin_ && v < *(j - 1))
 		{
 			*j = *(j - 1);
 			--j;
@@ -67,8 +67,8 @@ inline void insertion_sort(Iterator begin_, Iterator end_, Compare cmp)
 	}
 }
 
-template<typename Iterator, typename Compare>
-void do_intro_sort(Iterator begin_, Iterator end_, Compare cmp,
+template<typename Iterator>
+void do_intro_sort(Iterator begin_, Iterator end_,
 		std::size_t depth_, boost::threadpool::pool& _threadpool)
 {
 	typedef typename std::iterator_traits<Iterator>::value_type value_t;
@@ -86,7 +86,7 @@ void do_intro_sort(Iterator begin_, Iterator end_, Compare cmp,
 		// if only few members are left use insertion sort
 		if (end_ - begin_ < INSERTION_THRESHOLD)
 		{
-			insertion_sort(begin_, end_, cmp);
+			insertion_sort(begin_, end_);
 			return;
 		}
 
@@ -99,7 +99,7 @@ void do_intro_sort(Iterator begin_, Iterator end_, Compare cmp,
 		}
 
 		// calculate the pivot
-		value_t p = median(*begin_, *(begin_ + (end_ - begin_) / 2), *(end_ - 1), cmp);
+		value_t p = median(*begin_, *(begin_ + (end_ - begin_) / 2), *(end_ - 1));
 		Iterator i = begin_, j = end_;
 
 		// quicksort partitioning
@@ -121,12 +121,12 @@ void do_intro_sort(Iterator begin_, Iterator end_, Compare cmp,
 		{
 			if (r < THREAD_THRESHOLD)
 			{
-				do_intro_sort(i, end_, cmp, depth_, _threadpool);
+				do_intro_sort(i, end_, depth_, _threadpool);
 			}
 			else
 			{
-				_threadpool.schedule(boost::bind(&do_intro_sort<Iterator, Compare>,
-						i, end_, cmp, depth_, boost::ref(_threadpool)));
+				_threadpool.schedule(boost::bind(&do_intro_sort<Iterator>,
+						i, end_, depth_, boost::ref(_threadpool)));
 			}
 		}
 
@@ -136,8 +136,8 @@ void do_intro_sort(Iterator begin_, Iterator end_, Compare cmp,
 
 } // namespace detail
 
-template<class Iterator, class Compare>
-void intro_sort(Iterator first, Iterator last, Compare comp)
+template<class Iterator>
+void intro_sort(Iterator first, Iterator last)
 {
 	int number_of_threads = boost::thread::hardware_concurrency();
 	if (number_of_threads < 1)
@@ -149,7 +149,7 @@ void intro_sort(Iterator first, Iterator last, Compare comp)
 
 	if (last - first > 1)
 	{
-		detail::do_intro_sort(first, last, comp, depth, threadpool);
+		detail::do_intro_sort(first, last, depth, threadpool);
 		threadpool.wait();
 	}
 }

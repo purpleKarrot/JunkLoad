@@ -12,10 +12,6 @@ function(add_tool name)
 endfunction(add_tool)
 
 
-add_tool(read_header
-  read_header.cpp
-  )
-
 add_tool(fix_scale
   fix_scale.cpp
   )

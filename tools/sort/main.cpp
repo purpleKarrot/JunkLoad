@@ -103,7 +103,7 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 	}
 
 	// do the actual sorting
-	trip::intro_sort(begin, end, std::less<sort_ref>());
+	trip::intro_sort(begin, end);
 
 	// setup result file
 	boost::iostreams::mapped_file_params out_params;
@@ -217,7 +217,7 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 	}
 
 	// do the actual sorting
-	trip::intro_sort(begin, end, std::less<sort_ref>());
+	trip::intro_sort(begin, end);
 
 	// setup result file
 	boost::iostreams::mapped_file_params out_params;
