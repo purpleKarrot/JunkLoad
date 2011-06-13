@@ -7,6 +7,7 @@
 
 #include <junk/mapped_data_set.hpp>
 #include "intro_sort.hpp"
+#include "z_order.hpp"
 
 template<typename T>
 class smallest_component_accessor
@@ -45,16 +46,14 @@ struct sort_reference
 	}
 };
 
-struct pos
-{
-	float x, y, z;
-};
+typedef boost::qvm::vec<float, 3> pos;
 
 struct pos_order
 {
 	bool operator()(const pos& a, const pos& b)
 	{
-		return a.y < b.y;
+		return zorder_less(a, b);
+		//return a.z < b.z;
 	}
 };
 

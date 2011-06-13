@@ -29,7 +29,7 @@ public:
 
 	virtual ~Model();
 
-	void draw(int myrank, int ranks) const;
+	void draw(int ranges) const;
 
 private:
 	void reset();

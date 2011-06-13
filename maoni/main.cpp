@@ -25,9 +25,10 @@
 RENDER_ALGORITHM(Junk,
 	(Model, model, "data/bunny.junk")
 	(Shader, shader, "data/color.shader")
+	(int, ranges, 5)
 	)
 {
 	shader.bind();
-	model.draw(myrank, ranks);
+	model.draw(ranges);
 	shader.unbind();
 }

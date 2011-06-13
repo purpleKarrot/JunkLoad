@@ -50,7 +50,7 @@ void Model::read_file() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Model::draw(int myrank, int ranks) const
+void Model::draw(int ranges) const
 {
 	if (!vbuffer)
 		read_file();
@@ -91,14 +91,13 @@ void Model::draw(int myrank, int ranks) const
 
 	std::size_t faces = header.get_element("face").size;
 
-	int total = 10;
-	for (int i = 0; i < total; ++i)
+	for (int i = 0; i < ranges; ++i)
 	{
-		int frag = faces / total;
+		int frag = faces / ranges;
 		int size = ((i + 1) * (frag + 1) * 3) - (i * frag * 3);
 		GLvoid* index = (char*) NULL + (i * frag * 3 * sizeof(unsigned int));
 
-		float ratio = float(i) / float(total);
+		float ratio = float(i) / float(ranges);
 
 		glColor3f(ratio, 1.f - ratio, 0.2f);
 		glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, index);

@@ -13,8 +13,8 @@ zorder_less(const Vector& a, const Vector& b)
 
 	for (int k = 0; k < v_traits::dim; ++k)
 	{
-		v_traits::scalar_type ak = v_traits::ir(k, a);
-		v_traits::scalar_type bk = v_traits::ir(k, b);
+		typename v_traits::scalar_type ak = v_traits::ir(k, a);
+		typename v_traits::scalar_type bk = v_traits::ir(k, b);
 
 		if ((ak < 0) != (bk < 0))
 			return ak < bk;
@@ -64,6 +64,6 @@ int msdb(Float a, Float b)
 		x_sig.i[i] |= lzero.i[i];
 	}
 
-	std::frexp(x_sig - lzero.d, &y_exp);
+	std::frexp(x_sig.d - lzero.d, &y_exp);
 	return x_exp + y_exp;
 }
