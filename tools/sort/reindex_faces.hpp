@@ -16,9 +16,8 @@ namespace junk
 namespace io = boost::iostreams;
 namespace fs = boost::filesystem;
 
-class reindex_faces
+struct reindex_faces
 {
-public:
 	struct params
 	{
 		std::string faces_file;
@@ -27,18 +26,18 @@ public:
 		junk::typid index_type;
 	};
 
-	reindex_faces(const params& params_);
+	reindex_faces(const params& params_) :
+		_params(params_)
+	{
+	}
 
-protected:
 	template<size_t M, typename T>
 	void _reindex();
 
 	params _params;
 	io::mapped_file_source _reindex_map;
 	io::mapped_file _faces_file;
-
-}; // class reindex_faces
-
+};
 
 template<size_t M, typename T>
 void reindex_faces::_reindex()

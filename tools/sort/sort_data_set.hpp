@@ -15,24 +15,24 @@
 namespace junk
 {
 
-class sort_data_set
+struct sort_data_set
 {
-public:
 	struct params
 	{
 		std::string in_name;
 		std::string out_name;
 		std::string tmp_name;
 		bool build_index_map;
-		size_t number_of_threads;
-		std::string sort_attribute;
+//		std::string sort_attribute;
 	};
 
-	sort_data_set(const params& params_);
+	sort_data_set(const params& params_) :
+		_params(params_), _input(_params.in_name)
+	{
+	}
 
-protected:
 	template<typename value_t, typename index_t>
-	void _sort_vertices(size_t index = 2); // default to z-sort
+	void _sort_vertices(size_t index = 0); // default to z-sort
 
 	template<typename value_t, typename index_t>
 	void _sort_faces();
@@ -40,8 +40,7 @@ protected:
 	// warning: only call this function with types that are
 	// of the same size ( sizeof(Tvalue) == sizeof(Tindex) )! - FIXME sfinae
 	template<typename value_t, typename index_t, typename value_accessor_t>
-	void _sort_file(const mapped_data_element& source,
-			const value_accessor_t& accessor_);
+	void _sort_file(const mapped_data_element& source, const value_accessor_t& accessor_);
 
 	params _params;
 
@@ -62,7 +61,7 @@ void sort_data_set::_sort_vertices(size_t index)
 	assert(_input.get_vertex_map().is_open());
 
 	const element& vs = vertices; //.get_structure();
-	const attribute& sort_attr = get_attribute(vs, _params.sort_attribute);
+	const attribute& sort_attr = get_attribute(vs, "position");
 
 	size_t base_offset = sort_attr.offset;
 	base_offset += index * sizeof(value_t);
@@ -78,7 +77,7 @@ void sort_data_set::_sort_faces()
 
 	const header& in_header = _input.get_header();
 	const element& fs = in_header.face();
-	const attribute& sort_attr = get_attribute(fs, _params.sort_attribute);
+	const attribute& sort_attr = get_attribute(fs, "vertex_indices");
 
 	size_t size = in_header.face().size;
 
@@ -140,7 +139,11 @@ void sort_data_set::_sort_file(const mapped_data_element& source_,
 		typedef trip::intro_sort<sort_ref, sort_ref*, std::less<sort_ref> >
 				intro_sort_type;
 
-		boost::threadpool::pool threadpool(_params.number_of_threads);
+		int number_of_threads = boost::thread::hardware_concurrency();
+		if (number_of_threads < 1)
+			number_of_threads = 1;
+
+		boost::threadpool::pool threadpool(number_of_threads);
 		intro_sort_type is(threadpool);
 		is(begin, end);
 	}

@@ -74,7 +74,8 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 	grammar() :
 		grammar::base_type(start)
 	{
-		start %= qi::eps
+		start
+			%= qi::eps
 			> "byteorder" > endian
 			> *element_
 			> qi::eoi
@@ -93,7 +94,7 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 			;
 
 		string_
-			%= qi::lexeme[+(ascii::alnum | '_')]
+			%= qi::lexeme[+(ascii::alnum | qi::char_('_'))]
 			;
 	}
 

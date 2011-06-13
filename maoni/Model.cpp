@@ -89,8 +89,20 @@ void Model::draw(int myrank, int ranks) const
 		}
 	}
 
-	faces = header.get_element("face").size;
-	glDrawRangeElements(GL_TRIANGLES, 0, faces * 3 - 1, faces * 3, GL_UNSIGNED_INT, 0);
+	std::size_t faces = header.get_element("face").size;
+
+	int total = 10;
+	for (int i = 0; i < total; ++i)
+	{
+		int frag = faces / total;
+		int size = ((i + 1) * (frag + 1) * 3) - (i * frag * 3);
+		GLvoid* index = (char*) NULL + (i * frag * 3 * sizeof(unsigned int));
+
+		float ratio = float(i) / float(total);
+
+		glColor3f(ratio, 1.f - ratio, 0.2f);
+		glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, index);
+	}
 
 	if (vertex_array)
 		glDisableClientState(GL_VERTEX_ARRAY);
