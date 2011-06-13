@@ -7,7 +7,6 @@
 
 #include <junk/mapped_data_set.hpp>
 #include "intro_sort.hpp"
-#include "preprocess_types.hpp"
 
 template<typename T>
 class smallest_component_accessor
@@ -29,6 +28,36 @@ private:
 	std::size_t size;
 };
 
+template<typename Value, typename Index, typename Less = std::less<Value> >
+struct sort_reference
+{
+	union
+	{
+		Value value;
+		Index new_index;
+	};
+
+	Index index;
+
+	bool operator<(const sort_reference& other) const
+	{
+		return Less()(value, other.value);
+	}
+};
+
+struct pos
+{
+	float x, y, z;
+};
+
+struct pos_order
+{
+	bool operator()(const pos& a, const pos& b)
+	{
+		return a.y < b.y;
+	}
+};
+
 void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted, const std::string& reindex_map)
 {
 	const junk::header& in_header = input.get_header();
@@ -40,32 +69,22 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 
 	std::size_t index = 0;
 
-	typedef junk::attribute_accessor<float> accessor_type;
-
 	const junk::element& vertices = input.get_vertex_element();
 	const junk::mapped_data_element& vertex_map = input.get_vertex_map();
 
 	assert(input.get_vertex_map().is_open());
 
-	const junk::element& vs = vertices; //.get_structure();
-	const junk::attribute& sort_attr = get_attribute(vs, "position");
+	const junk::element& vs = vertices;
+	const junk::attribute& pos_attr = get_attribute(vs, "position");
 
-	std::size_t base_offset = sort_attr.offset;
-	base_offset += index * sizeof(float);
+//	std::size_t base_offset = sort_attr.offset;
+//	base_offset += index * sizeof(float);
 
-	accessor_type get_attr(base_offset);
+	junk::attribute_accessor<pos> get_pos(pos_attr.offset);
 
-	typedef float value_t;
-	typedef uint32_t index_t;
-	typedef accessor_type value_accessor_t;
 	const junk::mapped_data_element& source_ = vertex_map;
-	const value_accessor_t& accessor = get_attr;
 
-	typedef junk::preprocess::sort_reference<value_t, index_t> sort_ref;
-	typedef junk::preprocess::index_reference<index_t> index_ref;
-
-	assert(sizeof(value_t) == sizeof(index_t));
-	assert(sizeof(sort_ref) == sizeof(index_ref));
+	typedef sort_reference<pos, uint32_t, pos_order> sort_ref;
 
 	const size_t number_of_elements = source_.size();
 	const junk::element& source = source_.get_element();
@@ -79,8 +98,7 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 	tmp_params.new_file_size = sizeof(sort_ref) * number_of_elements;
 	tmp_params.mode = std::ios_base::in | std::ios_base::out;
 
-	boost::iostreams::mapped_file _tmp_file;
-	_tmp_file.open(tmp_params);
+	boost::iostreams::mapped_file _tmp_file(tmp_params);
 	if (!_tmp_file.is_open())
 		throw std::runtime_error(reindex_map + " could not be created/opened.");
 
@@ -95,11 +113,8 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 	junk::mapped_data_element::const_iterator sit = source_map.begin();
 	for (sort_ref* it = begin; it != end; ++it, ++index, ++sit)
 	{
-		sort_ref& ref = *it;
-		const char* point = *sit;
-
-		ref.value = accessor(point);
-		ref.index = index;
+		it->value = get_pos(*sit);
+		it->index = index;
 	}
 
 	// do the actual sorting
@@ -111,9 +126,7 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 	out_params.mode = std::ios_base::in | std::ios_base::out;
 	out_params.new_file_size = file_size_in_bytes(source);
 
-	boost::iostreams::mapped_file _out_file;
-	_out_file.open(out_params);
-
+	boost::iostreams::mapped_file _out_file(out_params);
 	if (!_out_file.is_open())
 		throw std::runtime_error("output file could not be created/opened.");
 
@@ -125,14 +138,11 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 		memcpy(out_data, source_map[it->index], in_point_size);
 
 	// overwrite the value part of the sort_ref to create a 2-way reindex map
-	index_ref* ibegin = reinterpret_cast<index_ref*> (_tmp_file.data());
-	index_ref* iend = ibegin + number_of_elements;
-	index_ref* it = ibegin;
+	sort_ref* ibegin = reinterpret_cast<sort_ref*> (_tmp_file.data());
+	sort_ref* iend = ibegin + number_of_elements;
+	sort_ref* it = ibegin;
 	for (size_t index = 0; it != iend; ++it, ++index)
-	{
-		index_ref& iref = *it;
-		ibegin[iref.old_index].new_index = index;
-	}
+		ibegin[it->index].new_index = index;
 }
 
 void reindex_faces(const junk::element& faces_, const std::string& unsorted, const std::string& reindex_map_)
@@ -150,8 +160,8 @@ void reindex_faces(const junk::element& faces_, const std::string& unsorted, con
 	if (!_faces_file.is_open())
 		throw std::runtime_error("faces file could not be opened.");
 
-	typedef junk::preprocess::index_reference<uint32_t> ref_type;
-	const ref_type* reindex_map = reinterpret_cast<const ref_type*> (_reindex_map.data());
+	typedef sort_reference<pos, uint32_t> sort_ref;
+	const sort_ref* reindex_map = reinterpret_cast<const sort_ref*> (_reindex_map.data());
 
 	uint32_t* begin = reinterpret_cast<uint32_t*> (_faces_file.data());
 	uint32_t* end = begin + faces_.size * attr.size;
@@ -168,18 +178,11 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 
 	// uint32_t only atm
 	assert(attr.type == junk::SP_UINT_32);
-
 	smallest_component_accessor<uint32_t> get_attr(attr.offset, attr.size);
 
-	typedef uint32_t value_t;
-	typedef uint32_t index_t;
 	const junk::mapped_data_element& source_ = input.get_face_map();
 
-	typedef junk::preprocess::sort_reference<value_t, index_t> sort_ref;
-	typedef junk::preprocess::index_reference<index_t> index_ref;
-
-	assert(sizeof(value_t) == sizeof(index_t));
-	assert(sizeof(sort_ref) == sizeof(index_ref));
+	typedef sort_reference<uint32_t, uint32_t> sort_ref;
 
 	const size_t number_of_elements = source_.size();
 	const junk::element& source = source_.get_element();
@@ -193,8 +196,7 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 	tmp_params.new_file_size = sizeof(sort_ref) * number_of_elements;
 	tmp_params.mode = std::ios_base::in | std::ios_base::out;
 
-	boost::iostreams::mapped_file _tmp_file;
-	_tmp_file.open(tmp_params);
+	boost::iostreams::mapped_file _tmp_file(tmp_params);
 	if (!_tmp_file.is_open())
 		throw std::runtime_error(tmp_params.path + " could not be created/opened.");
 
@@ -209,11 +211,8 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 	junk::mapped_data_element::const_iterator sit = source_map.begin();
 	for (sort_ref* it = begin; it != end; ++it, ++index, ++sit)
 	{
-		sort_ref& ref = *it;
-		const char* point = *sit;
-
-		ref.value = get_attr(point);
-		ref.index = index;
+		it->value = get_attr(*sit);
+		it->index = index;
 	}
 
 	// do the actual sorting
@@ -225,9 +224,7 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 	out_params.mode = std::ios_base::in | std::ios_base::out;
 	out_params.new_file_size = file_size_in_bytes(source);
 
-	boost::iostreams::mapped_file _out_file;
-	_out_file.open(out_params);
-
+	boost::iostreams::mapped_file _out_file(out_params);
 	if (!_out_file.is_open())
 		throw std::runtime_error("output file could not be created/opened.");
 
