@@ -3,14 +3,7 @@
 #find_package(Equalizer NO_MODULE)
 #include("${Equalizer_USE_FILE}")
 
-include(StringifyShaders)
-
 include_directories(include ${CMAKE_CURRENT_BINARY_DIR})
-
-stringify_shaders(SHADERS
-  vertexShader.glsl
-  fragmentShader.glsl
-  )
 
 add_library(eqMesh STATIC
   mesh/plyfile.cpp
@@ -33,7 +26,6 @@ add_library(eqMesh STATIC
   )
 
 add_executable(eqJunk
-  ${SHADERS}
   cameraAnimation.cpp
   cameraAnimation.h
   channel.cpp

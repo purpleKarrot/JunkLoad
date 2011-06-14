@@ -32,9 +32,6 @@
 #include "pipe.h"
 #include "config.h"
 
-#include "fragmentShader.glsl.h"
-#include "vertexShader.glsl.h"
-
 #include <fstream>
 #include <sstream>
 
@@ -107,27 +104,25 @@ bool Window::configExitGL()
 
 void Window::_loadShaders()
 {
-    if( _state->getShader( vertexShader_glsl ) !=
-        VertexBufferState::INVALID )
-    {
-        // already loaded
-        return;
-    }
+    if (_state->getProgram(getPipe()) != VertexBufferState::INVALID)
+		return; // already loaded
 
     // Check if functions are available
     if( !GLEW_VERSION_2_0 )
     {
-        EQWARN << "Shader function pointers missing, using fixed function "
-               << "pipeline" << std::endl;
+        std::cerr << "Shader function pointers missing, using fixed function pipeline" << std::endl;
         return;
     }
 
-    const GLuint vShader = _state->newShader( vertexShader_glsl,
-                                              GL_VERTEX_SHADER );
+    std::ifstream file("data/blinn_phong.shader");
+	std::istreambuf_iterator<char> begin(file), end;
+	std::string code(begin, end);
+
+    GLuint vShader = _state->newShader("vertex", GL_VERTEX_SHADER);
     EQASSERT( vShader != VertexBufferState::INVALID );
-    const GLchar* vShaderPtr = vertexShader_glsl;
-    glShaderSource( vShader, 1, &vShaderPtr, 0 );
-    glCompileShader( vShader );
+	const GLchar* vertex_source[2] = { "#define VERTEX_SHADER\n", code.c_str() };
+    glShaderSource(vShader, 1, vertex_source, 0);
+	glCompileShader(vShader);
 
     GLint status;
     glGetShaderiv( vShader, GL_COMPILE_STATUS, &status );
@@ -136,12 +131,11 @@ void Window::_loadShaders()
         EQWARN << "Failed to compile vertex shader" << std::endl;
         return;
     }
-    
-    const GLuint fShader = 
-        _state->newShader( fragmentShader_glsl, GL_FRAGMENT_SHADER );
+
+    GLuint fShader = _state->newShader("fragment", GL_FRAGMENT_SHADER);
     EQASSERT( fShader != VertexBufferState::INVALID );
-    const GLchar* fShaderPtr = fragmentShader_glsl;
-    glShaderSource( fShader, 1, &fShaderPtr, 0 );
+	const GLchar* fragment_source[2] = { "#define FRAGMENT_SHADER\n", code.c_str() };
+    glShaderSource( fShader, 2, fragment_source, 0 );
     glCompileShader( fShader );
     glGetShaderiv( fShader, GL_COMPILE_STATUS, &status );
     if( !status )
