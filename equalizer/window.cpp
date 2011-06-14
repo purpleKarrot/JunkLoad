@@ -88,9 +88,6 @@ bool Window::configInitGL( const eq::uint128_t& initID )
     const Config*   config   = static_cast< const Config* >( getConfig( ));
     const InitData& initData = config->getInitData();
 
-    if( initData.showLogo( ))
-        _loadLogo();
-
     if( initData.useGLSL() )
         _loadShaders();
 
@@ -106,38 +103,6 @@ bool Window::configExitGL()
     _state = 0;
 
     return eq::Window::configExitGL();
-}
-
-static const std::string _logoTextureName = "/usr/share/Equalizer/data/logo.rgb";
-
-void Window::_loadLogo()
-{
-    if( !GLEW_ARB_texture_rectangle )
-    {
-        EQWARN << "Can't load overlay logo, GL_ARB_texture_rectangle not "
-               << "available" << std::endl;
-        return;
-    }
-
-    eq::Window::ObjectManager* om = getObjectManager();
-    _logoTexture = om->getEqTexture( _logoTextureName.c_str( ));
-    if( _logoTexture )
-        return;
-
-    eq::Image image;
-    if( !image.readImage( _logoTextureName, eq::Frame::BUFFER_COLOR ))
-    {
-        EQWARN << "Can't load overlay logo " << _logoTextureName << std::endl;
-        return;
-    }
-
-    _logoTexture = om->newEqTexture( _logoTextureName.c_str(),
-                                     GL_TEXTURE_RECTANGLE_ARB );
-    EQASSERT( _logoTexture );
-    
-    image.upload(eq::Frame::BUFFER_COLOR, _logoTexture, eq::Vector2i::ZERO, om);
-    EQVERB << "Created logo texture of size " << _logoTexture->getWidth() << "x"
-           << _logoTexture->getHeight() << std::endl;
 }
 
 void Window::_loadShaders()

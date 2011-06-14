@@ -12,6 +12,26 @@ stringify_shaders(SHADERS
   fragmentShader.glsl
   )
 
+add_library(eqMesh STATIC
+  mesh/plyfile.cpp
+  mesh/ply.h
+  mesh/typedefs.h
+  mesh/vertexBufferBase.cpp
+  mesh/vertexBufferBase.h
+  mesh/vertexBufferData.h
+  mesh/vertexBufferLeaf.cpp
+  mesh/vertexBufferLeaf.h
+  mesh/vertexBufferNode.cpp
+  mesh/vertexBufferNode.h
+  mesh/vertexBufferRoot.cpp
+  mesh/vertexBufferRoot.h
+  mesh/vertexBufferState.h
+  mesh/vertexData.cpp
+  mesh/vertexData.h
+  mesh/vertexBufferDist.cpp
+  mesh/vertexBufferDist.h
+  )
+
 add_executable(eqJunk
   ${SHADERS}
   cameraAnimation.cpp
@@ -38,23 +58,6 @@ add_executable(eqJunk
   node.h
   pipe.cpp
   pipe.h
-  plyfile.cpp
-  ply.h
-  typedefs.h
-  vertexBufferBase.cpp
-  vertexBufferBase.h
-  vertexBufferData.h
-  vertexBufferLeaf.cpp
-  vertexBufferLeaf.h
-  vertexBufferNode.cpp
-  vertexBufferNode.h
-  vertexBufferRoot.cpp
-  vertexBufferRoot.h
-  vertexBufferState.h
-  vertexData.cpp
-  vertexData.h
-  vertexBufferDist.cpp
-  vertexBufferDist.h
   view.cpp
   view.h
   window.cpp
@@ -62,6 +65,7 @@ add_executable(eqJunk
   )
 
 target_link_libraries(eqJunk
+  eqMesh
   Collage
   Equalizer
   EqualizerAdmin

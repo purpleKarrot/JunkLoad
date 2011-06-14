@@ -31,8 +31,8 @@
 
 #include <eq/eq.h>
 
-#include "vertexBufferDist.h"
-#include "vertexBufferRoot.h"
+#include "mesh/vertexBufferDist.h"
+#include "mesh/vertexBufferRoot.h"
 
 #ifndef M_PI_2
 #  define M_PI_2 1.57079632679489661923

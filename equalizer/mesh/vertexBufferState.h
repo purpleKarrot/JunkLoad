@@ -40,7 +40,7 @@
 
 #ifdef EQUALIZER
 #   include <eq/eq.h>
-#   include "channel.h"
+#   include "../channel.h"
 #endif // EQUALIZER
 
 

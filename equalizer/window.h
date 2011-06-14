@@ -31,7 +31,7 @@
 
 #include <eq/eq.h>
 
-#include "vertexBufferState.h"
+#include "mesh/vertexBufferState.h"
 #include <string>
 
 namespace eqPly
@@ -64,7 +64,6 @@ namespace eqPly
         VertexBufferState* _state;
         eq::util::Texture* _logoTexture;
 
-        void _loadLogo();
         void _loadShaders();
     };
 }

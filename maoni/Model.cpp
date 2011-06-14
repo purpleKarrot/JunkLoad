@@ -22,37 +22,24 @@
 #include "Model.hpp"
 #include <boost/foreach.hpp>
 
-static void set_color(float f)
+static void set_color(float x)
 {
-	assert(f >= 0.f);
-	assert(f <= 1.f);
+	assert(x >= 0.f);
+	assert(x <= 1.f);
 
-	float s = 1.f;
-	float v = 1.f;
+	float i;
+	float f = std::modf(x * 3, &i);
 
-	float p = (v * (1.f - s));
-	float q = (v * (1.f - (s * f)));
-	float t = (v * (1.f - (s * (1.f - f))));
-
-	switch (int(f * 6))
+	switch (int(i))
 	{
 	case 0:
-		glColor3f(v, t, p);
+		glColor3f(f, 0.f, 0.f);
 		break;
 	case 1:
-		glColor3f(q, v, p);
-		break;
-	case 2:
-		glColor3f(p, v, t);
-		break;
-	case 3:
-		glColor3f(p, q, v);
-		break;
-	case 4:
-		glColor3f(t, p, v);
+		glColor3f(1.f, f, 0.f);
 		break;
 	default:
-		glColor3f(v, p, q);
+		glColor3f(1.f, 1.f, f);
 		break;
 	}
 }

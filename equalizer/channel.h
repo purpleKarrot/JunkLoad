@@ -32,7 +32,7 @@
 
 #include "eqPly.h"
 
-#include "typedefs.h"
+#include "mesh/typedefs.h"
 
 #include <eq/eq.h>
 

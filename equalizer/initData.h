@@ -48,7 +48,6 @@ namespace eqPly
         mesh::RenderMode   getRenderMode() const    { return _renderMode; }
         bool               useGLSL() const          { return _useGLSL; }
         bool               useInvertedFaces() const { return _invFaces; }
-        bool               showLogo() const         { return _logo; }
 
     protected:
         virtual void getInstanceData( co::DataOStream& os );
@@ -60,7 +59,6 @@ namespace eqPly
             { _renderMode = renderMode; }
         void enableGLSL()          { _useGLSL  = true; }
         void enableInvertedFaces() { _invFaces = true; }
-        void disableLogo()         { _logo     = false; }
 
     private:
         eq::uint128_t    _frameDataID;
@@ -68,7 +66,6 @@ namespace eqPly
         mesh::RenderMode _renderMode;
         bool             _useGLSL;
         bool             _invFaces;
-        bool             _logo;
     };
 }
 

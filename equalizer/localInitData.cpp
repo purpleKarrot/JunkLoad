@@ -62,8 +62,6 @@ const LocalInitData& LocalInitData::operator = ( const LocalInitData& from )
         enableGLSL();
     if( from.useInvertedFaces( )) 
         enableInvertedFaces();
-    if( !from.showLogo( )) 
-        disableLogo();
 
     return *this;
 }
@@ -114,8 +112,6 @@ void LocalInitData::parseArguments( const int argc, char** argv )
         TCLAP::ValueArg<std::string> pathArg( "a", "cameraPath",
                                         "File containing camera path animation",
                                               false, "", "string", command );
-        TCLAP::SwitchArg overlayArg( "o", "noOverlay", "Disable overlay logo", 
-                                     command, false );
         TCLAP::VariableSwitchArg ignoreEqArgs( "eq",
                                                "Ignored Equalizer options",
                                                command );
@@ -173,8 +169,6 @@ void LocalInitData::parseArguments( const int argc, char** argv )
             enableGLSL();
         if( invFacesArg.isSet() )
             enableInvertedFaces();
-        if( overlayArg.isSet( ))
-            disableLogo();
     }
     catch( TCLAP::ArgException& exception )
     {

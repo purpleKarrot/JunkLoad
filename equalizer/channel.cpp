@@ -36,7 +36,7 @@
 #include "pipe.h"
 #include "view.h"
 #include "window.h"
-#include "vertexBufferState.h"
+#include "mesh/vertexBufferState.h"
 #include <co/base/bitOperation.h> // function getIndexOfLastBit
 
 // light parameters

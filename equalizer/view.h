@@ -32,7 +32,7 @@
 
 #include <eq/eq.h>
 
-#include "vertexBufferState.h"
+#include "mesh/vertexBufferState.h"
 #include <string>
 
 namespace eqPly
