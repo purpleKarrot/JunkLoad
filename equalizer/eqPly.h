@@ -31,7 +31,6 @@
 
 #include <eq/eq.h>
 
-#include "mesh/vertexBufferDist.h"
 #include "mesh/vertexBufferRoot.h"
 
 #ifndef M_PI_2
@@ -45,7 +44,6 @@ namespace eqPly
 class LocalInitData;
 
 typedef mesh::VertexBufferRoot Model;
-typedef VertexBufferDist ModelDist;
 
 /** The EqPly application instance */
 class EqPly: public eq::Client

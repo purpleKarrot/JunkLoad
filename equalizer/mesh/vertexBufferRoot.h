@@ -31,49 +31,52 @@
 #ifndef MESH_VERTEXBUFFERROOT_H
 #define MESH_VERTEXBUFFERROOT_H
 
-
 #include "vertexBufferNode.h"
 #include "vertexBufferData.h"
 
-
-namespace mesh 
+namespace mesh
 {
-    
-    
-    /*  The class for kd-tree root nodes.  */
-    class VertexBufferRoot : public VertexBufferNode
-    {
-    public:
-        VertexBufferRoot() : VertexBufferNode() {}
 
-        virtual void render( VertexBufferState& state ) const;
-        
-        void beginRendering( VertexBufferState& state ) const;
-        void endRendering( VertexBufferState& state ) const;
-        
-        void setupTree( VertexData& data );
-        bool writeToFile( const std::string& filename );
-        bool readFromFile( const std::string& filename );
-        bool hasColors() const { return _data.colors.size() > 0; }
+/*  The class for kd-tree root nodes.  */
+class VertexBufferRoot: public VertexBufferNode
+{
+public:
+	VertexBufferRoot() :
+			VertexBufferNode()
+	{
+	}
 
-        const std::string& getName() const { return _name; }
+	virtual void render(VertexBufferState& state) const;
 
-    protected:
-        virtual void toStream( std::ostream& os );
-        virtual void fromMemory( char* start );
-        
-    private:
-        bool _constructFromPly( const std::string& filename );
-        bool _readBinary( std::string filename );
-        
-        VertexBufferData _data;
-        std::string      _name;
+	void beginRendering(VertexBufferState& state) const;
+	void endRendering(VertexBufferState& state) const;
 
-        friend class eqPly::VertexBufferDist;
-    };
-    
-    
-}
+	void setupTree(VertexData& data);
+	bool writeToFile(const std::string& filename);
+	bool readFromFile(const std::string& filename);
 
+	bool hasColors() const
+	{
+		return _data.colors.size() > 0;
+	}
+
+	const std::string& getName() const
+	{
+		return _name;
+	}
+
+protected:
+	virtual void toStream(std::ostream& os);
+	virtual void fromMemory(char* start);
+
+private:
+	bool _constructFromPly(const std::string& filename);
+	bool _readBinary(std::string filename);
+
+	VertexBufferData _data;
+	std::string _name;
+};
+
+} // namespace mesh
 
 #endif // MESH_VERTEXBUFFERROOT_H

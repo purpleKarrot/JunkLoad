@@ -80,7 +80,7 @@ bool Window::configInitGL( const eq::uint128_t& initID )
     glCullFace( GL_BACK );
 
     EQASSERT( !_state );
-    _state = new VertexBufferState( getObjectManager( ));
+    _state = new mesh::VertexBufferState( getObjectManager( ));
 
     const Config*   config   = static_cast< const Config* >( getConfig( ));
     const InitData& initData = config->getInitData();
@@ -103,7 +103,7 @@ bool Window::configExitGL()
 
 void Window::_loadShaders()
 {
-    if (_state->getProgram(getPipe()) != VertexBufferState::INVALID)
+    if (_state->getProgram(getPipe()) != mesh::VertexBufferState::INVALID)
 		return; // already loaded
 
     // Check if functions are available
@@ -118,7 +118,7 @@ void Window::_loadShaders()
 	std::string code(begin, end);
 
     GLuint vShader = _state->newShader("vertex", GL_VERTEX_SHADER);
-    EQASSERT( vShader != VertexBufferState::INVALID );
+    EQASSERT( vShader != mesh::VertexBufferState::INVALID );
 	const GLchar* vertex_source[2] = { "#define VERTEX_SHADER\n", code.c_str() };
     glShaderSource(vShader, 1, vertex_source, 0);
 	glCompileShader(vShader);
@@ -132,7 +132,7 @@ void Window::_loadShaders()
     }
 
     GLuint fShader = _state->newShader("fragment", GL_FRAGMENT_SHADER);
-    EQASSERT( fShader != VertexBufferState::INVALID );
+    EQASSERT( fShader != mesh::VertexBufferState::INVALID );
 	const GLchar* fragment_source[2] = { "#define FRAGMENT_SHADER\n", code.c_str() };
     glShaderSource( fShader, 2, fragment_source, 0 );
     glCompileShader( fShader );
@@ -144,7 +144,7 @@ void Window::_loadShaders()
     }
     
     const GLuint program = _state->newProgram( getPipe() );
-    EQASSERT( program != VertexBufferState::INVALID );
+    EQASSERT( program != mesh::VertexBufferState::INVALID );
     glAttachShader( program, vShader );
     glAttachShader( program, fShader );
     glLinkProgram( program );

@@ -34,49 +34,48 @@
 #ifndef MESH_VERTEXBUFFERLEAF_H
 #define MESH_VERTEXBUFFERLEAF_H
 
-
 #include "vertexBufferBase.h"
 
-
-namespace mesh 
+namespace mesh
 {
-    /*  The class for kd-tree leaf nodes.  */
-    class VertexBufferLeaf : public VertexBufferBase
-    {
-    public:
-        VertexBufferLeaf( VertexBufferData& data )
-            : _globalData( data ), _vertexStart( 0 ),
-              _indexStart( 0 ), _indexLength( 0 ) {}
-        virtual ~VertexBufferLeaf() {}
-        
-        virtual void render( VertexBufferState& state ) const;
-        virtual Index getNumberOfVertices() const { return _indexLength; }
-        
-    protected:
-        virtual void toStream( std::ostream& os );
-        virtual void fromMemory( char** addr, VertexBufferData& globalData );
-        
-        virtual void setupTree( VertexData& data, const Index start,
-                                const Index length, const Axis axis,
-                                const size_t depth,
-                                VertexBufferData& globalData );
-        virtual const BoundingSphere& updateBoundingSphere();
-        virtual void updateRange();
-        
-    private:
-        void setupRendering( VertexBufferState& state, GLuint* data ) const;
-        void renderBufferObject( VertexBufferState& state ) const;
-        
-        VertexBufferData&   _globalData;
-        Index               _vertexStart;
-        Index               _indexStart;
-        Index               _indexLength;
-        ShortIndex          _vertexLength;
-        friend class eqPly::VertexBufferDist;
-    };
-    
-    
-}
 
+/*  The class for kd-tree leaf nodes.  */
+class VertexBufferLeaf: public VertexBufferBase
+{
+public:
+	VertexBufferLeaf(VertexBufferData& data) :
+			_globalData(data), _vertexStart(0), _indexStart(0), _indexLength(0)
+	{
+	}
+	virtual ~VertexBufferLeaf()
+	{
+	}
+
+	virtual void render(VertexBufferState& state) const;
+	virtual Index getNumberOfVertices() const
+	{
+		return _indexLength;
+	}
+
+protected:
+	virtual void toStream(std::ostream& os);
+	virtual void fromMemory(char** addr, VertexBufferData& globalData);
+
+	virtual void setupTree(VertexData& data, const Index start, const Index length, const Axis axis, const size_t depth, VertexBufferData& globalData);
+	virtual const BoundingSphere& updateBoundingSphere();
+	virtual void updateRange();
+
+private:
+	void setupRendering(VertexBufferState& state, GLuint* data) const;
+	void renderBufferObject(VertexBufferState& state) const;
+
+	VertexBufferData& _globalData;
+	Index _vertexStart;
+	Index _indexStart;
+	Index _indexLength;
+	ShortIndex _vertexLength;
+};
+
+} // namespace mesh
 
 #endif // MESH_VERTEXBUFFERLEAF_H

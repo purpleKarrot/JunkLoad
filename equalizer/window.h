@@ -49,7 +49,7 @@ namespace eqPly
         Window( eq::Pipe* parent ) 
                 : eq::Window( parent ), _state( 0 ) {}
 
-        VertexBufferState& getState() { return *_state; }
+        mesh::VertexBufferState& getState() { return *_state; }
         
     protected:
         virtual ~Window() {}
@@ -60,7 +60,7 @@ namespace eqPly
                                  const uint32_t frameNumber );
 
     private:
-        VertexBufferState* _state;
+        mesh::VertexBufferState* _state;
 
         void _loadShaders();
     };

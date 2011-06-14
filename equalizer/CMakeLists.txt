@@ -7,7 +7,6 @@ add_library(eqMesh STATIC
   mesh/plyfile.cpp
   mesh/ply.h
   mesh/typedefs.h
-  mesh/vertexBufferBase.cpp
   mesh/vertexBufferBase.h
   mesh/vertexBufferData.h
   mesh/vertexBufferLeaf.cpp
@@ -19,8 +18,6 @@ add_library(eqMesh STATIC
   mesh/vertexBufferState.h
   mesh/vertexData.cpp
   mesh/vertexData.h
-  mesh/vertexBufferDist.cpp
-  mesh/vertexBufferDist.h
   )
 
 add_executable(eqJunk

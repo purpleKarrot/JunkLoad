@@ -577,7 +577,7 @@ const Model* Channel::_getModel()
 void Channel::_drawModel( const Model* model )
 {
     Window*            window    = static_cast< Window* >( getWindow( ));
-    VertexBufferState& state     = window->getState();
+    mesh::VertexBufferState& state     = window->getState();
     const FrameData&   frameData = _getFrameData();
     const eq::Range&   range     = getRange();
     eq::FrustumCullerf culler;
@@ -592,7 +592,7 @@ void Channel::_drawModel( const Model* model )
 
     const eq::Pipe* pipe = getPipe();
     const GLuint program = state.getProgram( pipe );
-    if( program != VertexBufferState::INVALID )
+    if( program != mesh::VertexBufferState::INVALID )
         glUseProgram( program );
     
     model->beginRendering( state );
@@ -677,7 +677,7 @@ void Channel::_drawModel( const Model* model )
     model->endRendering( state );
     state.setChannel( 0 );
 
-    if( program != VertexBufferState::INVALID )
+    if( program != mesh::VertexBufferState::INVALID )
         glUseProgram( 0 );
 
 #ifndef NDEBUG
