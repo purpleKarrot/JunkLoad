@@ -46,7 +46,6 @@ namespace eqPly
 
         void parseArguments( const int argc, char** argv );
 
-        const std::string& getTrackerPort() const { return _trackerPort; }
         const std::string& getPathFilename()const { return _pathFilename; }
         bool               useColor()       const { return _color; }
         bool               isResident()     const { return _isResident; }
@@ -58,7 +57,6 @@ namespace eqPly
         const LocalInitData& operator = ( const LocalInitData& from );
 
     private:
-        std::string _trackerPort;
         std::vector< std::string > _filenames;
         std::string _pathFilename;
         uint32_t    _maxFrames;

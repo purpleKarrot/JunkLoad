@@ -40,8 +40,6 @@ add_executable(eqJunk
   pipe.h
   plyfile.cpp
   ply.h
-  tracker.cpp
-  tracker.h
   typedefs.h
   vertexBufferBase.cpp
   vertexBufferBase.h

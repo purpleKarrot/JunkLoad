@@ -36,7 +36,6 @@
 // members
 #include "localInitData.h"
 #include "frameData.h"
-#include "tracker.h"
 #include "cameraAnimation.h"
 
 namespace eqPly
@@ -99,8 +98,6 @@ namespace eqPly
 
         LocalInitData _initData;
         FrameData     _frameData;
-
-        Tracker _tracker;
 
         Models     _models;
         ModelDists _modelDist;
