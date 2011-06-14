@@ -55,7 +55,6 @@ namespace eqPly
         void setModelID( const eq::uint128_t& id );
 
         void setColorMode( const ColorMode color );
-        void setRenderMode( const mesh::RenderMode mode );
         void setIdle( const bool idleMode );
 
         void toggleOrtho();
@@ -65,7 +64,6 @@ namespace eqPly
         void toggleColorMode();
         void adjustQuality( const float delta );
         void togglePilotMode();
-        void toggleRenderMode();
 
         eq::uint128_t getModelID() const { return _modelID; }
         ColorMode getColorMode() const { return _colorMode; }
@@ -76,7 +74,6 @@ namespace eqPly
         bool useWireframe() const { return _wireframe; }
         bool usePilotMode() const { return _pilotMode; }
         bool isIdle() const { return _idle; }
-        mesh::RenderMode getRenderMode() const { return _renderMode; }
         //*}
 
         /** @name Camera parameters. */
@@ -134,7 +131,6 @@ namespace eqPly
         eq::Vector3f _position;
         
         eq::uint128_t _modelID;
-        mesh::RenderMode _renderMode;
         ColorMode        _colorMode;
         float            _quality;
         bool             _ortho;

@@ -68,43 +68,18 @@ void VertexBufferRoot::setupTree( VertexData& data )
                                  axis, 0, _data );
     VertexBufferNode::updateBoundingSphere();
     VertexBufferNode::updateRange();
-
-#if 0
-    // re-test all points to be in the bounding sphere
-    Vertex center( _boundingSphere.array );
-    float  radius        = _boundingSphere.w();
-    float  radiusSquared =  radius * radius;
-    for( size_t offset = 0; offset < _data.vertices.size(); ++offset )
-    {
-        const Vertex& vertex = _data.vertices[ offset ];
-        
-        const Vertex centerToPoint   = vertex - center;
-        const float  distanceSquared = centerToPoint.squared_length();
-        EQASSERTINFO( distanceSquared <= radiusSquared,
-                      distanceSquared << " > " << radiusSquared );
-    }
-#endif
 }
 
 
 /*  Set up the common OpenGL state for rendering of all nodes.  */
-void VertexBufferRoot::beginRendering( VertexBufferState& state ) const
+void VertexBufferRoot::beginRendering(VertexBufferState& state) const
 {
-    switch( state.getRenderMode() )
-    {
-#ifdef GL_ARB_vertex_buffer_object
-    case RENDER_MODE_BUFFER_OBJECT:
-        glPushClientAttrib( GL_CLIENT_VERTEX_ARRAY_BIT );
-        glEnableClientState( GL_VERTEX_ARRAY );
-        glEnableClientState( GL_NORMAL_ARRAY );
-        if( state.useColors() )
-            glEnableClientState( GL_COLOR_ARRAY );
-#endif
-    case RENDER_MODE_DISPLAY_LIST:
-    case RENDER_MODE_IMMEDIATE:
-    default:
-        ;
-    }
+	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+
+	if (state.useColors())
+		glEnableClientState(GL_COLOR_ARRAY);
 }
 
 
@@ -116,25 +91,13 @@ void VertexBufferRoot::render( VertexBufferState& state ) const
 
 
 /*  Tear down the common OpenGL state for rendering of all nodes.  */
-void VertexBufferRoot::endRendering( VertexBufferState& state ) const
+void VertexBufferRoot::endRendering(VertexBufferState& state) const
 {
-    switch( state.getRenderMode() )
-    {
-#ifdef GL_ARB_vertex_buffer_object
-    case RENDER_MODE_BUFFER_OBJECT:
-    {
-        // deactivate VBO and EBO use
+	// deactivate VBO and EBO use
 #define glewGetContext state.glewGetContext
-        glBindBuffer( GL_ARRAY_BUFFER_ARB, 0);
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-        glPopClientAttrib();
-    }
-#endif
-    case RENDER_MODE_DISPLAY_LIST:
-    case RENDER_MODE_IMMEDIATE:
-    default:
-        ;
-    }
+	glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+	glPopClientAttrib();
 }
 
 

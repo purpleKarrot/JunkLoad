@@ -36,7 +36,6 @@ FrameData::FrameData()
         , _modelRotation( eq::Matrix4f::ZERO )
         , _position( eq::Vector3f::ZERO )
         , _modelID( co::base::UUID::ZERO )
-        , _renderMode( mesh::RENDER_MODE_DISPLAY_LIST )
         , _colorMode( COLOR_MODEL )
         , _quality( 1.0f )
         , _ortho( false )
@@ -57,7 +56,7 @@ void FrameData::serialize( co::DataOStream& os, const uint64_t dirtyBits )
     if( dirtyBits & DIRTY_CAMERA )
         os << _position << _rotation << _modelRotation;
     if( dirtyBits & DIRTY_FLAGS )
-        os << _modelID << _renderMode << _colorMode << _quality << _ortho
+        os << _modelID << _colorMode << _quality << _ortho
            << _statistics << _help << _wireframe << _pilotMode << _idle;
     if( dirtyBits & DIRTY_VIEW )
         os << _currentViewID;
@@ -71,7 +70,7 @@ void FrameData::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
     if( dirtyBits & DIRTY_CAMERA )
         is >> _position >> _rotation >> _modelRotation;
     if( dirtyBits & DIRTY_FLAGS )
-        is >> _modelID >> _renderMode >> _colorMode >> _quality >> _ortho
+        is >> _modelID >> _colorMode >> _quality >> _ortho
            >> _statistics >> _help >> _wireframe >> _pilotMode >> _idle;
     if( dirtyBits & DIRTY_VIEW )
         is >> _currentViewID;
@@ -91,12 +90,6 @@ void FrameData::setModelID( const eq::uint128_t& id )
 void FrameData::setColorMode( const ColorMode mode )
 {
     _colorMode = mode;
-    setDirty( DIRTY_FLAGS );
-}
-
-void FrameData::setRenderMode( const mesh::RenderMode mode )
-{
-    _renderMode = mode;
     setDirty( DIRTY_FLAGS );
 }
 
@@ -151,15 +144,6 @@ void FrameData::adjustQuality( const float delta )
 void FrameData::togglePilotMode()
 {
     _pilotMode = !_pilotMode;
-    setDirty( DIRTY_FLAGS );
-}
-
-void FrameData::toggleRenderMode()
-{
-    _renderMode = static_cast< mesh::RenderMode >(
-        ( _renderMode + 1) % mesh::RENDER_MODE_ALL );
-
-    EQINFO << "Switched to " << _renderMode << std::endl;
     setDirty( DIRTY_FLAGS );
 }
 

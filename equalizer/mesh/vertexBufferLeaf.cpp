@@ -210,13 +210,6 @@ void VertexBufferLeaf::updateRange()
 void VertexBufferLeaf::setupRendering( VertexBufferState& state,
                                        GLuint* data ) const
 {
-    switch( state.getRenderMode() )
-    {
-    case RENDER_MODE_IMMEDIATE:
-        break;
-
-    case RENDER_MODE_BUFFER_OBJECT:
-    {
         const char* charThis = reinterpret_cast< const char* >( this );
         
         if( data[VERTEX_OBJECT] == state.INVALID )
@@ -246,25 +239,6 @@ void VertexBufferLeaf::setupRendering( VertexBufferState& state,
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, 
                         _indexLength * sizeof( ShortIndex ),
                         &_globalData.indices[_indexStart], GL_STATIC_DRAW );
-        
-        break;
-    }        
-    case RENDER_MODE_DISPLAY_LIST:
-    default:
-    {
-        if( data[0] == state.INVALID )
-        {
-            char* key = (char*)( this );
-            if( state.useColors( ))
-                ++key;
-            data[0] = state.newDisplayList( key );
-        }
-        glNewList( data[0], GL_COMPILE );
-        renderImmediate( state );
-        glEndList();
-        break;
-    }
-    }
 }
 
 
@@ -273,20 +247,8 @@ void VertexBufferLeaf::render( VertexBufferState& state ) const
 {
     if ( state.stopRendering( ))
         return;
-    
-    switch( state.getRenderMode() )
-    {
-    case RENDER_MODE_IMMEDIATE:
-        renderImmediate( state );
-        return;
-    case RENDER_MODE_BUFFER_OBJECT:
-        renderBufferObject( state );
-        return;
-    case RENDER_MODE_DISPLAY_LIST:
-    default:
-        renderDisplayList( state );
-        return;
-    }
+
+    renderBufferObject( state );
 }
 
 
@@ -315,48 +277,6 @@ void VertexBufferLeaf::renderBufferObject( VertexBufferState& state ) const
     glVertexPointer( 3, GL_FLOAT, 0, 0 );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, buffers[INDEX_OBJECT] );
     glDrawElements( GL_TRIANGLES, GLsizei( _indexLength ), GL_UNSIGNED_SHORT, 0 );
-}
-
-
-/*  Render the leaf with a display list.  */
-inline
-void VertexBufferLeaf::renderDisplayList( VertexBufferState& state ) const
-{
-    char* key = (char*)( this );
-    if( state.useColors( ))
-        ++key;
-
-    GLuint displayList = state.getDisplayList( key );
-
-    if( displayList == state.INVALID )
-        setupRendering( state, &displayList );
-    
-    glCallList( displayList );
-}
-
-
-/*  Render the leaf with immediate mode primitives or vertex arrays.  */
-inline
-void VertexBufferLeaf::renderImmediate( VertexBufferState& state ) const
-{
-    glBegin( GL_TRIANGLES );  
-    for( Index offset = 0; offset < _indexLength; ++offset )
-    {
-        const Index i =_vertexStart + _globalData.indices[_indexStart + offset];
-        if( state.useColors() )
-            glColor4ubv( &_globalData.colors[i][0] );
-        glNormal3fv( &_globalData.normals[i][0] );
-        glVertex3fv( &_globalData.vertices[i][0] );
-    }
-    glEnd();
-    
-//    if( state.useColors() )
-//        glColorPointer( 4, GL_UNSIGNED_BYTE, 0, 
-//                        &_globalData.colors[_vertexStart] );
-//    glNormalPointer( GL_FLOAT, 0, &_globalData.normals[_vertexStart] );
-//    glVertexPointer( 3, GL_FLOAT, 0, &_globalData.vertices[_vertexStart] );
-//    glDrawElements( GL_TRIANGLES, _indexLength, GL_UNSIGNED_SHORT, 
-//                    &_globalData.indices[_indexStart] );
 }
 
 

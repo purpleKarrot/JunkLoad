@@ -167,7 +167,6 @@ void Window::frameStart( const eq::uint128_t& frameID, const uint32_t frameNumbe
     const Pipe*      pipe      = static_cast<Pipe*>( getPipe( ));
     const FrameData& frameData = pipe->getFrameData();
 
-    _state->setRenderMode( frameData.getRenderMode( ));
     eq::Window::frameStart( frameID, frameNumber );
 }
 

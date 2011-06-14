@@ -57,7 +57,6 @@ const LocalInitData& LocalInitData::operator = ( const LocalInitData& from )
     _pathFilename = from._pathFilename;
 
     setWindowSystem( from.getWindowSystem( ));
-    setRenderMode( from.getRenderMode( ));
     if( from.useGLSL( )) 
         enableGLSL();
     if( from.useInvertedFaces( )) 
@@ -100,10 +99,6 @@ void LocalInitData::parseArguments( const int argc, char** argv )
                                              command );
         TCLAP::ValueArg<std::string> wsArg( "w", "windowSystem", wsHelp,
                                             false, "auto", "string", command );
-        TCLAP::ValueArg<std::string> modeArg( "c", "renderMode", 
-                                 "Rendering Mode (immediate, displayList, VBO)",
-                                              false, "auto", "string",
-                                              command );
         TCLAP::SwitchArg glslArg( "g", "glsl", "Enable GLSL shaders", 
                                     command, false );
         TCLAP::SwitchArg invFacesArg( "i", "invertFaces",
@@ -147,20 +142,6 @@ void LocalInitData::parseArguments( const int argc, char** argv )
 
         if( residentArg.isSet( ))
             _isResident = true;
-
-        if( modeArg.isSet() )
-        {
-            std::string mode = modeArg.getValue();
-            transform( mode.begin(), mode.end(), mode.begin(),
-                       (int(*)(int))std::tolower );
-            
-            if( mode == "immediate" )
-                setRenderMode( mesh::RENDER_MODE_IMMEDIATE );
-            else if( mode == "displaylist" )
-                setRenderMode( mesh::RENDER_MODE_DISPLAY_LIST );
-            else if( mode == "vbo" )
-                setRenderMode( mesh::RENDER_MODE_BUFFER_OBJECT );
-        }
 
         if( pathArg.isSet( ))
             _pathFilename = pathArg.getValue();

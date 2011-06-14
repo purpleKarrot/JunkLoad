@@ -45,7 +45,6 @@ namespace eqPly
 
         eq::uint128_t getFrameDataID() const  { return _frameDataID; }
         eq::WindowSystem   getWindowSystem() const  { return _windowSystem; }
-        mesh::RenderMode   getRenderMode() const    { return _renderMode; }
         bool               useGLSL() const          { return _useGLSL; }
         bool               useInvertedFaces() const { return _invFaces; }
 
@@ -55,15 +54,12 @@ namespace eqPly
 
         void setWindowSystem( const eq::WindowSystem windowSystem )
             { _windowSystem = windowSystem; }
-        void setRenderMode( const mesh::RenderMode renderMode )
-            { _renderMode = renderMode; }
         void enableGLSL()          { _useGLSL  = true; }
         void enableInvertedFaces() { _invFaces = true; }
 
     private:
         eq::uint128_t    _frameDataID;
         eq::WindowSystem _windowSystem;
-        mesh::RenderMode _renderMode;
         bool             _useGLSL;
         bool             _invFaces;
     };

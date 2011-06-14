@@ -43,11 +43,6 @@ namespace eqPly
 InitData::InitData()
         : _frameDataID( co::base::UUID::ZERO )
         , _windowSystem( eq::WINDOW_SYSTEM_NONE )
-#ifdef Darwin
-        , _renderMode( mesh::RENDER_MODE_BUFFER_OBJECT )
-#else
-        , _renderMode( mesh::RENDER_MODE_DISPLAY_LIST )
-#endif
         , _useGLSL( false )
         , _invFaces( false )
 {}
@@ -59,12 +54,12 @@ InitData::~InitData()
 
 void InitData::getInstanceData( co::DataOStream& os )
 {
-    os << _frameDataID << _windowSystem << _renderMode << _useGLSL << _invFaces;
+    os << _frameDataID << _windowSystem << _useGLSL << _invFaces;
 }
 
 void InitData::applyInstanceData( co::DataIStream& is )
 {
-    is >> _frameDataID >> _windowSystem >> _renderMode >> _useGLSL >> _invFaces;
+    is >> _frameDataID >> _windowSystem >> _useGLSL >> _invFaces;
 
     EQASSERT( _frameDataID != eq::UUID::ZERO );
     EQINFO << "New InitData instance" << std::endl;

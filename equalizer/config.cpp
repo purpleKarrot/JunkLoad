@@ -77,7 +77,6 @@ bool Config::init()
     if( !_initData.useColor( ))
         _frameData.setColorMode( COLOR_WHITE );
 
-    _frameData.setRenderMode( _initData.getRenderMode( ));
     registerObject( &_frameData );
     _frameData.setAutoObsolete( getLatency( ));
 
@@ -616,10 +615,6 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
             _frameData.toggleWireframe();
             return true;
 
-        case 'r':
-        case 'R':
-            _frameData.toggleRenderMode();
-            return true;
         case 'g':
         case 'G':
             _switchViewMode();

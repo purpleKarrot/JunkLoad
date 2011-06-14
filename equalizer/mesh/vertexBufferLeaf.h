@@ -65,8 +65,6 @@ namespace mesh
         
     private:
         void setupRendering( VertexBufferState& state, GLuint* data ) const;
-        void renderImmediate( VertexBufferState& state ) const;
-        void renderDisplayList( VertexBufferState& state ) const;
         void renderBufferObject( VertexBufferState& state ) const;
         
         VertexBufferData&   _globalData;

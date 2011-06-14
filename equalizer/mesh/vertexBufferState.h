@@ -58,22 +58,6 @@ namespace mesh
         virtual bool useColors() const { return _useColors; }
         virtual void setColors( const bool colors ) { _useColors = colors; }
         virtual bool stopRendering() const { return false; }
-        virtual RenderMode getRenderMode() const { return _renderMode; }
-        virtual void setRenderMode( const RenderMode mode ) 
-        { 
-            if( _renderMode == mode )
-                return;
-
-            _renderMode = mode;
-
-            // Check if VBO funcs available, else fall back to display lists
-            if( _renderMode == RENDER_MODE_BUFFER_OBJECT && !GLEW_VERSION_1_5 )
-            {
-                MESHINFO << "VBO not available, using display lists"
-                         << std::endl;
-                _renderMode = RENDER_MODE_DISPLAY_LIST;
-            }
-        }
 
         virtual GLuint getDisplayList( const void* key ) = 0;
         virtual GLuint newDisplayList( const void* key ) = 0;
@@ -86,8 +70,7 @@ namespace mesh
         
     protected:
         VertexBufferState( const GLEWContext* glewContext ) 
-            : _glewContext( glewContext ), _useColors( false ), 
-              _renderMode( RENDER_MODE_DISPLAY_LIST ) 
+            : _glewContext( glewContext ), _useColors( false )
         {
             MESHASSERT( glewContext );
         } 
@@ -96,9 +79,6 @@ namespace mesh
         
         const GLEWContext* const _glewContext;
         bool          _useColors;
-        RenderMode    _renderMode;
-        
-    private:
     };
     
     
