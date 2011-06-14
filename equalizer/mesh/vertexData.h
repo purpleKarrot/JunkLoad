@@ -55,8 +55,6 @@ namespace mesh
         const BoundingBox& getBoundingBox() const { return _boundingBox; }
         Axis getLongestAxis( const size_t start, const size_t elements ) const;
 
-        void useInvertedFaces() { _invertFaces = true; }
-
         std::vector< Vertex >   vertices;
         std::vector< Color >    colors;
         std::vector< Normal >   normals;
@@ -68,7 +66,6 @@ namespace mesh
         void readTriangles( PlyFile* file, const int nFaces );
 
         BoundingBox _boundingBox;
-        bool        _invertFaces;
     };
 }
 

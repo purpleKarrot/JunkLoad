@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2006-2010, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,118 +32,163 @@
 
 namespace eqPly
 {
-    /**
-     * Frame-specific data.
-     *
-     * The frame-specific data is used as a per-config distributed object and
-     * contains mutable, rendering-relevant data. Each rendering thread (pipe)
-     * keeps its own instance synchronized with the frame currently being
-     * rendered. The data is managed by the Config, which modifies it directly.
-     */
-    class FrameData : public eq::fabric::Serializable
-    {
-    public:
-        FrameData();
 
-        virtual ~FrameData() {};
+/**
+ * Frame-specific data.
+ *
+ * The frame-specific data is used as a per-config distributed object and
+ * contains mutable, rendering-relevant data. Each rendering thread (pipe)
+ * keeps its own instance synchronized with the frame currently being
+ * rendered. The data is managed by the Config, which modifies it directly.
+ */
+class FrameData: public eq::fabric::Serializable
+{
+public:
+	FrameData();
 
-        void reset();
-        
-        /** @name Rendering flags. */
-        //*{
-        void setModelID( const eq::uint128_t& id );
+	virtual ~FrameData()
+	{
+	}
 
-        void setColorMode( const ColorMode color );
-        void setIdle( const bool idleMode );
+	void reset();
 
-        void toggleOrtho();
-        void toggleStatistics();
-        void toggleHelp();
-        void toggleWireframe();
-        void toggleColorMode();
-        void adjustQuality( const float delta );
-        void togglePilotMode();
+	/** @name Rendering flags. */
+	//*{
+	void setModelID(const eq::uint128_t& id);
 
-        eq::uint128_t getModelID() const { return _modelID; }
-        ColorMode getColorMode() const { return _colorMode; }
-        float getQuality() const { return _quality; }
-        bool useOrtho() const { return _ortho; }
-        bool useStatistics() const { return _statistics; }
-        bool showHelp() const { return _help; }
-        bool useWireframe() const { return _wireframe; }
-        bool usePilotMode() const { return _pilotMode; }
-        bool isIdle() const { return _idle; }
-        //*}
+	void setColorMode(const ColorMode color);
+	void setIdle(const bool idleMode);
 
-        /** @name Camera parameters. */
-        //*{
-        void setCameraPosition( const eq::Vector3f& position );
-        void setRotation( const eq::Vector3f& rotation);
-        void setModelRotation( const eq::Vector3f& rotation    );
-        void spinCamera( const float x, const float y );
-        void spinModel(  const float x, const float y );
-        void spinModel(  const float x, const float y, const float z );
-        void moveCamera( const float x, const float y, const float z );
+	void toggleOrtho();
+	void toggleStatistics();
+	void toggleHelp();
+	void toggleWireframe();
+	void toggleColorMode();
+	void adjustQuality(const float delta);
 
-        const eq::Matrix4f& getCameraRotation() const
-            { return _rotation; }
-        const eq::Matrix4f& getModelRotation() const
-            { return _modelRotation; }
-        const eq::Vector3f& getCameraPosition() const
-            { return _position; }
-        //*}
+	eq::uint128_t getModelID() const
+	{
+		return _modelID;
+	}
 
-        /** @name View interface. */
-        //*{
-        void setCurrentViewID( const eq::uint128_t& id );
-        eq::uint128_t getCurrentViewID() const { return _currentViewID; }
-        //*}
+	ColorMode getColorMode() const
+	{
+		return _colorMode;
+	}
 
-        /** @name Message overlay. */
-        //*{
-        void setMessage( const std::string& message );
-        const std::string& getMessage() const { return _message; }
-        //*}
+	float getQuality() const
+	{
+		return _quality;
+	}
 
-    protected:
-        /** @sa Object::serialize() */
-        virtual void serialize( co::DataOStream& os,
-                                const uint64_t dirtyBits );
-        /** @sa Object::deserialize() */
-        virtual void deserialize( co::DataIStream& is,
-                                  const uint64_t dirtyBits );
+	bool useOrtho() const
+	{
+		return _ortho;
+	}
 
-        virtual ChangeType getChangeType() const { return DELTA; }
+	bool useStatistics() const
+	{
+		return _statistics;
+	}
 
-        /** The changed parts of the data since the last pack(). */
-        enum DirtyBits
-        {
-            DIRTY_CAMERA  = eq::fabric::Serializable::DIRTY_CUSTOM << 0,
-            DIRTY_FLAGS   = eq::fabric::Serializable::DIRTY_CUSTOM << 1,
-            DIRTY_VIEW    = eq::fabric::Serializable::DIRTY_CUSTOM << 2,
-            DIRTY_MESSAGE = eq::fabric::Serializable::DIRTY_CUSTOM << 3,
-        };
+	bool showHelp() const
+	{
+		return _help;
+	}
 
-    private:
-        eq::Matrix4f _rotation;
-        eq::Matrix4f _modelRotation;
-        eq::Vector3f _position;
-        
-        eq::uint128_t _modelID;
-        ColorMode        _colorMode;
-        float            _quality;
-        bool             _ortho;
-        bool             _statistics;
-        bool             _help;
-        bool             _wireframe;
-        bool             _pilotMode;
-        bool             _idle;
+	bool useWireframe() const
+	{
+		return _wireframe;
+	}
 
-        eq::uint128_t _currentViewID;
-        std::string _message;
-    };
-}
+	bool isIdle() const
+	{
+		return _idle;
+	}
+	//*}
 
+	/** @name Camera parameters. */
+	//*{
+	void setCameraPosition(const eq::Vector3f& position);
+	void setRotation(const eq::Vector3f& rotation);
+	void setModelRotation(const eq::Vector3f& rotation);
+	void spinModel(const float x, const float y);
+	void spinModel(const float x, const float y, const float z);
+	void moveCamera(const float x, const float y, const float z);
+
+	const eq::Matrix4f& getCameraRotation() const
+	{
+		return _rotation;
+	}
+
+	const eq::Matrix4f& getModelRotation() const
+	{
+		return _modelRotation;
+	}
+
+	const eq::Vector3f& getCameraPosition() const
+	{
+		return _position;
+	}
+	//*}
+
+	/** @name View interface. */
+	//*{
+	void setCurrentViewID(const eq::uint128_t& id);
+	eq::uint128_t getCurrentViewID() const
+	{
+		return _currentViewID;
+	}
+	//*}
+
+	/** @name Message overlay. */
+	//*{
+	void setMessage(const std::string& message);
+	const std::string& getMessage() const
+	{
+		return _message;
+	}
+	//*}
+
+protected:
+	/** @sa Object::serialize() */
+	virtual void serialize(co::DataOStream& os, const uint64_t dirtyBits);
+
+	/** @sa Object::deserialize() */
+	virtual void deserialize(co::DataIStream& is, const uint64_t dirtyBits);
+
+	virtual ChangeType getChangeType() const
+	{
+		return DELTA;
+	}
+
+	/** The changed parts of the data since the last pack(). */
+	enum DirtyBits
+	{
+		DIRTY_CAMERA = eq::fabric::Serializable::DIRTY_CUSTOM << 0,
+		DIRTY_FLAGS = eq::fabric::Serializable::DIRTY_CUSTOM << 1,
+		DIRTY_VIEW = eq::fabric::Serializable::DIRTY_CUSTOM << 2,
+		DIRTY_MESSAGE = eq::fabric::Serializable::DIRTY_CUSTOM << 3,
+	};
+
+private:
+	eq::Matrix4f _rotation;
+	eq::Matrix4f _modelRotation;
+	eq::Vector3f _position;
+
+	eq::uint128_t _modelID;
+	ColorMode _colorMode;
+	float _quality;
+	bool _ortho;
+	bool _statistics;
+	bool _help;
+	bool _wireframe;
+	bool _idle;
+
+	eq::uint128_t _currentViewID;
+	std::string _message;
+};
+
+} // namespace eqPly
 
 #endif // EQ_PLY_FRAMEDATA_H
-

@@ -43,7 +43,6 @@ using namespace mesh;
 
 /*  Contructor.  */
 VertexData::VertexData()
-    : _invertFaces( false )
 {
     _boundingBox[0] = Vertex( 0.0f );
     _boundingBox[1] = Vertex( 0.0f );
@@ -122,8 +121,6 @@ void VertexData::readTriangles( PlyFile* file, const int nFaces )
     triangles.reserve( nFaces );
     
     // read in the faces, asserting that they are only triangles
-    uint8_t ind1 = _invertFaces ? 2 : 0;
-    uint8_t ind3 = _invertFaces ? 0 : 2;
     for( int i = 0; i < nFaces; ++i )
     {
         ply_get_element( file, static_cast< void* >( &face ) );
@@ -139,9 +136,9 @@ void VertexData::readTriangles( PlyFile* file, const int nFaces )
         assert(face.vertices[1] < vertices.size());
         assert(face.vertices[2] < vertices.size());
 
-        triangles.push_back( Triangle( face.vertices[ind1], 
+        triangles.push_back( Triangle( face.vertices[0],
                                        face.vertices[1],
-                                       face.vertices[ind3] ) );
+                                       face.vertices[2] ) );
         
         // free the memory that was allocated by ply_get_element
         free( face.vertices );

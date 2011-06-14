@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2006-2010, Stefan Eilemann <eile@equalizergraphics.com> 
  *                    2010, Cedric Stalder <cedric.stalder@gmail.com>
@@ -40,27 +39,27 @@
 namespace eqPly
 {
 
-InitData::InitData()
-        : _frameDataID( co::base::UUID::ZERO )
-        , _useGLSL( false )
-        , _invFaces( false )
-{}
+InitData::InitData() :
+		_frameDataID(co::base::UUID::ZERO)
+{
+}
 
 InitData::~InitData()
 {
-    setFrameDataID( co::base::UUID::ZERO );
+	setFrameDataID(co::base::UUID::ZERO);
 }
 
-void InitData::getInstanceData( co::DataOStream& os )
+void InitData::getInstanceData(co::DataOStream& os)
 {
-    os << _frameDataID << _useGLSL << _invFaces;
+	os << _frameDataID;
 }
 
-void InitData::applyInstanceData( co::DataIStream& is )
+void InitData::applyInstanceData(co::DataIStream& is)
 {
-    is >> _frameDataID >> _useGLSL >> _invFaces;
+	is >> _frameDataID;
 
-    EQASSERT( _frameDataID != eq::UUID::ZERO );
-    EQINFO << "New InitData instance" << std::endl;
+	EQASSERT( _frameDataID != eq::UUID::ZERO );
+	EQINFO << "New InitData instance" << std::endl;
 }
-}
+
+} // namespace eqPly

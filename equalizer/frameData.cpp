@@ -42,7 +42,6 @@ FrameData::FrameData()
         , _statistics( false )
         , _help( false )
         , _wireframe( false )
-        , _pilotMode( false )
         , _idle( false )
         , _currentViewID( co::base::UUID::ZERO )
 {
@@ -57,7 +56,7 @@ void FrameData::serialize( co::DataOStream& os, const uint64_t dirtyBits )
         os << _position << _rotation << _modelRotation;
     if( dirtyBits & DIRTY_FLAGS )
         os << _modelID << _colorMode << _quality << _ortho
-           << _statistics << _help << _wireframe << _pilotMode << _idle;
+           << _statistics << _help << _wireframe << _idle;
     if( dirtyBits & DIRTY_VIEW )
         os << _currentViewID;
     if( dirtyBits & DIRTY_MESSAGE )
@@ -71,7 +70,7 @@ void FrameData::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
         is >> _position >> _rotation >> _modelRotation;
     if( dirtyBits & DIRTY_FLAGS )
         is >> _modelID >> _colorMode >> _quality >> _ortho
-           >> _statistics >> _help >> _wireframe >> _pilotMode >> _idle;
+           >> _statistics >> _help >> _wireframe >> _idle;
     if( dirtyBits & DIRTY_VIEW )
         is >> _currentViewID;
     if( dirtyBits & DIRTY_MESSAGE )
@@ -141,22 +140,6 @@ void FrameData::adjustQuality( const float delta )
     EQINFO << "Set non-idle image quality to " << _quality << std::endl;
 }
 
-void FrameData::togglePilotMode()
-{
-    _pilotMode = !_pilotMode;
-    setDirty( DIRTY_FLAGS );
-}
-
-void FrameData::spinCamera( const float x, const float y )
-{
-    if( x == 0.f && y == 0.f )
-        return;
-
-    _rotation.pre_rotate_x( x );
-    _rotation.pre_rotate_y( y );
-    setDirty( DIRTY_CAMERA );
-}
-
 void FrameData::spinModel( const float x, const float y )
 {
     if( x == 0.f && y == 0.f )
@@ -178,24 +161,13 @@ void FrameData::spinModel( const float x, const float y, const float z )
     setDirty( DIRTY_CAMERA );
 }
 
-void FrameData::moveCamera( const float x, const float y, const float z )
+void FrameData::moveCamera(const float x, const float y, const float z)
 {
-    if( _pilotMode )
-    {
-        eq::Matrix4f matInverse;
-        compute_inverse( _rotation, matInverse );
-        eq::Vector4f shift = matInverse * eq::Vector4f( x, y, z, 1 );
+	_position.x() += x;
+	_position.y() += y;
+	_position.z() += z;
 
-        _position += shift;
-    }
-    else
-    {
-        _position.x() += x;
-        _position.y() += y;
-        _position.z() += z;
-    }
-
-    setDirty( DIRTY_CAMERA );
+	setDirty(DIRTY_CAMERA);
 }
 
 void FrameData::setCameraPosition( const eq::Vector3f& position )

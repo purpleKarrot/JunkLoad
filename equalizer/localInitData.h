@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2007-2009, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +11,7 @@
  * - Neither the name of Eyescale Software GmbH nor the names of its
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
-! *
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,38 +30,31 @@
 
 #include "initData.h"
 
-class FrameData;
-
 namespace eqPly
 {
-    /**
-     * Manages the argument parsing and non-distributed part of the
-     * initialization data.
-     */
-    class LocalInitData : public InitData
-    {
-    public:
-        LocalInitData();
 
-        void parseArguments( const int argc, char** argv );
+/**
+ * Manages the argument parsing and non-distributed part of the
+ * initialization data.
+ */
+class LocalInitData: public InitData
+{
+public:
+	LocalInitData();
 
-        const std::string& getPathFilename()const { return _pathFilename; }
-        bool               useColor()       const { return _color; }
-        bool               isResident()     const { return _isResident; }
-        uint32_t           getMaxFrames()   const { return _maxFrames; }
+	void parseArguments(const int argc, char** argv);
 
-        const std::vector< std::string >& getFilenames() const
-            { return _filenames; }
+	std::string getFilename() const
+	{
+		return model_filename;
+	}
 
-        const LocalInitData& operator = ( const LocalInitData& from );
+	const LocalInitData& operator =(const LocalInitData& from);
 
-    private:
-        std::vector< std::string > _filenames;
-        std::string _pathFilename;
-        uint32_t    _maxFrames;
-        bool        _color;
-        bool        _isResident;
-    };
-}
+private:
+	std::string model_filename;
+};
+
+} // namespace eqPly
 
 #endif // EQ_PLY_LOCALINITDATA_H

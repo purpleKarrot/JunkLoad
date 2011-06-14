@@ -33,6 +33,7 @@
 
 namespace eqPly
 {
+
 bool Node::configInit( const eq::uint128_t& initID )
 {
     if( !eq::Node::configInit( initID ))
@@ -51,12 +52,4 @@ bool Node::configInit( const eq::uint128_t& initID )
     return true;
 }
 
-bool Node::configExit()
-{
-    Config* config = static_cast< Config* >( getConfig( ));
-    config->unmapData();
-    
-    return eq::Node::configExit();
-}
-
-}
+} // namespace eqPly

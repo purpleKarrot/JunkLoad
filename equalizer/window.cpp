@@ -85,8 +85,7 @@ bool Window::configInitGL( const eq::uint128_t& initID )
     const Config*   config   = static_cast< const Config* >( getConfig( ));
     const InitData& initData = config->getInitData();
 
-    if( initData.useGLSL() )
-        _loadShaders();
+    _loadShaders();
 
     return true;
 }

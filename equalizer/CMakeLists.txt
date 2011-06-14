@@ -26,8 +26,6 @@ add_library(eqMesh STATIC
   )
 
 add_executable(eqJunk
-  cameraAnimation.cpp
-  cameraAnimation.h
   channel.cpp
   channel.h
   config.cpp
@@ -45,7 +43,6 @@ add_executable(eqJunk
   localInitData.cpp
   localInitData.h
   main.cpp
-  modelAssigner.h
   node.cpp
   node.h
   pipe.cpp

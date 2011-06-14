@@ -41,52 +41,50 @@
 /** The Equalizer polygonal rendering example. */
 namespace eqPly
 {
-    class LocalInitData;
 
-    typedef mesh::VertexBufferRoot    Model;
-    typedef VertexBufferDist          ModelDist;
+class LocalInitData;
 
-    typedef std::vector< Model* > Models;
-    typedef std::vector< ModelDist* > ModelDists;
+typedef mesh::VertexBufferRoot Model;
+typedef VertexBufferDist ModelDist;
 
-    typedef Models::const_iterator ModelsCIter;
-    typedef ModelDists::const_iterator ModelDistsCIter;
+/** The EqPly application instance */
+class EqPly: public eq::Client
+{
+public:
+	EqPly(const LocalInitData& initData);
 
-    /** The EqPly application instance */
-    class EqPly : public eq::Client
-    {
-    public:
-        EqPly( const LocalInitData& initData );
-        virtual ~EqPly() {}
+	virtual ~EqPly()
+	{
+	}
 
-        /** Run an eqPly instance. */
-        int run();
+	/** Run an eqPly instance. */
+	int run();
 
-        /** @return a string containing an online help description. */
-        static const std::string& getHelp();
+	/** @return a string containing an online help description. */
+	static const char* const getHelp();
 
-    protected:
-        /** @sa eq::Client::clientLoop. */
-        virtual void clientLoop();
-        
-    private:
-        const LocalInitData& _initData;
-    };
+protected:
+	/** @sa eq::Client::clientLoop. */
+	virtual void clientLoop();
 
-    enum ColorMode
-    {
-        COLOR_MODEL, //!< Render using the colors defined in the ply file
-        COLOR_DEMO,  //!< Use a unique color to demonstrate decomposition
-        COLOR_WHITE, //!< Render in solid white (mostly for anaglyph stereo)
-        COLOR_ALL    //!< @internal, must be last
-    };
+private:
+	const LocalInitData& _initData;
+};
 
-    enum LogTopics
-    {
-        LOG_STATS = eq::LOG_CUSTOM << 0, // 65536
-        LOG_CULL  = eq::LOG_CUSTOM << 1  // 131072
-    };
-}
+enum ColorMode
+{
+	COLOR_MODEL, //!< Render using the colors defined in the ply file
+	COLOR_DEMO,  //!< Use a unique color to demonstrate decomposition
+	COLOR_WHITE, //!< Render in solid white (mostly for anaglyph stereo)
+	COLOR_ALL    //!< @internal, must be last
+};
+
+enum LogTopics
+{
+	LOG_STATS = eq::LOG_CUSTOM << 0, // 65536
+	LOG_CULL  = eq::LOG_CUSTOM << 1  // 131072
+};
+
+} // namespace eqPly
 
 #endif // EQ_PLY_H
-

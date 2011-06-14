@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2007-2011, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,95 +39,37 @@
 
 namespace eqPly
 {
-LocalInitData::LocalInitData() 
-        : _maxFrames( 0xffffffffu )
-        , _color( true )
-        , _isResident( false )
+
+LocalInitData::LocalInitData() :
+		model_filename("/usr/share/Equalizer/data/bunny.ply")
 {
-    _filenames.push_back("/usr/share/Equalizer/data");
 }
 
-const LocalInitData& LocalInitData::operator = ( const LocalInitData& from )
+const LocalInitData& LocalInitData::operator =(const LocalInitData& from)
 {
-    _maxFrames   = from._maxFrames;    
-    _color       = from._color;        
-    _isResident  = from._isResident;
-    _filenames    = from._filenames;
-    _pathFilename = from._pathFilename;
-
-    if( from.useGLSL( )) 
-        enableGLSL();
-    if( from.useInvertedFaces( )) 
-        enableInvertedFaces();
-
-    return *this;
+	model_filename = from.model_filename;
+	return *this;
 }
 
-void LocalInitData::parseArguments( const int argc, char** argv )
+void LocalInitData::parseArguments(const int argc, char** argv)
 {
-    try
-    {
-        const std::string& desc = EqPly::getHelp();
+	try
+	{
+		const std::string& desc = EqPly::getHelp();
 
-        TCLAP::CmdLine command( desc );
-        TCLAP::MultiArg<std::string> modelArg( "m", "model", 
-                                             "ply model file name or directory",
-                                               false, "string", command );
-        TCLAP::SwitchArg colorArg( "b", "blackAndWhite", 
-                                   "Don't use colors from ply file", 
-                                   command, false );
-        TCLAP::SwitchArg residentArg( "r", "resident", 
-           "Keep client resident (see resident node documentation on website)", 
-                                      command, false );
-        TCLAP::ValueArg<uint32_t> framesArg( "n", "numFrames", 
-                                           "Maximum number of rendered frames", 
-                                             false, 0xffffffffu, "unsigned",
-                                             command );
-        TCLAP::SwitchArg glslArg( "g", "glsl", "Enable GLSL shaders", 
-                                    command, false );
-        TCLAP::SwitchArg invFacesArg( "i", "invertFaces",
-                             "Invert faces (valid during binary file creation)",
-                                    command, false );
-        TCLAP::ValueArg<std::string> pathArg( "a", "cameraPath",
-                                        "File containing camera path animation",
-                                              false, "", "string", command );
-        TCLAP::VariableSwitchArg ignoreEqArgs( "eq",
-                                               "Ignored Equalizer options",
-                                               command );
-        TCLAP::UnlabeledMultiArg< std::string >
-            ignoreArgs( "ignore", "Ignored unlabeled arguments", false, "any",
-                        command );
+		TCLAP::CmdLine command(desc);
+		TCLAP::MultiArg<std::string> modelArg("m", "model", "ply model file name or directory", false, "string", command);
 
-        command.parse( argc, argv );
+		command.parse(argc, argv);
 
-        if( modelArg.isSet( ))
-        {
-            _filenames.clear();
-            _filenames = modelArg.getValue();
-        }
-
-        _color = !colorArg.isSet();
-
-        if( framesArg.isSet( ))
-            _maxFrames = framesArg.getValue();
-
-        if( residentArg.isSet( ))
-            _isResident = true;
-
-        if( pathArg.isSet( ))
-            _pathFilename = pathArg.getValue();
-
-        if( glslArg.isSet() )
-            enableGLSL();
-        if( invFacesArg.isSet() )
-            enableInvertedFaces();
-    }
-    catch( TCLAP::ArgException& exception )
-    {
-        EQERROR << "Command line parse error: " << exception.error() 
-                << " for argument " << exception.argId() << std::endl;
-        ::exit( EXIT_FAILURE );
-    }
-}
+		if (modelArg.isSet())
+			model_filename = modelArg.getValue()[0];
+	}
+	catch (TCLAP::ArgException& exception)
+	{
+		EQERROR << "Command line parse error: " << exception.error() << " for argument " << exception.argId() << std::endl;
+		::exit(EXIT_FAILURE);
+	}
 }
 
+} // namespace eqPly

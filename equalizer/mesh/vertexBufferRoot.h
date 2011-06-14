@@ -44,7 +44,7 @@ namespace mesh
     class VertexBufferRoot : public VertexBufferNode
     {
     public:
-        VertexBufferRoot() : VertexBufferNode(), _invertFaces(false) {}
+        VertexBufferRoot() : VertexBufferNode() {}
 
         virtual void render( VertexBufferState& state ) const;
         
@@ -55,8 +55,6 @@ namespace mesh
         bool writeToFile( const std::string& filename );
         bool readFromFile( const std::string& filename );
         bool hasColors() const { return _data.colors.size() > 0; }
-
-        void useInvertedFaces() { _invertFaces = true; }
 
         const std::string& getName() const { return _name; }
 
@@ -69,7 +67,6 @@ namespace mesh
         bool _readBinary( std::string filename );
         
         VertexBufferData _data;
-        bool             _invertFaces;
         std::string      _name;
 
         friend class eqPly::VertexBufferDist;

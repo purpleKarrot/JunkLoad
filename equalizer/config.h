@@ -32,11 +32,11 @@
 
 #include <eq/eq.h>
 #include <eq/admin/base.h>
+#include <boost/scoped_ptr.hpp>
 
 // members
 #include "localInitData.h"
 #include "frameData.h"
-#include "cameraAnimation.h"
 
 namespace eqPly
 {
@@ -66,9 +66,6 @@ namespace eqPly
         /** Map per-config data to the local node process */
         bool mapData( const eq::uint128_t& initDataID );
 
-        /** Unmap per-config data to the local node process */
-        void unmapData();
-
         /** @return the requested, default model or 0. */
         const Model* getModel( const eq::uint128_t& id );
 
@@ -95,11 +92,8 @@ namespace eqPly
         LocalInitData _initData;
         FrameData     _frameData;
 
-        Models     _models;
-        ModelDists _modelDist;
+        boost::scoped_ptr<Model> _model;
         co::base::Lock  _modelLock;
-
-        CameraAnimation _animation;
 
         uint64_t _messageTime;
 
@@ -109,7 +103,6 @@ namespace eqPly
         uint32_t _numFramesAA;
 
         void _loadModels();
-        void _registerModels();
         void _loadPath();
         void _deregisterData();
         bool _handleKeyEvent( const eq::KeyEvent& event );
@@ -117,7 +110,6 @@ namespace eqPly
         void _switchCanvas();
         void _switchView();
         void _switchViewMode();
-        void _switchModel();
         void _freezeLoadBalancing( const bool onOff );
         void _switchLayout( int32_t increment );
 

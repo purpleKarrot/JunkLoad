@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2006-2011, Stefan Eilemann <eile@equalizergraphics.com> 
  *                    2010, Cedric Stalder <cedric.stalder@gmail.com>
  *
@@ -34,33 +33,31 @@
 
 namespace eqPly
 {
-    class InitData : public co::Object
-    {
-    public:
-        InitData();
-        virtual ~InitData();
 
-        void setFrameDataID( const eq::uint128_t& id )   
-            { _frameDataID = id; }
+class InitData: public co::Object
+{
+public:
+	InitData();
+	virtual ~InitData();
 
-        eq::uint128_t getFrameDataID() const  { return _frameDataID; }
-        bool               useGLSL() const          { return _useGLSL; }
-        bool               useInvertedFaces() const { return _invFaces; }
+	void setFrameDataID(const eq::uint128_t& id)
+	{
+		_frameDataID = id;
+	}
 
-    protected:
-        virtual void getInstanceData( co::DataOStream& os );
-        virtual void applyInstanceData( co::DataIStream& is );
+	eq::uint128_t getFrameDataID() const
+	{
+		return _frameDataID;
+	}
 
-        void enableGLSL()          { _useGLSL  = true; }
-        void enableInvertedFaces() { _invFaces = true; }
+protected:
+	virtual void getInstanceData(co::DataOStream& os);
+	virtual void applyInstanceData(co::DataIStream& is);
 
-    private:
-        eq::uint128_t    _frameDataID;
-        bool             _useGLSL;
-        bool             _invFaces;
-    };
-}
+private:
+	eq::uint128_t _frameDataID;
+};
 
+} // namespace eqPly
 
 #endif // EQ_PLY_INITDATA_H
-

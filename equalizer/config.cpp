@@ -31,7 +31,6 @@
 #include "configEvent.h"
 
 #include "view.h"
-#include "modelAssigner.h"
 
 namespace eqPly
 {
@@ -51,29 +50,11 @@ Config::Config( co::base::RefPtr< eq::Server > parent )
 
 Config::~Config()
 {
-    for( ModelsCIter i = _models.begin(); i != _models.end(); ++i )
-    {
-        delete *i;
-    }
-    _models.clear();
-
-    for( ModelDistsCIter i = _modelDist.begin(); i != _modelDist.end(); ++i )
-    {
-        EQASSERT( !(*i)->isAttached() );
-        delete *i;
-    }
-    _modelDist.clear();
 }
 
 bool Config::init()
 {
-    if( !_animation.isValid( ))
-        _animation.loadAnimation( _initData.getPathFilename( ));
-
     // init distributed objects
-    if( !_initData.useColor( ))
-        _frameData.setColorMode( COLOR_WHITE );
-
     registerObject( &_frameData );
     _frameData.setAutoObsolete( getLatency( ));
 
@@ -88,7 +69,6 @@ bool Config::init()
     }
 
     _loadModels();
-    _registerModels();
 
     const eq::Canvases& canvases = getCanvases();
     if( canvases.empty( ))
@@ -110,119 +90,23 @@ bool Config::exit()
     return ret;
 }
 
-namespace
-{
-static bool _isPlyfile( const std::string& filename )
-{
-    const size_t size = filename.length();
-    if( size < 5 )
-        return false;
-
-    if( filename[size-4] != '.' || filename[size-3] != 'p' ||
-        filename[size-2] != 'l' || filename[size-1] != 'y' )
-    {
-        return false;
-    }
-    return true;
-}
-}
-
 void Config::_loadModels()
 {
-    if( _models.empty( )) // only load on the first config run
-    {
-        eq::Strings filenames = _initData.getFilenames();
-        while( !filenames.empty( ))
-        {
-            const std::string filename = filenames.back();
-            filenames.pop_back();
-     
-            if( _isPlyfile( filename ))
-            {
-                Model* model = new Model;
+	// only load on the first config run
+	if (_model)
+		return;
 
-                if( _initData.useInvertedFaces() )
-                    model->useInvertedFaces();
-        
-                if( !model->readFromFile( filename.c_str() ) )
-                {
-                    EQWARN << "Can't load model: " << filename << std::endl;
-                    delete model;
-                }
-                else
-                    _models.push_back( model );
-            }
-            else
-            {
-                const std::string basename = co::base::getFilename( filename );
-                if( basename == "." || basename == ".." )
-                    continue;
-
-                // recursively search directories
-                const eq::Strings subFiles =
-                    co::base::searchDirectory( filename, "*" );
-
-                for( eq::StringsCIter i = subFiles.begin();
-                     i != subFiles.end(); ++i )
-                {
-                    filenames.push_back( filename + '/' + *i );
-                }
-            }
-        }
-    }
-}
-
-void Config::_registerModels()
-{
-    // Register distribution helpers on each config run
-    const bool createDist = _modelDist.empty(); //first run, create distributors
-    const size_t  nModels = _models.size();
-    EQASSERT( createDist || _modelDist.size() == nModels );
-
-    for( size_t i = 0; i < nModels; ++i )
-    {
-        const Model* model = _models[i];
-        ModelDist* modelDist = 0;
-        if( createDist )
-        {
-            modelDist = new ModelDist( model );
-            _modelDist.push_back( modelDist );
-        }
-        else
-            modelDist = _modelDist[i];
-
-        modelDist->registerTree( getClient( ));
-        EQASSERT( modelDist->isAttached() );
-
-        _frameData.setModelID( modelDist->getID( ));
-    }
-
-    EQASSERT( _modelDist.size() == nModels );
-
-    if( !_modelDist.empty( ))
-    {
-        ModelAssigner assigner( _modelDist );
-        accept( assigner );
-    }
+	_model.reset(new Model);
+	_model->readFromFile(_initData.getFilename());
 }
 
 void Config::_deregisterData()
 {
-    for( ModelDistsCIter i = _modelDist.begin(); i != _modelDist.end(); ++i )
-    {
-        ModelDist* modelDist = *i;
-        if( !modelDist->isAttached() ) // already done
-            continue;
+	deregisterObject(&_initData);
+	deregisterObject(&_frameData);
 
-        EQASSERT( modelDist->isMaster( ));
-        modelDist->deregisterTree();
-    }
-
-    deregisterObject( &_initData );
-    deregisterObject( &_frameData );
-
-    _initData.setFrameDataID( eq::UUID::ZERO );
-    _frameData.setModelID( eq::UUID::ZERO );
+	_initData.setFrameDataID(eq::UUID::ZERO);
+	_frameData.setModelID(eq::UUID::ZERO);
 }
 
 bool Config::mapData( const eq::uint128_t& initDataID )
@@ -243,43 +127,11 @@ bool Config::mapData( const eq::uint128_t& initDataID )
     return true;
 }
 
-void Config::unmapData()
+const Model* Config::getModel(const eq::uint128_t& modelID)
 {
-    for( ModelDistsCIter i = _modelDist.begin(); i != _modelDist.end(); ++i )
-    {
-        ModelDist* modelDist = *i;
-        if( !modelDist->isAttached( )) // already done
-            continue;
-
-        if( !modelDist->isMaster( )) // leave registered on appNode
-            modelDist->unmapTree();
-    }
-}
-
-const Model* Config::getModel( const eq::uint128_t& modelID )
-{
-    if( modelID == eq::UUID::ZERO )
-        return 0;
-
-    // Accessed concurrently from pipe threads
-    co::base::ScopedMutex<> _mutex( _modelLock );
-
-    const size_t nModels = _models.size();
-    EQASSERT( _modelDist.size() == nModels );
-
-    for( size_t i = 0; i < nModels; ++i )
-    {
-        const ModelDist* dist = _modelDist[ i ];
-        if( dist->getID() == modelID )
-            return _models[ i ];
-    }
-    
-    _modelDist.push_back( new ModelDist );
-    Model* model = _modelDist.back()->mapModel( getClient(), modelID );
-    EQASSERT( model );
-    _models.push_back( model );
-
-    return model;
+	// Accessed concurrently from pipe threads
+	co::base::ScopedMutex<> _mutex(_modelLock);
+	return _model.get();
 }
 
 uint32_t Config::startFrame()
@@ -293,36 +145,19 @@ uint32_t Config::startFrame()
 
 void Config::_updateData()
 {
-    // update database
-    if( _animation.isValid( ))
-    {
-        const eq::Vector3f&  modelRotation = _animation.getModelRotation();
-        const CameraAnimation::Step& curStep = _animation.getNextStep();
+	_frameData.spinModel(-0.001f * _spinX, -0.001f * _spinY);
+	_frameData.moveCamera(0.0f, 0.0f, 0.001f * _advance);
 
-        _frameData.setModelRotation( modelRotation);
-        _frameData.setRotation( curStep.rotation );
-        _frameData.setCameraPosition( curStep.position );
-    }
-    else
-    {
-        if( _frameData.usePilotMode())
-            _frameData.spinCamera( -0.001f * _spinX, -0.001f * _spinY );
-        else
-            _frameData.spinModel( -0.001f * _spinX, -0.001f * _spinY );
+	// idle mode
+	if (isIdleAA())
+	{
+		EQASSERT( _numFramesAA > 0 );
+		_frameData.setIdle(true);
+	}
+	else
+		_frameData.setIdle(false);
 
-        _frameData.moveCamera( 0.0f, 0.0f, 0.001f*_advance );
-    }
-
-    // idle mode
-    if( isIdleAA( ))
-    {
-        EQASSERT( _numFramesAA > 0 );
-        _frameData.setIdle( true );
-    }
-    else
-        _frameData.setIdle( false );
-
-    _numFramesAA = 0;
+	_numFramesAA = 0;
 }
 
 bool Config::isIdleAA()
@@ -422,12 +257,8 @@ bool Config::handleEvent( const eq::ConfigEvent* event )
                 _spinX = 0;
                 _spinY = 0;
 
-                if( _frameData.usePilotMode())
-                    _frameData.spinCamera(-0.005f*event->data.pointerMotion.dy,
-                                          -0.005f*event->data.pointerMotion.dx);
-                else
-                    _frameData.spinModel( -0.005f*event->data.pointerMotion.dy,
-                                          -0.005f*event->data.pointerMotion.dx);
+                _frameData.spinModel( -0.005f*event->data.pointerMotion.dy,
+                		-0.005f*event->data.pointerMotion.dx);
 
                 _redraw = true;
             }
@@ -503,10 +334,6 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
 {
     switch( event.key )
     {
-        case 'n':
-        case 'N':
-            _frameData.togglePilotMode();
-            return true;
         case ' ':
             stopFrames();
             _spinX   = 0;
@@ -533,8 +360,6 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
                 _switchView();
             if( rng.get< bool >( ))
                 _switchLayout( 1 );
-            if( rng.get< bool >( ))
-                _switchModel();
             if( rng.get< bool >( ))
                 _switchViewMode();
             return true;
@@ -585,11 +410,6 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
         case 'v':
         case 'V':
             _switchView();
-            return true;
-
-        case 'm':
-        case 'M':
-            _switchModel();
             return true;
 
         case 'l':
@@ -774,44 +594,6 @@ void Config::_switchView()
         _frameData.setCurrentViewID( eq::UUID::ZERO );
     else
         _frameData.setCurrentViewID( (*i)->getID( ));
-}
-
-void Config::_switchModel()
-{
-    if( _modelDist.empty( )) // no models
-        return;
-
-    // current model of current view
-    const eq::uint128_t& viewID = _frameData.getCurrentViewID();
-    View* view = static_cast< View* >( find< eq::View >( viewID ));
-    const eq::uint128_t& currentID = view ?
-                               view->getModelID() : _frameData.getModelID();
-
-    // next model
-    ModelDistsCIter i;
-    for( i = _modelDist.begin(); i != _modelDist.end(); ++i )
-    {
-        if( (*i)->getID() != currentID )
-            continue;
-                
-        ++i;
-        break;
-    }
-    if( i == _modelDist.end( ))
-        i = _modelDist.begin(); // wrap around
-
-    // set identifier on view or frame data (default model)
-    const eq::uint128_t& modelID = (*i)->getID();
-    if( view )
-        view->setModelID( modelID );
-    else
-        _frameData.setModelID( modelID );
-
-    if( view )
-    {
-        const Model* model = getModel( modelID );
-        _setMessage( "Using " + co::base::getFilename( model->getName( )));
-    }
 }
 
 void Config::_switchViewMode()
