@@ -22,6 +22,41 @@
 #include "Model.hpp"
 #include <boost/foreach.hpp>
 
+static void set_color(float f)
+{
+	assert(f >= 0.f);
+	assert(f <= 1.f);
+
+	float s = 1.f;
+	float v = 1.f;
+
+	float p = (v * (1.f - s));
+	float q = (v * (1.f - (s * f)));
+	float t = (v * (1.f - (s * (1.f - f))));
+
+	switch (int(f * 6))
+	{
+	case 0:
+		glColor3f(v, t, p);
+		break;
+	case 1:
+		glColor3f(q, v, p);
+		break;
+	case 2:
+		glColor3f(p, v, t);
+		break;
+	case 3:
+		glColor3f(p, q, v);
+		break;
+	case 4:
+		glColor3f(t, p, v);
+		break;
+	default:
+		glColor3f(v, p, q);
+		break;
+	}
+}
+
 Model::Model(const char* filename) :
 		Path(filename), vbuffer(0), ibuffer(0)
 {
@@ -54,8 +89,6 @@ void Model::draw(int ranges) const
 {
 	if (!vbuffer)
 		read_file();
-
-	glColor3f(1.f, 0.5f, 0.5f);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuffer);
@@ -97,9 +130,7 @@ void Model::draw(int ranges) const
 		int size = ((i + 1) * (frag + 1) * 3) - (i * frag * 3);
 		GLvoid* index = (char*) NULL + (i * frag * 3 * sizeof(unsigned int));
 
-		float ratio = float(i) / float(ranges);
-
-		glColor3f(ratio, 1.f - ratio, 0.2f);
+		set_color(float(i) / float(ranges));
 		glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, index);
 	}
 

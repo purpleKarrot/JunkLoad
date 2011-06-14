@@ -52,8 +52,10 @@ struct pos_order
 {
 	bool operator()(const pos& a, const pos& b)
 	{
-		return zorder_less(a, b);
-		//return a.z < b.z;
+		//return zorder_less(a, b);
+
+		using namespace boost::qvm;
+		return a%Z < b%Z;
 	}
 };
 

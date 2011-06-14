@@ -1,5 +1,7 @@
 //
 
+#include <cmath>
+#include <limits>
 #include <boost/qvm/all.hpp>
 
 template<typename Vector>
@@ -16,8 +18,8 @@ zorder_less(const Vector& a, const Vector& b)
 		typename v_traits::scalar_type ak = v_traits::ir(k, a);
 		typename v_traits::scalar_type bk = v_traits::ir(k, b);
 
-		if ((ak < 0) != (bk < 0))
-			return ak < bk;
+//		if ((ak < 0) != (bk < 0))
+//			return ak < bk;
 
 		int y = msdb(ak, bk);
 		if (x < y)
