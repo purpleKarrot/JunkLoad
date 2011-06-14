@@ -56,7 +56,6 @@ const LocalInitData& LocalInitData::operator = ( const LocalInitData& from )
     _filenames    = from._filenames;
     _pathFilename = from._pathFilename;
 
-    setWindowSystem( from.getWindowSystem( ));
     if( from.useGLSL( )) 
         enableGLSL();
     if( from.useInvertedFaces( )) 
@@ -69,18 +68,6 @@ void LocalInitData::parseArguments( const int argc, char** argv )
 {
     try
     {
-        std::string wsHelp = "Window System API ( one of: ";
-#ifdef AGL
-        wsHelp += "AGL ";
-#endif
-#ifdef GLX
-        wsHelp += "glX ";
-#endif
-#ifdef WGL
-        wsHelp += "WGL ";
-#endif
-        wsHelp += ")";
-
         const std::string& desc = EqPly::getHelp();
 
         TCLAP::CmdLine command( desc );
@@ -97,8 +84,6 @@ void LocalInitData::parseArguments( const int argc, char** argv )
                                            "Maximum number of rendered frames", 
                                              false, 0xffffffffu, "unsigned",
                                              command );
-        TCLAP::ValueArg<std::string> wsArg( "w", "windowSystem", wsHelp,
-                                            false, "auto", "string", command );
         TCLAP::SwitchArg glslArg( "g", "glsl", "Enable GLSL shaders", 
                                     command, false );
         TCLAP::SwitchArg invFacesArg( "i", "invertFaces",
@@ -120,19 +105,6 @@ void LocalInitData::parseArguments( const int argc, char** argv )
         {
             _filenames.clear();
             _filenames = modelArg.getValue();
-        }
-        if( wsArg.isSet( ))
-        {
-            std::string windowSystem = wsArg.getValue();
-            transform( windowSystem.begin(), windowSystem.end(),
-                       windowSystem.begin(), (int(*)(int))std::tolower );
-
-            if( windowSystem == "glx" )
-                setWindowSystem( eq::WINDOW_SYSTEM_GLX );
-            else if( windowSystem == "agl" )
-                setWindowSystem( eq::WINDOW_SYSTEM_AGL );
-            else if( windowSystem == "wgl" )
-                setWindowSystem( eq::WINDOW_SYSTEM_WGL );
         }
 
         _color = !colorArg.isSet();

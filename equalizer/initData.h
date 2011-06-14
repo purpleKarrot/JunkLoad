@@ -44,7 +44,6 @@ namespace eqPly
             { _frameDataID = id; }
 
         eq::uint128_t getFrameDataID() const  { return _frameDataID; }
-        eq::WindowSystem   getWindowSystem() const  { return _windowSystem; }
         bool               useGLSL() const          { return _useGLSL; }
         bool               useInvertedFaces() const { return _invFaces; }
 
@@ -52,14 +51,11 @@ namespace eqPly
         virtual void getInstanceData( co::DataOStream& os );
         virtual void applyInstanceData( co::DataIStream& is );
 
-        void setWindowSystem( const eq::WindowSystem windowSystem )
-            { _windowSystem = windowSystem; }
         void enableGLSL()          { _useGLSL  = true; }
         void enableInvertedFaces() { _invFaces = true; }
 
     private:
         eq::uint128_t    _frameDataID;
-        eq::WindowSystem _windowSystem;
         bool             _useGLSL;
         bool             _invFaces;
     };

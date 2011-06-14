@@ -42,7 +42,6 @@ namespace eqPly
 
 InitData::InitData()
         : _frameDataID( co::base::UUID::ZERO )
-        , _windowSystem( eq::WINDOW_SYSTEM_NONE )
         , _useGLSL( false )
         , _invFaces( false )
 {}
@@ -54,12 +53,12 @@ InitData::~InitData()
 
 void InitData::getInstanceData( co::DataOStream& os )
 {
-    os << _frameDataID << _windowSystem << _useGLSL << _invFaces;
+    os << _frameDataID << _useGLSL << _invFaces;
 }
 
 void InitData::applyInstanceData( co::DataIStream& is )
 {
-    is >> _frameDataID >> _windowSystem >> _useGLSL >> _invFaces;
+    is >> _frameDataID >> _useGLSL >> _invFaces;
 
     EQASSERT( _frameDataID != eq::UUID::ZERO );
     EQINFO << "New InitData instance" << std::endl;
