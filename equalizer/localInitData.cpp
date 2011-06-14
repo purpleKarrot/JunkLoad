@@ -26,49 +26,35 @@
  */
 
 #include "localInitData.h"
-#include "frameData.h"
-
-#include <algorithm>
-#include <cctype>
-#include <functional>
-
-#ifndef MIN
-#  define MIN EQ_MIN
-#endif
-#include <tclap/CmdLine.h>
+#include <boost/program_options.hpp>
 
 namespace eqPly
 {
 
 LocalInitData::LocalInitData() :
-		model_filename("/usr/share/Equalizer/data/bunny.ply")
+		model_path("/usr/share/Equalizer/data/bunny.ply"),
+		shader_path("/usr/share/Equalizer/data/blinn_phong.shader")
 {
-}
-
-const LocalInitData& LocalInitData::operator =(const LocalInitData& from)
-{
-	model_filename = from.model_filename;
-	return *this;
 }
 
 void LocalInitData::parseArguments(const int argc, char** argv)
 {
-	try
+	using namespace boost::program_options;
+	options_description desc("Allowed options");
+	desc.add_options()
+		("help", "produce this help message")
+		("model,M", value<std::string> (&model_path), "path to the model")
+		("shader,S", value<std::string> (&shader_path), "path to the shader")
+		;
+
+	variables_map vm;
+	store(parse_command_line(argc, argv, desc), vm);
+	notify(vm);
+
+	if (vm.count("help"))
 	{
-		const std::string& desc = EqPly::getHelp();
-
-		TCLAP::CmdLine command(desc);
-		TCLAP::MultiArg<std::string> modelArg("m", "model", "ply model file name or directory", false, "string", command);
-
-		command.parse(argc, argv);
-
-		if (modelArg.isSet())
-			model_filename = modelArg.getValue()[0];
-	}
-	catch (TCLAP::ArgException& exception)
-	{
-		EQERROR << "Command line parse error: " << exception.error() << " for argument " << exception.argId() << std::endl;
-		::exit(EXIT_FAILURE);
+		std::cout << desc << "\n";
+		::exit(EXIT_SUCCESS);
 	}
 }
 

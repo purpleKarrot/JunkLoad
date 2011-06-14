@@ -44,15 +44,20 @@ public:
 
 	void parseArguments(const int argc, char** argv);
 
-	std::string getFilename() const
+public:
+	std::string getModelPath() const
 	{
-		return model_filename;
+		return model_path;
 	}
 
-	const LocalInitData& operator =(const LocalInitData& from);
+	std::string getShaderPath() const
+	{
+		return shader_path;
+	}
 
 private:
-	std::string model_filename;
+	std::string model_path;
+	std::string shader_path;
 };
 
 } // namespace eqPly

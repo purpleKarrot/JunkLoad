@@ -9,7 +9,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 include_directories(include)
 
-find_package(Boost COMPONENTS iostreams thread filesystem NO_MODULE)
+find_package(Boost
+  COMPONENTS
+    iostreams
+    thread
+    filesystem
+    program_options
+  NO_MODULE
+  )
 include(${Boost_USE_FILE})
 
 # loading library

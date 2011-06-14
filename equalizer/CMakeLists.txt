@@ -3,8 +3,6 @@
 #find_package(Equalizer NO_MODULE)
 #include("${Equalizer_USE_FILE}")
 
-include_directories(include ${CMAKE_CURRENT_BINARY_DIR})
-
 add_library(eqMesh STATIC
   mesh/plyfile.cpp
   mesh/ply.h
@@ -58,4 +56,8 @@ target_link_libraries(eqJunk
   Collage
   Equalizer
 # ${EQUALIZER_LIBRARIES}
+  )
+
+boost_link_libraries(eqJunk
+  program_options
   )

@@ -97,7 +97,7 @@ void Config::_loadModels()
 		return;
 
 	_model.reset(new Model);
-	_model->readFromFile(_initData.getFilename());
+	_model->readFromFile(_initData.getModelPath());
 }
 
 void Config::_deregisterData()
