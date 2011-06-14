@@ -87,10 +87,6 @@ namespace eqPly
     protected:
         virtual ~Config();
 
-        /** Synchronize config and admin copy. */
-        virtual co::uint128_t sync( 
-                             const co::uint128_t& version = co::VERSION_HEAD );
-
     private:
         int         _spinX, _spinY;
         int         _advance;
@@ -112,8 +108,6 @@ namespace eqPly
 
         uint32_t _numFramesAA;
 
-        eq::admin::ServerPtr _admin;
-
         void _loadModels();
         void _registerModels();
         void _loadPath();
@@ -131,10 +125,6 @@ namespace eqPly
         const eq::Matrix4f& _getHeadMatrix() const;
         void _changeFocusDistance( const float delta );
         void _setFocusMode( const eq::FocusMode mode );
-
-        /** @return a pointer to a connected admin server. */
-        eq::admin::ServerPtr _getAdminServer();
-        void _closeAdminServer();
 
         void _setMessage( const std::string& message );
         void _updateData();

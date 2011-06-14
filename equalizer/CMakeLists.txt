@@ -60,6 +60,5 @@ target_link_libraries(eqJunk
   eqMesh
   Collage
   Equalizer
-  EqualizerAdmin
 # ${EQUALIZER_LIBRARIES}
   )

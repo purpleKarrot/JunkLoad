@@ -33,9 +33,6 @@
 #include "view.h"
 #include "modelAssigner.h"
 
-#include <admin/addWindow.h>
-#include <admin/removeWindow.h>
-
 namespace eqPly
 {
 
@@ -107,7 +104,6 @@ bool Config::exit()
 {
     const bool ret = eq::Config::exit();
     _deregisterData();
-    _closeAdminServer();
 
     // retain models and distributors for possible other config runs, destructor
     // deletes it
@@ -540,13 +536,6 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
             if( rng.get< bool >( ))
                 _switchModel();
             if( rng.get< bool >( ))
-                eqAdmin::addWindow( _getAdminServer(), rng.get< bool >( ));
-            if( rng.get< bool >( ))
-            {
-                eqAdmin::removeWindow( _getAdminServer( ));
-                _currentCanvas = 0;
-            }
-            if( rng.get< bool >( ))
                 _switchViewMode();
             return true;
         }
@@ -619,17 +608,6 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
         case 'G':
             _switchViewMode();
             return true;
-        case 'a':
-            eqAdmin::addWindow( _getAdminServer(), false /* active stereo */ );
-            return true;
-        case 'p':
-            eqAdmin::addWindow( _getAdminServer(), true /* passive stereo */ );
-            return true;
-        case 'x':
-            eqAdmin::removeWindow( _getAdminServer( ));
-            _currentCanvas = 0;
-            EQASSERT( update() );
-            return false;
 
         // Head Tracking Emulation
         case eq::KC_UP:
@@ -739,14 +717,6 @@ bool Config::_handleKeyEvent( const eq::KeyEvent& event )
         default:
             return false;
     }
-}
-
-co::uint128_t Config::sync( const co::uint128_t& version )
-{
-    if( _admin.isValid() && _admin->isConnected( ))
-        _admin->syncConfig( getID(), version );
-
-    return eq::Config::sync( version );
 }
 
 void Config::_switchCanvas()
@@ -957,46 +927,6 @@ void Config::_setMessage( const std::string& message )
 {
     _frameData.setMessage( message );
     _messageTime = getTime();
-}
-
-eq::admin::ServerPtr Config::_getAdminServer()
-{
-    // Debug: _closeAdminServer();
-    if( _admin.isValid() && _admin->isConnected( ))
-        return _admin;
-
-    eq::admin::init( 0, 0 );
-    eq::admin::ClientPtr client = new eq::admin::Client;
-    if( !client->initLocal( 0, 0 ))
-    {
-        _setMessage( "Can't init admin client" );
-        eq::admin::exit();
-    }
-
-    _admin = new eq::admin::Server;
-    if( !client->connectServer( _admin ))
-    {
-        _setMessage( "Can't open connection to administrate server" );
-        client->exitLocal();
-        _admin = 0;
-        eq::admin::exit();
-    }
-    return _admin;
-}
-
-void Config::_closeAdminServer()
-{
-    if( !_admin )
-        return;
-
-    eq::admin::ClientPtr client = _admin->getClient();
-    client->disconnectServer( _admin );
-    client->exitLocal();
-    EQASSERT( client->getRefCount() == 1 );
-    EQASSERT( _admin->getRefCount() == 1 );
-    
-    _admin = 0;
-    eq::admin::exit();
 }
 
 }
