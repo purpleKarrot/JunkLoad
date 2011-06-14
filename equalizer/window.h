@@ -47,9 +47,8 @@ namespace eqPly
     {
     public:
         Window( eq::Pipe* parent ) 
-                : eq::Window( parent ), _state( 0 ), _logoTexture( 0 ) {}
+                : eq::Window( parent ), _state( 0 ) {}
 
-        const eq::util::Texture* getLogoTexture() const { return _logoTexture; }
         VertexBufferState& getState() { return *_state; }
         
     protected:
@@ -62,7 +61,6 @@ namespace eqPly
 
     private:
         VertexBufferState* _state;
-        eq::util::Texture* _logoTexture;
 
         void _loadShaders();
     };
