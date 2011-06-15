@@ -121,7 +121,6 @@ namespace mesh
     // compound type definitions
     typedef vmml::vector< 3, Index >      Triangle;
     typedef ArrayWrapper< Vertex, 2 >   BoundingBox;
-    typedef vmml::vector< 4, float >    BoundingSphere;
     typedef ArrayWrapper< float, 2 >    Range;
     
     

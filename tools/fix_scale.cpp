@@ -7,20 +7,11 @@ using namespace boost::qvm;
 
 typedef vec<float, 3> position;
 
-int main(int argc, char* argv[])
+void fix_scale(junk::mapped_data_set& junk)
 {
-	if (argc != 2)
-	{
-		std::cerr << "usage: fix_scale <junkfile>" << std::endl;
-		return 0;
-	}
+	junk::mapped_data_element& mesh_ = junk.get_vertex_map();
 
-	// load file
-	junk::mapped_data_set data_set_(argv[1]);
-
-	junk::mapped_data_element& mesh_ = data_set_.get_vertex_map();
-
-	junk::attribute_accessor<position> get_position(get_attribute(data_set_.get_vertex_element(), "position").offset);
+	junk::attribute_accessor<position> get_position(get_attribute(junk.get_vertex_element(), "position").offset);
 
 	typedef junk::mapped_data_element::iterator iterator;
 	iterator begin = mesh_.begin();

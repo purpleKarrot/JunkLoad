@@ -76,9 +76,7 @@ namespace eqPly
 
     private:
         void _drawModel( const Model* model );
-        void _updateNearFar( const mesh::BoundingSphere& boundingSphere );
-        void _initFrustum( eq::FrustumCullerf& frustum, 
-                           const mesh::BoundingSphere& boundingSphere );
+        void _updateNearFar( );
 
         bool _isDone() const;
 

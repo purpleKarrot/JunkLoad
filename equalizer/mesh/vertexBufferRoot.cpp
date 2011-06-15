@@ -66,7 +66,6 @@ void VertexBufferRoot::setupTree( VertexData& data )
 
     VertexBufferNode::setupTree( data, 0, data.triangles.size(), 
                                  axis, 0, _data );
-    VertexBufferNode::updateBoundingSphere();
     VertexBufferNode::updateRange();
 }
 

@@ -129,7 +129,7 @@ void Channel::frameDraw( const eq::uint128_t& frameID )
 
     const Model* model = _getModel();
     if( model )
-        _updateNearFar( model->getBoundingSphere( ));
+        _updateNearFar();
 
     // Setup OpenGL state
     eq::Channel::frameDraw( frameID );
@@ -580,7 +580,6 @@ void Channel::_drawModel( const Model* model )
     mesh::VertexBufferState& state     = window->getState();
     const FrameData&   frameData = _getFrameData();
     const eq::Range&   range     = getRange();
-    eq::FrustumCullerf culler;
 
     if( frameData.getColorMode() == COLOR_MODEL && model->hasColors( ))
         state.setColors( true );
@@ -588,19 +587,12 @@ void Channel::_drawModel( const Model* model )
         state.setColors( false );
     state.setChannel( this );
 
-    _initFrustum( culler, model->getBoundingSphere( ));
-
     const eq::Pipe* pipe = getPipe();
     const GLuint program = state.getProgram( pipe );
     if( program != mesh::VertexBufferState::INVALID )
         glUseProgram( program );
     
     model->beginRendering( state );
-    
-#ifndef NDEBUG
-    size_t verticesRendered = 0;
-    size_t verticesOverlap  = 0;
-#endif
 
     // start with root node
     std::vector< const mesh::VertexBufferBase* > candidates;
@@ -620,8 +612,7 @@ void Channel::_drawModel( const Model* model )
             continue;
             
         // bounding sphere view frustum culling
-        const vmml::Visibility visibility =
-            culler.test_sphere( treeNode->getBoundingSphere( ));
+        const vmml::Visibility visibility = vmml::VISIBILITY_FULL;
 
         switch( visibility )
         {
@@ -632,10 +623,6 @@ void Channel::_drawModel( const Model* model )
                       treeNode->getRange()[1] < range.end ))
                 {
                     treeNode->render( state );
-                    //treeNode->renderBoundingSphere( state );
-#ifndef NDEBUG
-                    verticesRendered += treeNode->getNumberOfVertices();
-#endif
                     break;
                 }
                 // partial range, fall through to partial visibility
@@ -650,12 +637,6 @@ void Channel::_drawModel( const Model* model )
                     if( treeNode->getRange()[0] >= range.start )
                     {
                         treeNode->render( state );
-                        //treeNode->renderBoundingSphere( state );
-#ifndef NDEBUG
-                        verticesRendered += treeNode->getNumberOfVertices();
-                        if( visibility == vmml::VISIBILITY_PARTIAL )
-                            verticesOverlap  += treeNode->getNumberOfVertices();
-#endif
                     }
                     // else drop, to be drawn by 'previous' channel
                 }
@@ -668,7 +649,7 @@ void Channel::_drawModel( const Model* model )
                 }
                 break;
             }
-            case vmml::VISIBILITY_NONE:
+            default:
                 // do nothing
                 break;
         }
@@ -677,19 +658,10 @@ void Channel::_drawModel( const Model* model )
     model->endRendering( state );
     state.setChannel( 0 );
 
-    if( program != mesh::VertexBufferState::INVALID )
-        glUseProgram( 0 );
-
-#ifndef NDEBUG
-    const size_t verticesTotal = model->getNumberOfVertices();
-    EQLOG( LOG_CULL ) 
-        << getName() << " rendered " << verticesRendered * 100 / verticesTotal
-        << "% of model, overlap <= " << verticesOverlap * 100 / verticesTotal
-        << "%" << std::endl;
-#endif    
+    glUseProgram( 0 );
 }
 
-void Channel::_updateNearFar( const mesh::BoundingSphere& boundingSphere )
+void Channel::_updateNearFar()
 {
     // compute dynamic near/far plane of whole model
     const FrameData& frameData = _getFrameData();
@@ -705,17 +677,15 @@ void Channel::_updateNearFar( const mesh::BoundingSphere& boundingSphere )
 
     front -= zero;
     front.normalize();
-    front *= boundingSphere.w();
+    front *= 2;
 
-    const eq::Vector3f center =  
-        frameData.getCameraPosition().get_sub_vector< 3 >() -
-        boundingSphere.get_sub_vector< 3 >();
+    const eq::Vector3f center = frameData.getCameraPosition().get_sub_vector< 3 >();
     const eq::Vector3f nearPoint  = headTransform * ( center - front );
     const eq::Vector3f farPoint   = headTransform * ( center + front );
 
     if( useOrtho( ))
     {
-        EQASSERTINFO( fabs( farPoint.z() - nearPoint.z() ) > 
+        EQASSERTINFO( fabs( farPoint.z() - nearPoint.z() ) >
                       std::numeric_limits< float >::epsilon(),
                       nearPoint << " == " << farPoint );
         setNearFar( -nearPoint.z(), -farPoint.z() );
@@ -736,22 +706,4 @@ void Channel::_updateNearFar( const mesh::BoundingSphere& boundingSphere )
     }
 }
 
-void Channel::_initFrustum( eq::FrustumCullerf& culler,
-                            const mesh::BoundingSphere& boundingSphere )
-{
-    // setup frustum cull helper
-    const FrameData& frameData = _getFrameData();
-    const eq::Matrix4f& rotation = frameData.getCameraRotation();
-    const eq::Matrix4f& modelRotation = frameData.getModelRotation();
-    eq::Matrix4f position = eq::Matrix4f::IDENTITY;
-    position.set_translation( frameData.getCameraPosition());
-
-    const eq::Matrix4f& xfm = getHeadTransform();
-    const eq::Matrix4f modelView = xfm * rotation * position * modelRotation;
-
-    const eq::Frustumf& frustum = getFrustum();
-    const eq::Matrix4f projection = useOrtho() ? frustum.compute_ortho_matrix():
-                                                 frustum.compute_matrix();
-    culler.setup( projection * modelView );
-}
 }

@@ -148,7 +148,7 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 
 void reindex_faces(const junk::element& faces_, const std::string& unsorted, const std::string& reindex_map_)
 {
-	const junk::attribute& attr = get_attribute(faces_, "vertex_indices");
+	const junk::attribute& attr = get_attribute(faces_, "indices");
 
 	// uint32_t only atm
 	assert(attr.type == junk::SP_UINT_32);
@@ -175,7 +175,7 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 {
 	const junk::header& in_header = input.get_header();
 	const junk::element& fs = in_header.face();
-	const junk::attribute& attr = get_attribute(fs, "vertex_indices");
+	const junk::attribute& attr = get_attribute(fs, "indices");
 
 	// uint32_t only atm
 	assert(attr.type == junk::SP_UINT_32);

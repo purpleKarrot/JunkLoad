@@ -72,7 +72,6 @@ protected:
 	virtual void fromMemory(char** addr, VertexBufferData& globalData);
 
 	virtual void setupTree(VertexData& data, const Index start, const Index length, const Axis axis, const size_t depth, VertexBufferData& globalData);
-	virtual const BoundingSphere& updateBoundingSphere();
 	virtual void updateRange();
 
 private:

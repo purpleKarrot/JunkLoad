@@ -51,11 +51,6 @@ public:
 	virtual void render(VertexBufferState& state) const = 0;
 	virtual Index getNumberOfVertices() const = 0;
 
-	const BoundingSphere& getBoundingSphere() const
-	{
-		return _boundingSphere;
-	}
-
 	const float* getRange() const
 	{
 		return &_range[0];
@@ -71,11 +66,8 @@ public:
 		return 0;
 	}
 
-	virtual const BoundingSphere& updateBoundingSphere() = 0;
-
 protected:
-	VertexBufferBase() :
-			_boundingSphere(0.0f)
+	VertexBufferBase()
 	{
 		_range[0] = 0.0f;
 		_range[1] = 1.0f;
@@ -87,13 +79,11 @@ protected:
 
 	virtual void toStream(std::ostream& os)
 	{
-		os.write(reinterpret_cast<char*> (&_boundingSphere), sizeof(BoundingSphere));
 		os.write(reinterpret_cast<char*> (&_range), sizeof(Range));
 	}
 
 	virtual void fromMemory(char** addr, VertexBufferData& globalData)
 	{
-		memRead(reinterpret_cast<char*> (&_boundingSphere), addr, sizeof(BoundingSphere));
 		memRead(reinterpret_cast<char*> (&_range), addr, sizeof(Range));
 	}
 
@@ -101,7 +91,6 @@ protected:
 
 	virtual void updateRange() = 0;
 
-	BoundingSphere _boundingSphere;
 	Range _range;
 };
 

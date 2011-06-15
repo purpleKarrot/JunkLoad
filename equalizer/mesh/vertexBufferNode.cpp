@@ -98,37 +98,6 @@ void VertexBufferNode::setupTree( VertexData& data, const Index start,
 }
 
 
-/*  Compute the bounding sphere from the children's bounding spheres.  */
-const BoundingSphere& VertexBufferNode::updateBoundingSphere()
-{
-    // take the bounding spheres returned by the children
-    const BoundingSphere& sphere1 = _left->updateBoundingSphere();
-    const BoundingSphere& sphere2 = _right->updateBoundingSphere();
-    
-    // compute enclosing sphere
-    const Vertex center1( sphere1.array );
-    const Vertex center2( sphere2.array );
-    Vertex c1ToC2     = center2 - center1;
-    c1ToC2.normalize();
-    
-    const Vertex outer1 = center1 - c1ToC2 * sphere1.w();
-    const Vertex outer2 = center2 + c1ToC2 * sphere2.w();
-
-    Vertex vertexBoundingSphere = Vertex( outer1 + outer2 ) * 0.5f; 
-    _boundingSphere.x() = vertexBoundingSphere.x();
-    _boundingSphere.y() = vertexBoundingSphere.y();
-    _boundingSphere.z() = vertexBoundingSphere.z();
-    _boundingSphere.w() = Vertex( outer1 - outer2 ).length() * 0.5f;
-    
-#ifndef NDEBUG
-    MESHINFO << "updateBoundingSphere" << "( " << _boundingSphere << " )." 
-             << endl;
-#endif
-    
-    return _boundingSphere;
-}
-
-
 /*  Compute the range from the children's ranges.  */
 void VertexBufferNode::updateRange()
 {
