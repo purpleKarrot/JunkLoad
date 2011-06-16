@@ -32,16 +32,17 @@ enum typid
 } // namespace junk
 
 BOOST_FUSION_DEFINE_STRUCT((junk), attribute,
-	(std::string, name)
 	(junk::typid, type)
+	(std::string, name)
 	(std::size_t, size)
 	(std::size_t, offset)
 )
 
 BOOST_FUSION_DEFINE_STRUCT((junk), element,
-	(std::string, name)
-	(std::size_t, size)
 	(std::vector<junk::attribute>, attributes)
+	(std::string, name_sg)
+	(std::string, name_pl)
+	(std::size_t, size)
 )
 
 namespace junk
@@ -176,70 +177,6 @@ struct attribute_type<V, typename boost::enable_if<boost::qvm::is_v<V> >::type>
 	}
 };
 
-template<>
-inline attribute attribute_type<mat3f>::create(const std::string& name)
-{
-	return attribute(name, SP_FLOAT_32, 9, 0);
-}
-
-template<>
-inline bool attribute_type<mat3f>::test(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_32)
-		return false;
-	if (attribute_.size != 9)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute attribute_type<mat4f>::create(const std::string& name)
-{
-	return attribute(name, SP_FLOAT_32, 16, 0);
-}
-
-template<>
-inline bool attribute_type<mat4f>::test(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_32)
-		return false;
-	if (attribute_.size != 16)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute attribute_type<mat3d>::create(const std::string& name)
-{
-	return attribute(name, SP_FLOAT_64, 9, 0);
-}
-
-template<>
-inline bool attribute_type<mat3d>::test(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_64)
-		return false;
-	if (attribute_.size != 9)
-		return false;
-	return true;
-}
-
-template<>
-inline attribute attribute_type<mat4d>::create(const std::string& name)
-{
-	return attribute(name, SP_FLOAT_64, 16, 0);
-}
-
-template<>
-inline bool attribute_type<mat4d>::test(const attribute& attribute_)
-{
-	if (attribute_.type != SP_FLOAT_64)
-		return false;
-	if (attribute_.size != 16)
-		return false;
-	return true;
-}
-
 template<typename T>
 void create_attribute(element& e, const std::string& name)
 {
@@ -314,11 +251,13 @@ inline element& header::get_element(const std::string& name)
 	if (elements.empty())
 	{
 		element vertex;
-		vertex.name = "vertex";
+		vertex.name_sg = "vertex";
+		vertex.name_pl = "vertices";
 		elements.push_back(vertex);
 
 		element face;
-		face.name = "face";
+		face.name_sg = "face";
+		face.name_pl = "faces";
 		elements.push_back(face);
 
 		update();
@@ -338,11 +277,13 @@ inline const element& header::get_element(const std::string& name) const
 	if (elements.empty())
 	{
 		element vertex;
-		vertex.name = "vertex";
+		vertex.name_sg = "vertex";
+		vertex.name_pl = "vertices";
 		elements.push_back(vertex);
 
 		element face;
-		face.name = "face";
+		face.name_sg = "face";
+		face.name_pl = "faces";
 		elements.push_back(face);
 
 		update();

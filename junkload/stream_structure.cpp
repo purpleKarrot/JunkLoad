@@ -53,7 +53,7 @@ const attribute& get_attribute(const element& e, const std::string& name)
 // creates an empty attribute with the specified name
 void create_attribute(element& e, const std::string& name, typid type, size_t size)
 {
-	e.attributes.push_back(attribute(name, type, size, 0));
+	e.attributes.push_back(attribute(type, name, size, 0));
 }
 
 void compute_offsets(element& e)

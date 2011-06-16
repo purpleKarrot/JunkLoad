@@ -12,6 +12,7 @@
 
 #include <fstream>
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/support_multi_pass.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
 
@@ -48,7 +49,7 @@ struct endian_policy: qi::bool_policies<>
     template<typename Iterator, typename Attribute>
 	static bool parse_false(Iterator& first, Iterator const& last, Attribute& attr)
 	{
-		if (qi::detail::string_parse("little_endian", first, last, qi::unused))
+		if (qi::detail::string_parse("LITTLE_ENDIAN", first, last, qi::unused))
 		{
 			boost::spirit::traits::assign_to(false, attr);
 			return true;
@@ -59,7 +60,7 @@ struct endian_policy: qi::bool_policies<>
     template<typename Iterator, typename Attribute>
 	static bool parse_true(Iterator& first, Iterator const& last, Attribute& attr)
 	{
-		if (qi::detail::string_parse("big_endian", first, last, qi::unused))
+		if (qi::detail::string_parse("BIG_ENDIAN", first, last, qi::unused))
 		{
 			boost::spirit::traits::assign_to(true, attr);
 			return true;
@@ -76,25 +77,27 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 	{
 		start
 			%= qi::eps
-			> "byteorder" > endian
+			> "#define" > endian
 			> *element_
 			> qi::eoi
 			;
 
 		element_
-			%= string_
-			> qi::uint_
-			> '{'
+			%= "typedef struct {"
 			> *attribute_
-			> '}'
+			> '}' > string_ > ',' > string_ > size_ > ';'
 			;
 
 		attribute_
-			%= string_ > scalar_ > qi::uint_ > ';'
+			%= scalar_ > string_ > size_ > ';'
 			;
 
 		string_
 			%= qi::lexeme[+(ascii::alnum | qi::char_('_'))]
+			;
+
+		size_
+			%= ('[' > qi::uint_ > ']') | qi::eps(qi::_val = 1)
 			;
 	}
 
@@ -102,6 +105,7 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 	qi::rule<Iterator, element(), Skipper> element_;
 	qi::rule<Iterator, attribute(), Skipper> attribute_;
 	qi::rule<Iterator, std::string(), Skipper> string_;
+	qi::rule<Iterator, std::size_t(), Skipper> size_;
 
 	scalar_symbols scalar_;
 	qi::bool_parser<bool, endian_policy> endian;
@@ -123,7 +127,7 @@ bool load_header(const std::string& filename, header& h)
 	iterator iter(forward, forward_end, filename);
 	iterator end;
 
-	BOOST_AUTO(comment, '#' >> *(ascii::char_ - qi::eol) >> qi::eol);
+	BOOST_AUTO(comment, "//" >> *(ascii::char_ - qi::eol) >> qi::eol);
 	BOOST_AUTO(skip, ascii::space | comment);
 
 	try

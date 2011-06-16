@@ -105,7 +105,7 @@ void Model::draw(int ranges) const
 		{
 			color_array = true;
 			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(attr.size, gl_type(attr.type), size_in_bytes(vertex), (const GLvoid*) 12 /*attr.offset*/);
+			glColorPointer(attr.size, gl_type(attr.type), size_in_bytes(vertex), (const GLvoid*) attr.offset);
 		}
 	}
 

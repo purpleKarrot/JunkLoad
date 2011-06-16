@@ -55,7 +55,7 @@ struct pos_order
 		//return zorder_less(a, b);
 
 		using namespace boost::qvm;
-		return a%Z < b%Z;
+		return a%Y > b%Y;
 	}
 };
 
@@ -123,7 +123,7 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 
 	// setup result file
 	boost::iostreams::mapped_file_params out_params;
-	out_params.path = sorted + '.' + source.name;
+	out_params.path = sorted + '.' + source.name_pl;
 	out_params.mode = std::ios_base::in | std::ios_base::out;
 	out_params.new_file_size = file_size_in_bytes(source);
 
@@ -221,7 +221,7 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 
 	// setup result file
 	boost::iostreams::mapped_file_params out_params;
-	out_params.path = sorted + '.' + source.name;
+	out_params.path = sorted + '.' + source.name_pl;
 	out_params.mode = std::ios_base::in | std::ios_base::out;
 	out_params.new_file_size = file_size_in_bytes(source);
 
