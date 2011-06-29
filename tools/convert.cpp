@@ -2,7 +2,6 @@
 #include <vector>
 
 #include <boost/foreach.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <junk/attribute_accessor.hpp>
@@ -131,21 +130,20 @@ static void _read_face_data(const shared_ply& ply, std::size_t num_faces,
 	}
 }
 
-void convert(const std::string& input, junk::mapped_data_set& junk, bool normal, bool color)
+void convert(const std::vector<std::string>& input, junk::mapped_data_set& junk, bool normal, bool color)
 {
-	typedef boost::filesystem::recursive_directory_iterator ply_iterator;
-	ply_iterator start(input), end;
-
 	junk::header& header = junk.get_header();
-	header.vertex().size = 0;
-	header.face().size = 0;
+	header.vertex().size = 35947;
+	header.face().size = 69451;
 
-	for (ply_iterator it = start; it != end; ++it)
-	{
-		shared_ply ply_file = open_ply(it->path().string());
-		header.vertex().size += elem_count(ply_file, "vertex");
-		header.face().size += elem_count(ply_file, "face");
-	}
+//	BOOST_FOREACH(const std::string& filename, input)
+//	{
+//		shared_ply ply_file = open_ply(filename);
+//		header.vertex().size += elem_count(ply_file, "vertex");
+//		header.face().size += elem_count(ply_file, "face");
+//
+//		std::cout << filename << std::endl;
+//	}
 
 	junk._setup(true);
 	std::size_t vetex_offset = 0;
@@ -156,9 +154,11 @@ void convert(const std::string& input, junk::mapped_data_set& junk, bool normal,
 	junk::mapped_data_set::iterator fit = junk.fbegin();
 	junk::mapped_data_set::iterator fit_end = junk.fend();
 
-	for (ply_iterator it = start; it != end; ++it)
+	BOOST_FOREACH(const std::string& filename, input)
 	{
-		shared_ply ply_file = open_ply(it->path().string());
+		std::cout << filename << std::endl;
+
+		shared_ply ply_file = open_ply(filename);
 		setup_ply(ply_file, header, normal, color);
 
 		std::size_t num_vertices = elem_count(ply_file, "vertex");
