@@ -4,25 +4,27 @@
 #include <vector>
 #include <iostream>
 
+#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
 #include <junk/mapped_data_set.hpp>
 
-void convert(const std::string& ply_file, junk::mapped_data_set& junk, bool, bool);
+void convert(const std::vector<std::string>& input, junk::mapped_data_set& junk, bool, bool);
 void setup_header(junk::header& header, bool normal, bool color);
 void fix_scale(junk::mapped_data_set& junk);
 void calc_normals(junk::mapped_data_set& junk);
 
 int main(const int argc, char* argv[])
 {
-	std::string input;
+	std::vector<std::string> input;
 	std::string output;
 
 	po::options_description desc("Allowed options");
 	desc.add_options()
 		("help",          "produce this help message")
-		("input,i",       po::value(&input),  "input ply file")
+		("input,i",       po::value(&input),  "input ply files")
 		("output,o",      po::value(&output), "output junk file")
 		("use-color,c",   "extract colors")
 		("use-normal,n",  "extract normals")
@@ -59,14 +61,33 @@ int main(const int argc, char* argv[])
 	}
 
 	if (output.empty())
-		output = input + ".junk";
+	{
+		std::cout << "An output file is required!" << std::endl;
+		return -1;
+	}
 
 	bool use_color = vm.count("use-color");
 	bool use_normal = vm.count("use-normal");
 	bool auto_normal = vm.count("auto-normal");
 
-//	bool fix_scale = vm.count("fix-scale");
-//	std::cout << auto_normal << "  " << fix_scale << std::endl;
+	std::vector<std::string> ply_files;
+	BOOST_FOREACH(const std::string& in, input)
+	{
+		boost::filesystem::path path(in);
+		if(path.extension() == ".ply")
+		{
+			ply_files.push_back(in);
+			continue;
+		}
+
+		typedef boost::filesystem::recursive_directory_iterator rec_iterator;
+		rec_iterator start(in), end;
+		for (rec_iterator it = start; it != end; ++it)
+		{
+			if(it->path().extension() == ".ply")
+				ply_files.push_back(it->path().string());
+		}
+	}
 
 	junk::mapped_data_set junk(output, true);
 	junk::header& header = junk.get_header();
