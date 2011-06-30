@@ -7,9 +7,11 @@
 #include <junk/attribute_accessor.hpp>
 #include <junk/mapped_data_set.hpp>
 
-#include "ply/ply.h"
-
-#pragma GCC diagnostic ignored "-Wwrite-strings"
+#include "ply/config.hpp"
+#include "ply/ply.hpp"
+#include "ply/byte_order.hpp"
+#include "ply/io_operators.hpp"
+#include "ply/ply_parser.hpp"
 
 void setup_header(junk::header& header, bool normal, bool color)
 {
