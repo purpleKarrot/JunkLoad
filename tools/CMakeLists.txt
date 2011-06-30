@@ -2,7 +2,6 @@
 add_executable(junk
   main.cpp
   convert.cpp
-  ply/ply.cpp
   ply/ply_parser.cpp
   fix_scale.cpp
   calc_normals.cpp
