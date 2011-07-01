@@ -52,10 +52,10 @@ struct pos_order
 {
 	bool operator()(const pos& a, const pos& b)
 	{
-		//return zorder_less(a, b);
+		return zorder_less(a, b);
 
-		using namespace boost::qvm;
-		return a%Y > b%Y;
+		//using namespace boost::qvm;
+		//return a%Y > b%Y;
 	}
 };
 
@@ -157,7 +157,7 @@ void reindex_faces(const junk::element& faces_, const std::string& unsorted, con
 	if (!_reindex_map.is_open())
 		throw std::runtime_error("reindex map could not be opened.");
 
-	boost::iostreams::mapped_file _faces_file(std::string(unsorted) + ".face");
+	boost::iostreams::mapped_file _faces_file(std::string(unsorted) + ".faces");
 	if (!_faces_file.is_open())
 		throw std::runtime_error("faces file could not be opened.");
 

@@ -1,0 +1,264 @@
+\documentclass[paper=screen,orient=landscape,style=simple]{powerdot}
+\usepackage{listings}
+\usepackage{amssymb}
+\usepackage{times}
+
+\lstset{
+% language=C++,
+ basicstyle=\footnotesize,
+ morekeywords={array},
+ escapeinside=`'
+}
+
+\title{Beyond PLY}
+\author{Daniel Pfeifer}
+\date{VMML@IFI Group Meeting on \today}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Random Access PLY}
+
+\begin{slide}[method=file]{PLY 1.0}
+\linespread{0}
+\begin{lstlisting}
+  ply
+  format ascii 1.0
+  comment made by anonymous
+  comment this file is a cube
+  element vertex 8
+  property float32 x
+  property float32 y
+  property float32 z
+  element face 6
+  property list uint8 int32 vertex_index
+  end_header
+  0 0 0
+  0 0 1
+  0 1 1
+  0 1 0
+  1 0 0
+  1 0 1
+  1 1 1
+  1 1 0
+  4 0 1 2 3
+  4 7 6 5 4
+  4 0 4 5 1
+  4 1 5 6 2
+  4 2 6 7 3
+  4 3 7 4 0
+\end{lstlisting}
+\end{slide}
+
+\begin{slide}{PLY 1.0}
+  \begin{itemize}
+    \item format := ascii $|$ binary
+    \item element := name size property+
+    \item property := name ( scalar $|$ list )
+    \item list := scalar scalar
+  \end{itemize}
+
+  \textbf{Problem:}\\
+  Variable sized content limits parsing to \textbf{forward} only!\\
+  There is no way to implement \textbf{random access}.\\
+  (Analogous to \textbf{Forward} resp. \textbf{RandomAccess} iterator concepts).
+\end{slide}
+
+\begin{slide}{PLY 2.0}
+  \begin{itemize}
+    \item format is always binary, native byteorder
+    \item dropped support for lists
+    \item new support for \textbf{arrays}
+    \item array := size scalar
+  \end{itemize}
+
+  \textbf{List:}\\
+  property array vertex\_indices uint8 uint32\\[2em]
+
+  \textbf{Array:}\\
+  property array vertex\_indices 3 uint32
+\end{slide}
+
+\begin{slide}[method=file]{PLY 2.0}
+\linespread{0}
+\begin{lstlisting}
+  ply
+  format ascii 2.0
+  comment made by anonymous
+  comment this file is a cube
+  element vertex 8
+  property float32 x
+  property float32 y
+  property float32 z
+  element face 6
+  property array 4 int32 vertex_index
+  end_header
+  0 0 0
+  0 0 1
+  0 1 1
+  0 1 0
+  1 0 0
+  1 0 1
+  1 1 1
+  1 1 0
+  0 1 2 3
+  7 6 5 4
+  0 4 5 1
+  1 5 6 2
+  2 6 7 3
+  3 7 4 0
+\end{lstlisting}
+\end{slide}
+
+\section{Why PLY?}
+
+\begin{slide}{Why PLY?}
+Quoting the original PLY doc:\\[1em]
+``Our goal is to provide a format that is \textbf{simple and easy} to implement
+but that is general enough to be useful for a wide range of models.''
+
+\begin{itemize}
+  \item Was that goal achieved?
+  \item Is it easy to implement?
+  \item Is it simple to implement?
+\end{itemize}
+\end{slide}
+
+\begin{slide}{easy and simple?}
+All the identifiers are at the beginning of a line.\\
+It is possible to parse it like this:
+
+\begin{itemize}
+  \item while(not EOF)
+    \begin{itemize}
+      \item read line
+      \item tokenize line
+      \item if token == "format"
+        \begin{itemize}
+          \item ...
+        \end{itemize}
+      \item else if token == "comment"
+        \begin{itemize}
+          \item ...
+        \end{itemize}
+      \item ...
+    \end{itemize}
+\end{itemize}
+\end{slide}
+
+\begin{slide}{easy and simple?}
+\begin{itemize}
+  \item only minimal programming skills required\\
+        $\rightarrow$ easy: YES
+  \item Lots of code required:\\
+        $\rightarrow$ simple: NO!!
+\end{itemize}
+\end{slide}
+
+\begin{slide}[method=file]{simplify}
+Generate parser from formal grammar:
+
+\begin{lstlisting}
+ply      ::= "ply" EOL "format" format DOUBLE EOL element* "end_header" EOL
+element  ::= "element" STRING INT EOL property*
+property ::= "property" (list | scalar) STRING EOL
+list     ::= "list" size scalar
+format   ::= "ascii"|"binary_little_endian"|"binary_big_endian"
+size     ::= "uint8"|"uint16"|"uint32"|"uint64"
+scalar   ::= size|"int8"|"int16"|"int32"|"int64"|"float32"|"float64"
+\end{lstlisting}
+\end{slide}
+
+\begin{slide}[method=file]{Qi}
+C++ implementation with Qi (Boost.Spirit):
+
+\begin{lstlisting}
+start %= qi::eps > "ply" > qi::eol
+  > "format" > format_ > qi::double_ > qi::eol
+  > *element_
+  > "end_header" > qi::eol;
+
+element_ %= "element"
+  > *(ascii::char_ - qi::int_)
+  > qi::int_ > qi::eol
+  > *property_;
+
+property_ %= "property" > (list_ | scalar_)
+  > *(ascii::char_ - qi::eol) > qi::eol;
+
+list_ %= "list" > size_ > scalar_;
+\end{lstlisting}
+\end{slide}
+
+\begin{slide}{easy and simple?}
+\begin{itemize}
+  \item knowledge about formal languages required (2nd semester)\\
+        $\rightarrow$ easy: YES
+  \item seven rules for the complete PLY grammar:\\
+        $\rightarrow$ simple: YES
+\end{itemize}
+
+But this would hold true for any grammar!
+
+So let's change it...
+\end{slide}
+
+\begin{slide}[method=file]{new grammar}
+\linespread{0}
+\begin{lstlisting}
+start
+  %= qi::eps
+  > "#define" > endian
+  > *element_
+  > qi::eoi
+  ;
+element_
+  %= "typedef struct {"
+  > *attribute_
+  > '}' > string_ > ',' > string_ > size_ > ';'
+  ;
+attribute_
+  %= scalar_ > string_ > size_ > ';'
+  ;
+string_
+  %= qi::lexeme[+(ascii::alnum | qi::char_('_'))]
+  ;
+size_
+  %= ('[' > qi::uint_ > ']') | qi::eps(qi::_val = 1)
+  ;
+\end{lstlisting}
+\end{slide}
+
+\begin{slide}{easy and simple?}
+\begin{itemize}
+  \item knowledge about formal languages required (2nd semester)\\
+        $\rightarrow$ easy: YES
+  \item seven rules for the complete PLY grammar:\\
+        $\rightarrow$ simple: YES
+\end{itemize}
+
+But it you will get some bonus...
+\end{slide}
+
+\begin{slide}[method=file]{Bonus}
+\begin{lstlisting}
+#define LITTLE_ENDIAN
+ 
+typedef struct {
+   float32 x;
+   float32 y;
+   float32 z;
+} vertex, vertices[8];
+ 
+typedef struct {
+   uint32 indices[3];
+} face, faces[6];
+\end{lstlisting}
+
+The file header is now valid C code!
+\end{slide}
+
+\end{document}
+
