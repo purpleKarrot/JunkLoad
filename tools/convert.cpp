@@ -157,7 +157,7 @@ private:
 
 	void face_vertex_indices_element(ply::int32 vertex_index)
 	{
-		get_indices(*face_it)[p++] = vertex_index;
+		get_indices(*face_it)[p++] = vertex_index + vertex_offset;
 	}
 
 	void face_vertex_indices_end()
@@ -177,6 +177,9 @@ private:
 
 	int p;
 
+	std::size_t num_vertices;
+	std::size_t vertex_offset;
+
 	junk::mapped_data_set::iterator vrtx_it;
 	junk::mapped_data_set::iterator face_it;
 };
@@ -184,7 +187,11 @@ private:
 ply::ply_parser::element_callbacks_type read_ply_data::element_definition(const std::string& element_name, std::size_t count)
 {
 	if (element_name == "vertex")
+	{
+		vertex_offset += num_vertices;
+		num_vertices = count;
 		return ply::ply_parser::element_callbacks_type(boost::bind(&read_ply_data::vertex_begin, this), boost::bind(&read_ply_data::vertex_end, this));
+	}
 
 	if (element_name == "face")
 		return ply::ply_parser::element_callbacks_type(boost::bind(&read_ply_data::face_begin, this), boost::bind(&read_ply_data::face_end, this));
@@ -255,7 +262,7 @@ std::tr1::tuple<std::tr1::function<void(ply::uint8)>, std::tr1::function<void(pl
 }
 
 read_ply_data::read_ply_data(junk::mapped_data_set& junk, bool normal, bool color) :
-		normal(normal), color(color), vrtx_it(junk.vbegin()), face_it(junk.fbegin())
+		normal(normal), color(color), vrtx_it(junk.vbegin()), face_it(junk.fbegin()), num_vertices(0), vertex_offset(0)
 {
 	ply_parser.element_definition_callback(boost::bind(&read_ply_data::element_definition, this, _1, _2));
 

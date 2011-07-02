@@ -33,7 +33,7 @@ int main(const int argc, char* argv[])
 		;
 
 	po::positional_options_description p;
-	p.add("input-file", -1);
+	p.add("input", -1);
 
 	po::variables_map vm;
 	try
@@ -94,7 +94,7 @@ int main(const int argc, char* argv[])
 
 	setup_header(header, use_normal || auto_normal, use_color);
 
-	convert(input, junk, use_normal, use_color);
+	convert(ply_files, junk, use_normal, use_color);
 
 	if (vm.count("fix-scale"))
 		fix_scale(junk);
