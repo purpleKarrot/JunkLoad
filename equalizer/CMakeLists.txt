@@ -1,7 +1,7 @@
 # Copyright (c) 2011 Daniel Pfeifer <daniel@pfeifer-mail.de>
 
-#find_package(Equalizer NO_MODULE)
-#include("${Equalizer_USE_FILE}")
+find_package(Equalizer NO_MODULE)
+include_directories(${Equalizer_INCLUDE_DIRS})
 
 add_library(eqMesh STATIC
   mesh/plyfile.cpp
@@ -50,9 +50,7 @@ add_executable(eqJunk
 
 target_link_libraries(eqJunk
   eqMesh
-  Collage
-  Equalizer
-# ${EQUALIZER_LIBRARIES}
+  ${EQUALIZER_LIBRARIES}
   )
 
 boost_link_libraries(eqJunk

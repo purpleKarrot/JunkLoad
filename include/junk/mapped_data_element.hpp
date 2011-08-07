@@ -3,7 +3,7 @@
 
 #include "types.hpp"
 
-#include "stream_data_iterators.hpp"
+#include "stream_iterator.hpp"
 
 #include <boost/iostreams/device/mapped_file.hpp>
 
@@ -16,8 +16,8 @@ public:
 	typedef boost::iostreams::mapped_file mapped_file;
 	typedef boost::iostreams::mapped_file_params mapped_file_params;
 
-	typedef stream_data_iterator iterator;
-	typedef stream_data_const_iterator const_iterator;
+	typedef stream_iterator iterator;
+	typedef const_stream_iterator const_iterator;
 
 	mapped_data_element(element& element_);
 	mapped_data_element(element& element_,

@@ -30,4 +30,4 @@ add_subdirectory(data)
 
 # viewers
 add_subdirectory(equalizer)
-add_subdirectory(maoni)
+#add_subdirectory(maoni)

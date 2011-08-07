@@ -3,7 +3,7 @@
 
 #include <junk/types.hpp>
 #include <junk/mapped_data_element.hpp>
-#include <junk/stream_data_iterators.hpp>
+#include <junk/stream_iterator.hpp>
 #include <junk/attribute_accessor.hpp>
 
 #include <boost/iostreams/device/mapped_file.hpp>
@@ -19,8 +19,8 @@ public:
 	typedef boost::iostreams::mapped_file mapped_file;
 	typedef boost::iostreams::mapped_file_params mapped_file_params;
 
-	typedef stream_data_iterator iterator;
-	typedef stream_data_const_iterator const_iterator;
+	typedef stream_iterator iterator;
+	typedef const_stream_iterator const_iterator;
 
 	mapped_data_set(const std::string& filename, bool new_file = false);
 

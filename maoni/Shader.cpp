@@ -20,6 +20,7 @@
 
 #include <Maoni/glew.h>
 #include "Shader.hpp"
+#include <iostream>
 #include <fstream>
 
 Shader::Shader(const char* filename) :

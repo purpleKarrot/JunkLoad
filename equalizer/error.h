@@ -29,7 +29,7 @@
 #ifndef EQPLY_ERROR_H
 #define EQPLY_ERROR_H
 
-#include <eq/error.h>
+#include <eq/client/error.h>
 
 namespace eqPly
 {
