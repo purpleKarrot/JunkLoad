@@ -2,7 +2,6 @@
 #define __STREAM_PROCESS__MAPPED_DATA_ELEMENT__HPP__
 
 #include "types.hpp"
-
 #include "stream_iterator.hpp"
 
 #include <boost/iostreams/device/mapped_file.hpp>
@@ -13,114 +12,99 @@ namespace junk
 class mapped_data_element
 {
 public:
-	typedef boost::iostreams::mapped_file mapped_file;
-	typedef boost::iostreams::mapped_file_params mapped_file_params;
-
-	typedef stream_iterator iterator;
-	typedef const_stream_iterator const_iterator;
-
-	mapped_data_element(element& element_);
-	mapped_data_element(element& element_,
-			const std::string& filename_base, bool create_new_file = false);
+	mapped_data_element() :
+			num_elements(0), element_size(0)
+	{
+	}
 
 	~mapped_data_element()
 	{
 	}
 
-	inline iterator begin();
-	inline iterator end();
+	void open(const junk::element& element, const std::string& filename, bool create = false);
 
-	inline const_iterator begin() const;
-	inline const_iterator end() const;
+	void close()
+	{
+		num_elements = num_elements = 0;
+		mapped_file.close();
+	}
 
-	inline size_t size() const;
+	bool is_open() const
+	{
+		return mapped_file.is_open();
+	}
 
-	char* operator[](std::size_t index);
-	const char* operator[](std::size_t index) const;
+	std::size_t size() const
+	{
+		return num_elements;
+	}
 
-	void open(const std::string& filename_base, bool create_new_file = false);
-	inline void close();
-	inline bool is_open() const;
+	const junk::element& get_element() const
+	{
+		return *element;
+	}
 
-	const element& get_element() const;
+	char* data()
+	{
+		return mapped_file.data();
+	}
 
-	char* data();
-	const char* data() const;
+	const char* data() const
+	{
+		return mapped_file.data();
+	}
 
 	std::size_t data_size() const
 	{
-		return _mapped_file.size();
+		return mapped_file.size();
 	}
 
-protected:
-	void _update();
+public:
+	char* operator[](std::size_t index)
+	{
+		assert(index < num_elements);
+		assert(mapped_file.is_open());
+		return mapped_file.data() + index * element_size;
+	}
 
-	boost::iostreams::mapped_file _mapped_file;
-	element& _element;
+	const char* operator[](std::size_t index) const
+	{
+		assert(index < num_elements);
+		assert(mapped_file.is_open());
+		return mapped_file.data() + index * element_size;
+	}
 
-}; // class mapped_data_element
+	stream_iterator begin()
+	{
+		assert(mapped_file.is_open());
+		return stream_iterator(mapped_file.data(), element_size);
+	}
 
+	stream_iterator end()
+	{
+		assert(mapped_file.is_open());
+		return stream_iterator(mapped_file.data() + mapped_file.size(), element_size);
+	}
 
-inline char* mapped_data_element::operator[](size_t index)
-{
-	assert(index < _element.size);
-	assert(_mapped_file.data());
-	return data() + index * size_in_bytes(_element);
-}
+	const_stream_iterator begin() const
+	{
+		assert(mapped_file.is_open());
+		return const_stream_iterator(mapped_file.data(), element_size);
+	}
 
-inline const char* mapped_data_element::operator[](size_t index) const
-{
-	assert(index < _element.size);
-	assert(_mapped_file.data());
-	return data() + index * size_in_bytes(_element);
-}
+	const_stream_iterator end() const
+	{
+		assert(mapped_file.is_open());
+		return const_stream_iterator(mapped_file.data() + mapped_file.size(), element_size);
+	}
 
-inline mapped_data_element::iterator mapped_data_element::begin()
-{
-	assert(_mapped_file.is_open());
-	assert(_mapped_file.data());
-	return iterator(data(), size_in_bytes(_element));
-}
-
-inline mapped_data_element::iterator mapped_data_element::end()
-{
-	assert(_mapped_file.is_open());
-	assert(_mapped_file.data());
-	return iterator(data() + file_size_in_bytes(_element),
-			size_in_bytes(_element));
-}
-
-inline mapped_data_element::const_iterator mapped_data_element::begin() const
-{
-	assert(_mapped_file.is_open() == true);
-	assert(_mapped_file.data() != 0);
-	return const_iterator(data(), size_in_bytes(_element));
-}
-
-inline mapped_data_element::const_iterator mapped_data_element::end() const
-{
-	assert(_mapped_file.is_open());
-	assert(_mapped_file.data());
-	return const_iterator(data() + file_size_in_bytes(_element),
-			size_in_bytes(_element));
-}
-
-inline void mapped_data_element::close()
-{
-	_mapped_file.close();
-}
-
-inline bool mapped_data_element::is_open() const
-{
-	return _mapped_file.is_open();
-}
-
-inline size_t mapped_data_element::size() const
-{
-	return _element.size;
-}
+private:
+	std::size_t num_elements;
+	std::size_t element_size;
+	const junk::element* element;
+	boost::iostreams::mapped_file mapped_file;
+};
 
 } // namespace junk
 
 #endif
-

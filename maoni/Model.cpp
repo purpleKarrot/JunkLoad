@@ -58,7 +58,7 @@ void Model::read_file() const
 	glGenBuffers(1, &vbuffer);
 	glGenBuffers(1, &ibuffer);
 
-	data_set.reset(new junk::mapped_data_set(path()));
+	data_set.reset(new junk::data_set(path()));
 
 	junk::mapped_data_element& vertices = data_set->vertex_map();
 	junk::mapped_data_element& indices = data_set->face_map();

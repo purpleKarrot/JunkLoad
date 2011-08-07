@@ -1,6 +1,7 @@
 //
 
-#include <junk/mapped_data_set.hpp>
+#include <junk/attribute_accessor.hpp>
+#include <junk/data_set.hpp>
 
 #include <boost/qvm/all.hpp>
 using namespace boost::qvm;
@@ -8,7 +9,7 @@ using namespace boost::qvm;
 typedef vec<float, 3> vec3;
 typedef vec<unsigned int, 3> triangle;
 
-void calc_normals(junk::mapped_data_set& junk)
+void calc_normals(junk::data_set& junk)
 {
 	const junk::element& vs = junk.header().vertex();
 	const junk::element& fs = junk.header().face();
@@ -20,11 +21,11 @@ void calc_normals(junk::mapped_data_set& junk)
 	junk::mapped_data_element& vertices = junk.vertex_map();
 	junk::mapped_data_element& triangles = junk.face_map();
 
-	for (junk::mapped_data_element::iterator i = vertices.begin(); i != vertices.end(); ++i)
+	for (junk::stream_iterator i = vertices.begin(); i != vertices.end(); ++i)
 		set_zero(get_normal(*i));
 
 	// iterate over all triangles and add their normals to adjacent vertices
-	for (junk::mapped_data_element::iterator f = triangles.begin(); f != triangles.end(); ++f)
+	for (junk::stream_iterator f = triangles.begin(); f != triangles.end(); ++f)
 	{
 		triangle& tri = get_triangle(*f);
 
@@ -40,7 +41,7 @@ void calc_normals(junk::mapped_data_set& junk)
 	}
 
 	// normalize all the normals
-	for (junk::mapped_data_element::iterator i = vertices.begin(); i != vertices.end(); ++i)
+	for (junk::stream_iterator i = vertices.begin(); i != vertices.end(); ++i)
 	{
 		vec3& normal = get_normal(*i);
 		if (normal % X != 0 || normal % Y != 0 || normal % Z != 0)

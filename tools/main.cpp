@@ -9,12 +9,12 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
-#include <junk/mapped_data_set.hpp>
+#include <junk/data_set.hpp>
 
-void convert(const std::vector<std::string>& input, junk::mapped_data_set& junk, bool, bool);
+void convert(const std::vector<std::string>& input, junk::data_set& junk, bool, bool);
 void setup_header(junk::header& header, bool normal, bool color);
-void fix_scale(junk::mapped_data_set& junk);
-void calc_normals(junk::mapped_data_set& junk);
+void fix_scale(junk::data_set& junk);
+void calc_normals(junk::data_set& junk);
 
 int main(const int argc, char* argv[])
 {
@@ -89,7 +89,7 @@ int main(const int argc, char* argv[])
 		}
 	}
 
-	junk::mapped_data_set junk(output, true);
+	junk::data_set junk(output, true);
 	junk::header& header = junk.header();
 
 	setup_header(header, use_normal || auto_normal, use_color);

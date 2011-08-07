@@ -19,7 +19,7 @@
  */
 
 #include <Maoni.hpp>
-#include <junk/mapped_data_set.hpp>
+#include <junk/data_set.hpp>
 #include <boost/scoped_ptr.hpp>
 
 class Model: public Path
@@ -38,7 +38,7 @@ private:
 	void read_file() const;
 
 private:
-	mutable boost::scoped_ptr<junk::mapped_data_set> data_set;
+	mutable boost::scoped_ptr<junk::data_set> data_set;
 	mutable std::size_t faces;
 	mutable GLuint vbuffer;
 	mutable GLuint ibuffer;

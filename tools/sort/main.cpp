@@ -5,7 +5,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include <junk/mapped_data_set.hpp>
+#include <junk/attribute_accessor.hpp>
+#include <junk/data_set.hpp>
 #include "intro_sort.hpp"
 #include "z_order.hpp"
 
@@ -59,7 +60,7 @@ struct pos_order
 	}
 };
 
-void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted, const std::string& reindex_map)
+void sort_vertices(const junk::data_set& input, const std::string& sorted, const std::string& reindex_map)
 {
 	const junk::header& in_header = input.header();
 	const junk::element& ps = in_header.vertex();
@@ -111,7 +112,7 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 
 	assert(source_map.is_open());
 
-	junk::mapped_data_element::const_iterator sit = source_map.begin();
+	junk::const_stream_iterator sit = source_map.begin();
 	for (sort_ref* it = begin; it != end; ++it, ++index, ++sit)
 	{
 		it->value = get_pos(*sit);
@@ -171,7 +172,7 @@ void reindex_faces(const junk::element& faces_, const std::string& unsorted, con
 		*it = reindex_map[*it].new_index;
 }
 
-void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
+void sort_faces(const junk::data_set& input, const std::string& sorted)
 {
 	const junk::header& in_header = input.header();
 	const junk::element& fs = in_header.face();
@@ -209,7 +210,7 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 
 	assert(source_map.is_open());
 
-	junk::mapped_data_element::const_iterator sit = source_map.begin();
+	junk::const_stream_iterator sit = source_map.begin();
 	for (sort_ref* it = begin; it != end; ++it, ++index, ++sit)
 	{
 		it->value = get_attr(*sit);
@@ -252,7 +253,7 @@ int main(int argc, char* argv[])
 	const char* sorted = argv[2];
 	std::string reindex_map = std::string(sorted) + ".reindex_map";
 
-	junk::mapped_data_set input(argv[1]);
+	junk::data_set input(argv[1]);
 	const junk::element& faces = input.header().face();
 
 	sort_vertices(input, sorted, reindex_map);

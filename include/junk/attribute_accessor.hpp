@@ -1,6 +1,8 @@
 #ifndef JUNK_ATTRIBUTE_ACCESSOR_HPP
 #define JUNK_ATTRIBUTE_ACCESSOR_HPP
 
+#include <cstddef>
+
 namespace junk
 {
 

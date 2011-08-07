@@ -1,19 +1,20 @@
 //
 
-#include <junk/mapped_data_set.hpp>
+#include <junk/attribute_accessor.hpp>
+#include <junk/data_set.hpp>
 
 #include <boost/qvm/all.hpp>
 using namespace boost::qvm;
 
 typedef vec<float, 3> position;
 
-void fix_scale(junk::mapped_data_set& junk)
+void fix_scale(junk::data_set& junk)
 {
 	junk::mapped_data_element& mesh_ = junk.vertex_map();
 
 	junk::attribute_accessor<position> get_position(get_attribute(junk.header().vertex(), "position").offset);
 
-	typedef junk::mapped_data_element::iterator iterator;
+	typedef junk::stream_iterator iterator;
 	iterator begin = mesh_.begin();
 	iterator end = mesh_.end();
 

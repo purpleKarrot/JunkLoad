@@ -5,8 +5,9 @@
 #include <boost/foreach.hpp>
 #include <boost/range/algorithm/for_each.hpp>
 
+#include <junk/stream_iterator.hpp>
 #include <junk/attribute_accessor.hpp>
-#include <junk/mapped_data_set.hpp>
+#include <junk/data_set.hpp>
 
 #include "ply/config.hpp"
 #include "ply/ply.hpp"
@@ -73,7 +74,7 @@ private:
 class read_ply_data
 {
 public:
-	read_ply_data(junk::mapped_data_set& junk, bool normal, bool color);
+	read_ply_data(junk::data_set& junk, bool normal, bool color);
 
 	void operator()(const std::string& filename)
 	{
@@ -180,8 +181,8 @@ private:
 	std::size_t num_vertices;
 	std::size_t vertex_offset;
 
-	junk::mapped_data_set::iterator vrtx_it;
-	junk::mapped_data_set::iterator face_it;
+	junk::stream_iterator vrtx_it;
+	junk::stream_iterator face_it;
 };
 
 ply::ply_parser::element_callbacks_type read_ply_data::element_definition(const std::string& element_name, std::size_t count)
@@ -261,7 +262,7 @@ std::tr1::tuple<std::tr1::function<void(ply::uint8)>, std::tr1::function<void(pl
 	return return_type(0, 0, 0);
 }
 
-read_ply_data::read_ply_data(junk::mapped_data_set& junk, bool normal, bool color) :
+read_ply_data::read_ply_data(junk::data_set& junk, bool normal, bool color) :
 		normal(normal), color(color), vrtx_it(junk.vertex_map().begin()), face_it(junk.face_map().begin()), num_vertices(0), vertex_offset(0)
 {
 	ply_parser.element_definition_callback(boost::bind(&read_ply_data::element_definition, this, _1, _2));
@@ -294,7 +295,7 @@ void setup_header(junk::header& header, bool normal, bool color)
 	junk::compute_offsets(fs);
 }
 
-void convert(const std::vector<std::string>& input, junk::mapped_data_set& junk, bool normal, bool color)
+void convert(const std::vector<std::string>& input, junk::data_set& junk, bool normal, bool color)
 {
 	junk::header& header = junk.header();
 
