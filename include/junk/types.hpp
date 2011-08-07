@@ -9,10 +9,13 @@
 #define JUNKLOAD_TYPES_HPP
 
 #include <string>
+#include <vector>
+#include <stdexcept>
+
+#include <boost/cstdint.hpp>
+#include <boost/qvm/v_traits.hpp>
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/adapted/struct/define_struct.hpp>
-
-#include <junk/VMMLibIncludes.h>
 
 namespace junk
 {

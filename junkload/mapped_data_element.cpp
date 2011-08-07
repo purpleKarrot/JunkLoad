@@ -1,3 +1,5 @@
+
+#include <iostream>
 #include <junk/mapped_data_element.hpp>
 
 namespace junk

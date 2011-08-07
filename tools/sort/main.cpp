@@ -74,7 +74,7 @@ void sort_vertices(const junk::data_set& input, const std::string& sorted, const
 	const junk::element& vertices = input.header().vertex();
 	const junk::mapped_data_element& vertex_map = input.vertex_map();
 
-	assert(input.get_vertex_map().is_open());
+	assert(input.vertex_map().is_open());
 
 	const junk::element& vs = vertices;
 	const junk::attribute& pos_attr = get_attribute(vs, "position");

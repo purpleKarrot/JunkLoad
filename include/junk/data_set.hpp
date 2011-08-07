@@ -4,58 +4,26 @@
 #include <string>
 #include <junk/types.hpp>
 #include <junk/mapped_data_element.hpp>
-#include <boost/iostreams/device/mapped_file.hpp>
+
+#include <boost/pimpl.h>
 
 namespace junk
 {
 
-class data_set
+struct data_set: pimpl<data_set>::pointer_semantics
 {
-public:
 	data_set(const std::string& filename, bool new_file = false);
 
-	~data_set()
-	{
-	}
+	void load(bool new_file);
 
-	junk::header& header()
-	{
-		return header_;
-	}
+	junk::header& header();
+	const junk::header& header() const;
 
-	const junk::header& header() const
-	{
-		return header_;
-	}
+	mapped_data_element& vertex_map();
+	const mapped_data_element& vertex_map() const;
 
-	mapped_data_element& vertex_map()
-	{
-		return vertex_map_;
-	}
-
-	const mapped_data_element& vertex_map() const
-	{
-		return vertex_map_;
-	}
-
-	mapped_data_element& face_map()
-	{
-		return face_map_;
-	}
-
-	const mapped_data_element& face_map() const
-	{
-		return face_map_;
-	}
-
-	void _setup(bool new_file);
-
-protected:
-	std::string filename_;
-	junk::header header_;
-
-	mapped_data_element vertex_map_;
-	mapped_data_element face_map_;
+	mapped_data_element& face_map();
+	const mapped_data_element& face_map() const;
 };
 
 } // namespace junk

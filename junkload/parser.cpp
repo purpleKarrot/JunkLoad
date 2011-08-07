@@ -5,12 +5,10 @@
  *      Author: daniel
  */
 
-#ifndef JUNKLOAD_SPIRIT_QI_HPP
-#define JUNKLOAD_SPIRIT_QI_HPP
-
 #define FUSION_MAX_VECTOR_SIZE 16
 
 #include <fstream>
+#include <iomanip>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/support_multi_pass.hpp>
@@ -22,24 +20,22 @@ namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 namespace classic = boost::spirit::classic;
 
-namespace junk
-{
-namespace parser
+namespace
 {
 
-struct scalar_symbols: qi::symbols<char, typid>
+struct scalar_symbols: qi::symbols<char, junk::typid>
 {
 	scalar_symbols()
 	{
 		this->add
-			("int8",    SP_INT_8   )
-			("int16",   SP_INT_16  )
-			("int32",   SP_INT_32  )
-			("uint8",   SP_UINT_8  )
-			("uint16",  SP_UINT_16 )
-			("uint32",  SP_UINT_32 )
-			("float32", SP_FLOAT_32)
-			("float64", SP_FLOAT_64)
+			("int8",    junk::SP_INT_8   )
+			("int16",   junk::SP_INT_16  )
+			("int32",   junk::SP_INT_32  )
+			("uint8",   junk::SP_UINT_8  )
+			("uint16",  junk::SP_UINT_16 )
+			("uint32",  junk::SP_UINT_32 )
+			("float32", junk::SP_FLOAT_32)
+			("float64", junk::SP_FLOAT_64)
 		;
 	}
 };
@@ -70,7 +66,7 @@ struct endian_policy: qi::bool_policies<>
 };
 
 template<typename Iterator, typename Skipper>
-struct grammar: qi::grammar<Iterator, header(), Skipper>
+struct grammar: qi::grammar<Iterator, junk::header(), Skipper>
 {
 	grammar() :
 		grammar::base_type(start)
@@ -101,9 +97,9 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 			;
 	}
 
-	qi::rule<Iterator, header(), Skipper> start;
-	qi::rule<Iterator, element(), Skipper> element_;
-	qi::rule<Iterator, attribute(), Skipper> attribute_;
+	qi::rule<Iterator, junk::header(), Skipper> start;
+	qi::rule<Iterator, junk::element(), Skipper> element_;
+	qi::rule<Iterator, junk::attribute(), Skipper> attribute_;
 	qi::rule<Iterator, std::string(), Skipper> string_;
 	qi::rule<Iterator, std::size_t(), Skipper> size_;
 
@@ -111,7 +107,10 @@ struct grammar: qi::grammar<Iterator, header(), Skipper>
 	qi::bool_parser<bool, endian_policy> endian;
 };
 
-} // namespace parser
+} // unnamed namespace
+
+namespace junk
+{
 
 bool load_header(const std::string& filename, header& h)
 {
@@ -132,7 +131,7 @@ bool load_header(const std::string& filename, header& h)
 
 	try
 	{
-		parser::grammar<iterator, BOOST_TYPEOF(skip)> g;
+		grammar<iterator, BOOST_TYPEOF(skip)> g;
 		return qi::phrase_parse(iter, end, g, skip, h);
 	}
 	catch (qi::expectation_failure<iterator>& e)
@@ -152,5 +151,3 @@ bool load_header(const std::string& filename, header& h)
 }
 
 } // namespace junk
-
-#endif /* JUNKLOAD_SPIRIT_QI_HPP */

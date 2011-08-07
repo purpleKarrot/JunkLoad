@@ -302,6 +302,6 @@ void convert(const std::vector<std::string>& input, junk::data_set& junk, bool n
 	acc_ply_size acc(header.vertex().size, header.face().size);
 	boost::range::for_each(input, acc);
 
-	junk._setup(true);
+	junk.load(true);
 	boost::range::for_each(input, read_ply_data(junk, normal, color));
 }

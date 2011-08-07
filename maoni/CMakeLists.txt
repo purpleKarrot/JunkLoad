@@ -1,7 +1,6 @@
 
-#find_package(Maoni NO_MODULE)
-#include("${Maoni_USE_FILE}")
-set(Maoni_LIBRARIES Maoni MaoniMain)
+find_package(Maoni NO_MODULE)
+include_directories(${Maoni_INCLUDE_DIRS})
 
 add_executable(massive_maoni
   main.cpp
@@ -10,7 +9,7 @@ add_executable(massive_maoni
   )
 
 target_link_libraries(massive_maoni
-  ${Maoni_LIBRARIES}
+  ${MAONI_LIBRARIES}
   junkload
   )
 

@@ -5,9 +5,6 @@
  *      Author: daniel
  */
 
-#ifndef JUNKLOAD_SPIRIT_GENERATOR_HPP
-#define JUNKLOAD_SPIRIT_GENERATOR_HPP
-
 #include <fstream>
 #include <boost/spirit/include/karma.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
@@ -16,22 +13,22 @@
 namespace karma = boost::spirit::karma;
 namespace ascii = boost::spirit::ascii;
 
-namespace junk
+namespace
 {
 
-struct scalar_symbols: karma::symbols<typid, const char*>
+struct scalar_symbols: karma::symbols<junk::typid, const char*>
 {
 	scalar_symbols()
 	{
 		this->add
-			(SP_INT_8,    "int8"   )
-			(SP_INT_16,   "int16"  )
-			(SP_INT_32,   "int32"  )
-			(SP_UINT_8,   "uint8"  )
-			(SP_UINT_16,  "uint16" )
-			(SP_UINT_32,  "uint32" )
-			(SP_FLOAT_32, "float32")
-			(SP_FLOAT_64, "float64")
+			(junk::SP_INT_8,    "int8"   )
+			(junk::SP_INT_16,   "int16"  )
+			(junk::SP_INT_32,   "int32"  )
+			(junk::SP_UINT_8,   "uint8"  )
+			(junk::SP_UINT_16,  "uint16" )
+			(junk::SP_UINT_32,  "uint32" )
+			(junk::SP_FLOAT_32, "float32")
+			(junk::SP_FLOAT_64, "float64")
 		;
 	}
 };
@@ -52,7 +49,7 @@ struct endian_policy: karma::bool_policies<>
 };
 
 template<typename Iterator>
-struct header_grammar: karma::grammar<Iterator, header()>
+struct header_grammar: karma::grammar<Iterator, junk::header()>
 {
 	header_grammar() :
 		header_grammar::base_type(start)
@@ -78,14 +75,19 @@ struct header_grammar: karma::grammar<Iterator, header()>
 			;
 	}
 
-	karma::rule<Iterator, header()> start;
-	karma::rule<Iterator, element()> element_;
-	karma::rule<Iterator, attribute()> attribute_;
+	karma::rule<Iterator, junk::header()> start;
+	karma::rule<Iterator, junk::element()> element_;
+	karma::rule<Iterator, junk::attribute()> attribute_;
 	karma::rule<Iterator, std::size_t()> size_;
 
 	scalar_symbols scalar_;
 	karma::bool_generator<bool, endian_policy> endian;
 };
+
+} // unnamed namespace
+
+namespace junk
+{
 
 bool save_header(const std::string& filename, const header& h)
 {
@@ -98,5 +100,3 @@ bool save_header(const std::string& filename, const header& h)
 }
 
 } // namespace junk
-
-#endif /* JUNKLOAD_SPIRIT_GENERATOR_HPP */
