@@ -263,7 +263,7 @@ std::tr1::tuple<std::tr1::function<void(ply::uint8)>, std::tr1::function<void(pl
 }
 
 read_ply_data::read_ply_data(junk::data_set& junk, bool normal, bool color) :
-		normal(normal), color(color), vrtx_it(junk.vertex_map().begin()), face_it(junk.face_map().begin()), num_vertices(0), vertex_offset(0)
+		normal(normal), color(color), vrtx_it(junk.stream_range(0).begin()), face_it(junk.stream_range(1).begin()), num_vertices(0), vertex_offset(0)
 {
 	ply_parser.element_definition_callback(boost::bind(&read_ply_data::element_definition, this, _1, _2));
 

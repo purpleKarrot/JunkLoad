@@ -10,7 +10,7 @@ typedef vec<float, 3> position;
 
 void fix_scale(junk::data_set& junk)
 {
-	junk::mapped_data_element& mesh_ = junk.vertex_map();
+	junk::stream_range mesh_ = junk.stream_range(0);
 
 	junk::attribute_accessor<position> get_position(get_attribute(junk.header().vertex(), "position").offset);
 

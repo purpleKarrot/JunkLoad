@@ -61,15 +61,15 @@ void Model::read_file() const
 
 	data_set.reset(new junk::data_set(path()));
 
-	junk::mapped_data_element& vertices = data_set->vertex_map();
-	junk::mapped_data_element& indices = data_set->face_map();
+	junk::raw_data vertices = data_set->raw_data(0);
+	junk::raw_data indices = data_set->raw_data(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.data_size(), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size, vertices.data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.data_size(), indices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size, indices.data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 

@@ -5,6 +5,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <boost/iostreams/device/mapped_file.hpp>
+
 #include <junk/attribute_accessor.hpp>
 #include <junk/data_set.hpp>
 #include "intro_sort.hpp"
@@ -72,9 +74,7 @@ void sort_vertices(const junk::data_set& input, const std::string& sorted, const
 	std::size_t index = 0;
 
 	const junk::element& vertices = input.header().vertex();
-	const junk::mapped_data_element& vertex_map = input.vertex_map();
-
-	assert(input.vertex_map().is_open());
+	junk::const_stream_range vertex_map = input.stream_range(0);
 
 	const junk::element& vs = vertices;
 	const junk::attribute& pos_attr = get_attribute(vs, "position");
@@ -84,15 +84,13 @@ void sort_vertices(const junk::data_set& input, const std::string& sorted, const
 
 	junk::attribute_accessor<pos> get_pos(pos_attr.offset);
 
-	const junk::mapped_data_element& source_ = vertex_map;
+	junk::const_stream_range source_ = vertex_map;
 
 	typedef sort_reference<pos, uint32_t, pos_order> sort_ref;
 
 	const size_t number_of_elements = source_.size();
-	const junk::element& source = source_.get_element();
-	const junk::mapped_data_element& source_map = source_;
-
-	assert(source_.is_open());
+	const junk::element& source = input.header().vertex();
+	junk::const_stream_range source_map = source_;
 
 	// setup sort-file
 	boost::iostreams::mapped_file_params tmp_params;
@@ -109,8 +107,6 @@ void sort_vertices(const junk::data_set& input, const std::string& sorted, const
 	sort_ref* end = begin + number_of_elements;
 
 	index = 0;
-
-	assert(source_map.is_open());
 
 	junk::const_stream_iterator sit = source_map.begin();
 	for (sort_ref* it = begin; it != end; ++it, ++index, ++sit)
@@ -182,15 +178,13 @@ void sort_faces(const junk::data_set& input, const std::string& sorted)
 	assert(attr.type == junk::SP_UINT_32);
 	smallest_component_accessor<uint32_t> get_attr(attr.offset, attr.size);
 
-	const junk::mapped_data_element& source_ = input.face_map();
+	junk::const_stream_range source_ = input.stream_range(1);
 
 	typedef sort_reference<uint32_t, uint32_t> sort_ref;
 
 	const size_t number_of_elements = source_.size();
-	const junk::element& source = source_.get_element();
-	const junk::mapped_data_element& source_map = source_;
-
-	assert(source_.is_open());
+	const junk::element& source = input.header().face();
+	junk::const_stream_range source_map = source_;
 
 	// setup sort-file
 	boost::iostreams::mapped_file_params tmp_params;
@@ -207,8 +201,6 @@ void sort_faces(const junk::data_set& input, const std::string& sorted)
 	sort_ref* end = begin + number_of_elements;
 
 	size_t index = 0;
-
-	assert(source_map.is_open());
 
 	junk::const_stream_iterator sit = source_map.begin();
 	for (sort_ref* it = begin; it != end; ++it, ++index, ++sit)

@@ -18,8 +18,8 @@ void calc_normals(junk::data_set& junk)
 	junk::attribute_accessor<vec3> get_normal(get_attribute(vs, "normal").offset);
 	junk::attribute_accessor<triangle> get_triangle(get_attribute(fs, "indices").offset);
 
-	junk::mapped_data_element& vertices = junk.vertex_map();
-	junk::mapped_data_element& triangles = junk.face_map();
+	junk::stream_range vertices = junk.stream_range(0);
+	junk::stream_range triangles = junk.stream_range(1);
 
 	for (junk::stream_iterator i = vertices.begin(); i != vertices.end(); ++i)
 		set_zero(get_normal(*i));
