@@ -262,7 +262,7 @@ std::tr1::tuple<std::tr1::function<void(ply::uint8)>, std::tr1::function<void(pl
 }
 
 read_ply_data::read_ply_data(junk::mapped_data_set& junk, bool normal, bool color) :
-		normal(normal), color(color), vrtx_it(junk.vbegin()), face_it(junk.fbegin()), num_vertices(0), vertex_offset(0)
+		normal(normal), color(color), vrtx_it(junk.vertex_map().begin()), face_it(junk.face_map().begin()), num_vertices(0), vertex_offset(0)
 {
 	ply_parser.element_definition_callback(boost::bind(&read_ply_data::element_definition, this, _1, _2));
 
@@ -296,7 +296,7 @@ void setup_header(junk::header& header, bool normal, bool color)
 
 void convert(const std::vector<std::string>& input, junk::mapped_data_set& junk, bool normal, bool color)
 {
-	junk::header& header = junk.get_header();
+	junk::header& header = junk.header();
 
 	acc_ply_size acc(header.vertex().size, header.face().size);
 	boost::range::for_each(input, acc);

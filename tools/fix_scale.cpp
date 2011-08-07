@@ -9,9 +9,9 @@ typedef vec<float, 3> position;
 
 void fix_scale(junk::mapped_data_set& junk)
 {
-	junk::mapped_data_element& mesh_ = junk.get_vertex_map();
+	junk::mapped_data_element& mesh_ = junk.vertex_map();
 
-	junk::attribute_accessor<position> get_position(get_attribute(junk.get_vertex_element(), "position").offset);
+	junk::attribute_accessor<position> get_position(get_attribute(junk.header().vertex(), "position").offset);
 
 	typedef junk::mapped_data_element::iterator iterator;
 	iterator begin = mesh_.begin();

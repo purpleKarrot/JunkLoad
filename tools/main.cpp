@@ -90,7 +90,7 @@ int main(const int argc, char* argv[])
 	}
 
 	junk::mapped_data_set junk(output, true);
-	junk::header& header = junk.get_header();
+	junk::header& header = junk.header();
 
 	setup_header(header, use_normal || auto_normal, use_color);
 

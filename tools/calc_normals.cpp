@@ -10,15 +10,15 @@ typedef vec<unsigned int, 3> triangle;
 
 void calc_normals(junk::mapped_data_set& junk)
 {
-	const junk::element& vs = junk.get_vertex_element();
-	const junk::element& fs = junk.get_face_element();
+	const junk::element& vs = junk.header().vertex();
+	const junk::element& fs = junk.header().face();
 
 	junk::attribute_accessor<vec3> get_position(get_attribute(vs, "position").offset);
 	junk::attribute_accessor<vec3> get_normal(get_attribute(vs, "normal").offset);
 	junk::attribute_accessor<triangle> get_triangle(get_attribute(fs, "indices").offset);
 
-	junk::mapped_data_element& vertices = junk.get_vertex_map();
-	junk::mapped_data_element& triangles = junk.get_face_map();
+	junk::mapped_data_element& vertices = junk.vertex_map();
+	junk::mapped_data_element& triangles = junk.face_map();
 
 	for (junk::mapped_data_element::iterator i = vertices.begin(); i != vertices.end(); ++i)
 		set_zero(get_normal(*i));

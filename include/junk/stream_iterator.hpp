@@ -39,7 +39,7 @@ private:
 	template<class OtherValue>
 	bool equal(const stream_iterator_base<OtherValue>& other) const
 	{
-		return value_ == other._data;
+		return value_ == other.value_;
 	}
 
 	void increment()

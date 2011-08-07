@@ -60,8 +60,8 @@ void Model::read_file() const
 
 	data_set.reset(new junk::mapped_data_set(path()));
 
-	junk::mapped_data_element& vertices = data_set->get_vertex_map();
-	junk::mapped_data_element& indices = data_set->get_face_map();
+	junk::mapped_data_element& vertices = data_set->vertex_map();
+	junk::mapped_data_element& indices = data_set->face_map();
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
 	glBufferData(GL_ARRAY_BUFFER, vertices.data_size(), vertices.data(), GL_STATIC_DRAW);
@@ -80,7 +80,7 @@ void Model::draw(int ranges) const
 	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuffer);
 
-	junk::header& header = data_set->get_header();
+	junk::header& header = data_set->header();
 	junk::element& vertex = header.get_element("vertex");
 
 	bool vertex_array = false;

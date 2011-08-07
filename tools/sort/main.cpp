@@ -61,7 +61,7 @@ struct pos_order
 
 void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted, const std::string& reindex_map)
 {
-	const junk::header& in_header = input.get_header();
+	const junk::header& in_header = input.header();
 	const junk::element& ps = in_header.vertex();
 	const junk::attribute& attr = get_attribute(ps, "position");
 
@@ -70,8 +70,8 @@ void sort_vertices(const junk::mapped_data_set& input, const std::string& sorted
 
 	std::size_t index = 0;
 
-	const junk::element& vertices = input.get_vertex_element();
-	const junk::mapped_data_element& vertex_map = input.get_vertex_map();
+	const junk::element& vertices = input.header().vertex();
+	const junk::mapped_data_element& vertex_map = input.vertex_map();
 
 	assert(input.get_vertex_map().is_open());
 
@@ -173,7 +173,7 @@ void reindex_faces(const junk::element& faces_, const std::string& unsorted, con
 
 void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 {
-	const junk::header& in_header = input.get_header();
+	const junk::header& in_header = input.header();
 	const junk::element& fs = in_header.face();
 	const junk::attribute& attr = get_attribute(fs, "indices");
 
@@ -181,7 +181,7 @@ void sort_faces(const junk::mapped_data_set& input, const std::string& sorted)
 	assert(attr.type == junk::SP_UINT_32);
 	smallest_component_accessor<uint32_t> get_attr(attr.offset, attr.size);
 
-	const junk::mapped_data_element& source_ = input.get_face_map();
+	const junk::mapped_data_element& source_ = input.face_map();
 
 	typedef sort_reference<uint32_t, uint32_t> sort_ref;
 
@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
 	std::string reindex_map = std::string(sorted) + ".reindex_map";
 
 	junk::mapped_data_set input(argv[1]);
-	const junk::element& faces = input.get_header().face();
+	const junk::element& faces = input.header().face();
 
 	sort_vertices(input, sorted, reindex_map);
 
@@ -263,5 +263,5 @@ int main(int argc, char* argv[])
 		sort_faces(input, sorted);
 	}
 
-	junk::save_header(sorted, input.get_header());
+	junk::save_header(sorted, input.header());
 }
