@@ -47,7 +47,7 @@ void main()
 	gl_FrontColor = gl_Color;
 }
 
-#elif !defined(FRAGMENT_SHADER)
+#elif defined(FRAGMENT_SHADER)
 
 void main()
 {

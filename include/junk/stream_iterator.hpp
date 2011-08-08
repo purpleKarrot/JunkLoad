@@ -13,11 +13,11 @@ class stream_iterator_base:
 		Value,
 		boost::random_access_traversal_tag,
 		Value,
-		std::size_t
+		std::ptrdiff_t
 		>
 {
 public:
-	stream_iterator_base(Value value, std::size_t element_size) :
+	stream_iterator_base(Value value, std::ptrdiff_t element_size) :
 			value_(value), element_size_(element_size)
 	{
 	}
@@ -52,19 +52,19 @@ private:
 		value_ -= element_size_;
 	}
 
-	void advance(std::size_t steps)
+	void advance(std::ptrdiff_t steps)
 	{
 		value_ += steps * element_size_;
 	}
 
-	std::size_t distance_to(const stream_iterator_base& other) const
+	std::ptrdiff_t distance_to(const stream_iterator_base& other) const
 	{
-		return (value_ - other.value_) / element_size_;
+		return (other.value_ - value_) / element_size_;
 	}
 
 private:
 	Value value_;
-	std::size_t element_size_;
+	std::ptrdiff_t element_size_;
 };
 
 typedef stream_iterator_base<char*> stream_iterator;
