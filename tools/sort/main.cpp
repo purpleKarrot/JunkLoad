@@ -50,7 +50,6 @@ struct sort_reference
 };
 
 typedef boost::qvm::vec<float, 3> pos;
-typedef sort_reference<pos, uint32_t> sort_ref;
 
 struct pos_order
 {
@@ -63,7 +62,8 @@ struct pos_order
 	}
 };
 
-void sort_vertices(const junk::data_set& input, const std::string& sorted, const std::string& reindex_map)
+void sort_vertices(const junk::data_set& input, const std::string& sorted,
+		const std::string& reindex_map)
 {
 	junk::const_stream_range vertex_map = input.stream_range(0);
 	junk::accessor<pos> get_pos = input.get_accessor<pos>("vertex", "position");
@@ -121,6 +121,7 @@ void reindex_faces(const std::string& unsorted, const std::string& reindex_map_)
 	boost::iostreams::mapped_file_source _reindex_map(reindex_map_);
 	boost::iostreams::mapped_file _faces_file(std::string(unsorted) + ".faces");
 
+	typedef sort_reference<pos, uint32_t> sort_ref;
 	const sort_ref* reindex_map = reinterpret_cast<const sort_ref*> (_reindex_map.data());
 
 	uint32_t* begin = reinterpret_cast<uint32_t*> (_faces_file.begin());

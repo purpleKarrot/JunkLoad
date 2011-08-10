@@ -59,9 +59,6 @@ const char* const Shader::filter() const
 	return "Shader files (*.shader)";
 }
 
-static const char* const define_vert = "#define VERTEX_SHADER\n";
-static const char* const define_frag = "#define FRAGMENT_SHADER\n";
-
 #define ATTACH_SHADER(TYPE)                                                    \
 {                                                                              \
     GLuint shader = glCreateShader(GL_##TYPE##_SHADER);                        \

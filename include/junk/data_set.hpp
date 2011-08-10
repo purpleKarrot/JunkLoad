@@ -3,6 +3,7 @@
 
 #include <string>
 #include <junk/types.hpp>
+#include <junk/traits.hpp>
 #include <junk/stream_range.hpp>
 #include <junk/accessor.hpp>
 

@@ -55,43 +55,17 @@ struct element
 
 typedef std::vector<element> element_list;
 
-} // namespace junk
-
-
-#include <iostream>
-#include <junk/traits.hpp>
-#include <boost/foreach.hpp>
-
-namespace junk
-{
+unsigned int gl_type(junk::type type);
 
 std::size_t size_in_bytes(junk::type type);
 
-unsigned int gl_type(junk::type type);
-
-inline std::size_t size_in_bytes(const attribute& a)
-{
-	return a.size * size_in_bytes(a.type);
-}
+std::size_t size_in_bytes(const attribute& a);
 
 // returns the size of a  point/face/...
-inline std::size_t size_in_bytes(const element& e)
-{
-	std::size_t size = 0;
-
-	BOOST_FOREACH(const attribute& attr, e.attributes)
-	{
-		size += size_in_bytes(attr);
-	}
-
-	return size;
-}
+std::size_t size_in_bytes(const element& e);
 
 // returns the size of the whole data set
-inline std::size_t file_size_in_bytes(const element& e)
-{
-	return e.size * size_in_bytes(e);
-}
+std::size_t file_size_in_bytes(const element& e);
 
 } // namespace junk
 

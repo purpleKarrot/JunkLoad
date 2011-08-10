@@ -5,6 +5,7 @@
  *      Author: daniel
  */
 
+#include <boost/foreach.hpp>
 #include <junk/types.hpp>
 #include <GL/gl.h>
 
@@ -43,6 +44,30 @@ unsigned int gl_type(junk::type type)
 	};
 
 	return types[type];
+}
+
+std::size_t size_in_bytes(const attribute& a)
+{
+	return a.size * size_in_bytes(a.type);
+}
+
+// returns the size of a  point/face/...
+std::size_t size_in_bytes(const element& e)
+{
+	std::size_t size = 0;
+
+	BOOST_FOREACH(const attribute& attr, e.attributes)
+	{
+		size += size_in_bytes(attr);
+	}
+
+	return size;
+}
+
+// returns the size of the whole data set
+std::size_t file_size_in_bytes(const element& e)
+{
+	return e.size * size_in_bytes(e);
 }
 
 } // namespace junk

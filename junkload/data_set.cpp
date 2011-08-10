@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <junk/stream_range.hpp>
+#include <boost/foreach.hpp>
 #include <boost/range/algorithm/for_each.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/exception/diagnostic_information.hpp>
