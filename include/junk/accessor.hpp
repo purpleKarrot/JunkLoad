@@ -7,10 +7,10 @@ namespace junk
 {
 
 template<typename T>
-class attribute_accessor
+class accessor
 {
 public:
-	attribute_accessor(std::ptrdiff_t offset = 0) :
+	accessor(std::ptrdiff_t offset = 0) :
 			offset(offset)
 	{
 	}

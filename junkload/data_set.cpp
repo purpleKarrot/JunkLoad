@@ -15,6 +15,14 @@
 
 #define self (*(*this))
 
+namespace junk
+{
+
+bool load_header(const std::string& filename, element_list& elements);
+bool save_header(const std::string& filename, const element_list& elements);
+
+} //namespace junk
+
 struct load_element
 {
 	typedef std::vector<boost::iostreams::mapped_file>::iterator iterator;
@@ -50,10 +58,11 @@ template<>
 struct pimpl<junk::data_set>::implementation
 {
 	implementation(const std::string& filename, bool new_file) :
-			filename(filename)
+		is_open(false), filename(filename)
 	{
 	}
 
+	bool is_open;
 	std::string filename;
 	junk::element_list elements;
 	std::vector<boost::iostreams::mapped_file> mapped_files;
@@ -68,20 +77,15 @@ junk::data_set::data_set(const std::string& filename, bool new_file) :
 	junk::load_header(filename, self.elements);
 	load(false);
 
-	std::size_t offset = 0;
 	BOOST_FOREACH(junk::element& elem, self.elements)
 	{
+		std::size_t offset = 0;
 		BOOST_FOREACH(junk::attribute& attr, elem.attributes)
 		{
 			attr.offset = offset;
 			offset += size_in_bytes(attr);
 		}
 	}
-}
-
-void junk::data_set::safe_header()
-{
-	junk::save_header(self.filename, self.elements);
 }
 
 void junk::data_set::add_element(const char* name, const char* plural)
@@ -134,6 +138,9 @@ const junk::attribute& junk::data_set::get_attribute(const char* element, const 
 
 void junk::data_set::load(bool new_file)
 {
+	if (new_file)
+		junk::save_header(self.filename, self.elements);
+
 	try
 	{
 		self.mapped_files.resize(self.elements.size());

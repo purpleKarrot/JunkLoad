@@ -7,7 +7,7 @@
 
 #include <boost/iostreams/device/mapped_file.hpp>
 
-#include <junk/attribute_accessor.hpp>
+#include <junk/accessor.hpp>
 #include <junk/data_set.hpp>
 #include "intro_sort.hpp"
 #include "z_order.hpp"
@@ -66,7 +66,7 @@ struct pos_order
 void sort_vertices(const junk::data_set& input, const std::string& sorted, const std::string& reindex_map)
 {
 	junk::const_stream_range vertex_map = input.stream_range(0);
-	junk::attribute_accessor<pos> get_pos = input.get_accessor<pos>("vertex", "position");
+	junk::accessor<pos> get_pos = input.get_accessor<pos>("vertex", "position");
 
 	typedef sort_reference<pos, uint32_t, pos_order> sort_ref;
 
@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
 	const char* sorted = argv[2];
 	std::string reindex_map = std::string(sorted) + ".reindex_map";
 
-	junk::data_set input(argv[1]);
+	const junk::data_set input(argv[1]);
 	const junk::element& faces = input.get_element("face");
 
 	sort_vertices(input, sorted, reindex_map);

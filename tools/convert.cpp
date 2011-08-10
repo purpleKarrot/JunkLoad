@@ -4,9 +4,10 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/range/algorithm/for_each.hpp>
+#include <boost/qvm/v_traits_array.hpp>
 
 #include <junk/stream_iterator.hpp>
-#include <junk/attribute_accessor.hpp>
+#include <junk/accessor.hpp>
 #include <junk/data_set.hpp>
 
 #include "ply/config.hpp"
@@ -27,10 +28,10 @@ struct color_t
 
 typedef unsigned int triangle_t[3];
 
-junk::attribute_accessor<vec3_t> get_position(0);
-junk::attribute_accessor<vec3_t> get_normal(12);
-junk::attribute_accessor<color_t> get_color(24);
-junk::attribute_accessor<triangle_t> get_indices(0);
+junk::accessor<vec3_t> get_position(0);
+junk::accessor<vec3_t> get_normal(12);
+junk::accessor<color_t> get_color(24);
+junk::accessor<triangle_t> get_indices(0);
 
 class acc_ply_size
 {
@@ -276,32 +277,30 @@ read_ply_data::read_ply_data(junk::data_set& junk, bool normal, bool color) :
 	ply_parser.list_property_definition_callbacks(list_property_definition_callbacks);
 }
 
-void setup_header(junk::data_set& data_set, bool normal, bool color)
+void convert(junk::data_set& data_set, const std::vector<std::string>& input,
+		bool use_normal, bool auto_normal, bool use_color)
 {
 	data_set.add_element("vertex", "vertices");
-	data_set.add_attribute("vertex", "position", junk::float_32, 3);
+	data_set.add_attribute<float[3]>("vertex", "position");
 
-	if (normal)
-		data_set.add_attribute("vertex", "normal", junk::float_32, 3);
+	if (use_normal || auto_normal)
+		data_set.add_attribute<float[3]>("vertex", "normal");
 
-	if (color)
-		data_set.add_attribute("vertex", "color", junk::u_int_08, 3);
+	if (use_color)
+		data_set.add_attribute<boost::uint8_t[3]>("vertex", "color");
 
 	data_set.add_element("face");
-	data_set.add_attribute("face", "indices", junk::u_int_32, 3);
-}
+	data_set.add_attribute<boost::uint32_t[3]>("face", "indices");
 
-void convert(const std::vector<std::string>& input, junk::data_set& junk, bool normal, bool color)
-{
 	std::size_t vertices = 0;
 	std::size_t faces = 0;
 
 	boost::range::for_each(input, acc_ply_size (vertices, faces));
 
-	junk.set_size("vertex", vertices);
-	junk.set_size("face", faces);
+	data_set.set_size("vertex", vertices);
+	data_set.set_size("face", faces);
 
-	junk.load(true);
+	data_set.load(true);
 
-	boost::range::for_each(input, read_ply_data(junk, normal, color));
+	boost::range::for_each(input, read_ply_data(data_set, use_normal, use_color));
 }

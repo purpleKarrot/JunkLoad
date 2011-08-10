@@ -38,7 +38,7 @@ private:
 	void read_file() const;
 
 private:
-	mutable boost::scoped_ptr<junk::data_set> data_set;
+	mutable boost::scoped_ptr<const junk::data_set> data_set;
 	mutable std::size_t faces;
 	mutable GLuint vbuffer;
 	mutable GLuint ibuffer;

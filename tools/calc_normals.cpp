@@ -1,6 +1,6 @@
 //
 
-#include <junk/attribute_accessor.hpp>
+#include <junk/accessor.hpp>
 #include <junk/data_set.hpp>
 
 #include <boost/qvm/all.hpp>
@@ -11,9 +11,9 @@ typedef vec<unsigned int, 3> triangle;
 
 void calc_normals(junk::data_set& junk)
 {
-	junk::attribute_accessor<vec3> get_position = junk.get_accessor<vec3>("vertex", "position");
-	junk::attribute_accessor<vec3> get_normal = junk.get_accessor<vec3>("vertex", "normal");
-	junk::attribute_accessor<triangle> get_triangle = junk.get_accessor<triangle>("face", "indices");
+	junk::accessor<vec3> get_position = junk.get_accessor<vec3>("vertex", "position");
+	junk::accessor<vec3> get_normal = junk.get_accessor<vec3>("vertex", "normal");
+	junk::accessor<triangle> get_triangle = junk.get_accessor<triangle>("face", "indices");
 
 	junk::stream_range vertices = junk.stream_range(0);
 	junk::stream_range triangles = junk.stream_range(1);

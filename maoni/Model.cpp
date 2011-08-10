@@ -61,8 +61,8 @@ void Model::read_file() const
 
 	data_set.reset(new junk::data_set(path()));
 
-	junk::raw_data vertices = data_set->raw_data(0);
-	junk::raw_data indices = data_set->raw_data(1);
+	junk::const_raw_data vertices = data_set->raw_data(0);
+	junk::const_raw_data indices = data_set->raw_data(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size, vertices.data, GL_STATIC_DRAW);
@@ -81,13 +81,13 @@ void Model::draw(int ranges) const
 	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuffer);
 
-	junk::element& vertex = data_set->get_element("vertex");
+	const junk::element& vertex = data_set->get_element("vertex");
 
 	bool vertex_array = false;
 	bool normal_array = false;
 	bool color_array = false;
 
-	BOOST_FOREACH(junk::attribute& attr, vertex.attributes)
+	BOOST_FOREACH(const junk::attribute& attr, vertex.attributes)
 	{
 		if (attr.name == "position")
 		{

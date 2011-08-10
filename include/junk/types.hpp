@@ -66,15 +66,13 @@ namespace junk
 {
 
 std::size_t size_in_bytes(junk::type type);
+
 unsigned int gl_type(junk::type type);
 
 inline std::size_t size_in_bytes(const attribute& a)
 {
 	return a.size * size_in_bytes(a.type);
 }
-
-attribute& get_attribute(element& e, const std::string& name);
-const attribute& get_attribute(const element& e, const std::string& name);
 
 // returns the size of a  point/face/...
 inline std::size_t size_in_bytes(const element& e)
@@ -94,9 +92,6 @@ inline std::size_t file_size_in_bytes(const element& e)
 {
 	return e.size * size_in_bytes(e);
 }
-
-bool load_header(const std::string& filename, element_list& elements);
-bool save_header(const std::string& filename, const element_list& elements);
 
 } // namespace junk
 
