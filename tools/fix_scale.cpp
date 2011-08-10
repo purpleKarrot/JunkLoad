@@ -12,7 +12,7 @@ void fix_scale(junk::data_set& junk)
 {
 	junk::stream_range mesh_ = junk.stream_range(0);
 
-	junk::attribute_accessor<position> get_position(get_attribute(junk.header().vertex(), "position").offset);
+	junk::attribute_accessor<position> get_position = junk.get_accessor<position>("vertex", "position");
 
 	typedef junk::stream_iterator iterator;
 	iterator begin = mesh_.begin();

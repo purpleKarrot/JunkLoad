@@ -14,66 +14,47 @@
 #include <boost/spirit/include/support_multi_pass.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
 
-#include <junk/types.hpp>
+#include "adapted.hpp"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 namespace classic = boost::spirit::classic;
 
+#ifdef __BIG_ENDIAN__
+# define ENDIAN "BIG_ENDIAN"
+#else
+# define ENDIAN "LITTLE_ENDIAN"
+#endif
+
 namespace
 {
 
-struct scalar_symbols: qi::symbols<char, junk::typid>
+struct scalar_symbols: qi::symbols<char, junk::type>
 {
 	scalar_symbols()
 	{
 		this->add
-			("int8",    junk::SP_INT_8   )
-			("int16",   junk::SP_INT_16  )
-			("int32",   junk::SP_INT_32  )
-			("uint8",   junk::SP_UINT_8  )
-			("uint16",  junk::SP_UINT_16 )
-			("uint32",  junk::SP_UINT_32 )
-			("float32", junk::SP_FLOAT_32)
-			("float64", junk::SP_FLOAT_64)
+			("int8",    junk::s_int_08)
+			("int16",   junk::s_int_16)
+			("int32",   junk::s_int_32)
+			("uint8",   junk::u_int_08)
+			("uint16",  junk::u_int_16)
+			("uint32",  junk::u_int_32)
+			("float32", junk::float_32)
+			("float64", junk::float_64)
 		;
 	}
 };
 
-struct endian_policy: qi::bool_policies<>
-{
-    template<typename Iterator, typename Attribute>
-	static bool parse_false(Iterator& first, Iterator const& last, Attribute& attr)
-	{
-		if (qi::detail::string_parse("LITTLE_ENDIAN", first, last, qi::unused))
-		{
-			boost::spirit::traits::assign_to(false, attr);
-			return true;
-		}
-		return false;
-	}
-
-    template<typename Iterator, typename Attribute>
-	static bool parse_true(Iterator& first, Iterator const& last, Attribute& attr)
-	{
-		if (qi::detail::string_parse("BIG_ENDIAN", first, last, qi::unused))
-		{
-			boost::spirit::traits::assign_to(true, attr);
-			return true;
-		}
-		return false;
-	}
-};
-
 template<typename Iterator, typename Skipper>
-struct grammar: qi::grammar<Iterator, junk::header(), Skipper>
+struct grammar: qi::grammar<Iterator, junk::element_list(), Skipper>
 {
 	grammar() :
 		grammar::base_type(start)
 	{
 		start
 			%= qi::eps
-			> "#define" > endian
+			> "#define " ENDIAN
 			> *element_
 			> qi::eoi
 			;
@@ -97,14 +78,13 @@ struct grammar: qi::grammar<Iterator, junk::header(), Skipper>
 			;
 	}
 
-	qi::rule<Iterator, junk::header(), Skipper> start;
+	qi::rule<Iterator, junk::element_list(), Skipper> start;
 	qi::rule<Iterator, junk::element(), Skipper> element_;
 	qi::rule<Iterator, junk::attribute(), Skipper> attribute_;
 	qi::rule<Iterator, std::string(), Skipper> string_;
 	qi::rule<Iterator, std::size_t(), Skipper> size_;
 
 	scalar_symbols scalar_;
-	qi::bool_parser<bool, endian_policy> endian;
 };
 
 } // unnamed namespace
@@ -112,7 +92,7 @@ struct grammar: qi::grammar<Iterator, junk::header(), Skipper>
 namespace junk
 {
 
-bool load_header(const std::string& filename, header& h)
+bool load_header(const std::string& filename, element_list& elements)
 {
 	typedef std::istreambuf_iterator<char> input_iterator;
 	typedef boost::spirit::multi_pass<input_iterator> forward_iterator;
@@ -131,8 +111,8 @@ bool load_header(const std::string& filename, header& h)
 
 	try
 	{
-		grammar<iterator, BOOST_TYPEOF(skip)> g;
-		return qi::phrase_parse(iter, end, g, skip, h);
+		grammar<iterator, BOOST_TYPEOF(skip)> grammar;
+		return qi::phrase_parse(iter, end, grammar, skip, elements);
 	}
 	catch (qi::expectation_failure<iterator>& e)
 	{

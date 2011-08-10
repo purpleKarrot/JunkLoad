@@ -11,7 +11,7 @@
 namespace junk
 {
 
-std::size_t size_in_bytes(typid type)
+std::size_t size_in_bytes(junk::type type)
 {
 	static std::size_t type_sizes[] =
 	{
@@ -28,7 +28,7 @@ std::size_t size_in_bytes(typid type)
 	return type_sizes[type];
 }
 
-unsigned int gl_type(typid type)
+unsigned int gl_type(junk::type type)
 {
 	static unsigned int types[] =
 	{

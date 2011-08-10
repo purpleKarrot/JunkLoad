@@ -12,7 +12,7 @@ namespace po = boost::program_options;
 #include <junk/data_set.hpp>
 
 void convert(const std::vector<std::string>& input, junk::data_set& junk, bool, bool);
-void setup_header(junk::header& header, bool normal, bool color);
+void setup_header(junk::data_set& data_set, bool normal, bool color);
 void fix_scale(junk::data_set& junk);
 void calc_normals(junk::data_set& junk);
 
@@ -90,9 +90,8 @@ int main(const int argc, char* argv[])
 	}
 
 	junk::data_set junk(output, true);
-	junk::header& header = junk.header();
 
-	setup_header(header, use_normal || auto_normal, use_color);
+	setup_header(junk, use_normal || auto_normal, use_color);
 
 	convert(ply_files, junk, use_normal, use_color);
 
@@ -102,6 +101,6 @@ int main(const int argc, char* argv[])
 	if (auto_normal)
 		calc_normals(junk);
 
-	junk::save_header(output, header);
+	junk.safe_header();
 	return 0;
 }

@@ -1,10 +1,17 @@
 #include <junk/data_set.hpp>
 
 #include <iostream>
-#include <algorithm>
+#include <stdexcept>
 #include <junk/stream_range.hpp>
+#include <boost/range/algorithm/for_each.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/exception/diagnostic_information.hpp>
+
+#include <boost/spirit/home/phoenix/core/argument.hpp>
+//#include <boost/spirit/home/phoenix/operator/member.hpp>
+#include <boost/spirit/home/phoenix/operator/comparison.hpp>
+#include <boost/spirit/home/phoenix/bind/bind_member_variable.hpp>
+#include <boost/range/algorithm/find_if.hpp>
 
 #define self (*(*this))
 
@@ -25,7 +32,7 @@ struct load_element
 
 		if (new_file)
 		{
-			params.new_file_size = file_size_in_bytes(element);
+			params.new_file_size = junk::file_size_in_bytes(element);
 			std::cout << "creating file '" << params.path << "' with a size of "
 					  << (double) params.new_file_size / 1073741824.0
 					  << " gigabytes." << std::endl;
@@ -47,37 +54,90 @@ struct pimpl<junk::data_set>::implementation
 	{
 	}
 
-	junk::header header;
 	std::string filename;
+	junk::element_list elements;
 	std::vector<boost::iostreams::mapped_file> mapped_files;
 };
 
 junk::data_set::data_set(const std::string& filename, bool new_file) :
 		junk::data_set::data_set::base(filename, new_file)
 {
-	if (!new_file)
+	if (new_file)
+		return;
+
+	junk::load_header(filename, self.elements);
+	load(false);
+
+	std::size_t offset = 0;
+	BOOST_FOREACH(junk::element& elem, self.elements)
 	{
-		junk::load_header(filename, self.header);
-		load(false);
+		BOOST_FOREACH(junk::attribute& attr, elem.attributes)
+		{
+			attr.offset = offset;
+			offset += size_in_bytes(attr);
+		}
 	}
 }
 
-junk::header& junk::data_set::header()
+void junk::data_set::safe_header()
 {
-	return self.header;
+	junk::save_header(self.filename, self.elements);
 }
 
-const junk::header& junk::data_set::header() const
+void junk::data_set::add_element(const char* name, const char* plural)
 {
-	return self.header;
+	junk::element elem;
+	elem.name_sg = name;
+	elem.name_pl = plural ? plural : elem.name_sg + 's';
+	self.elements.push_back(elem);
+}
+
+void junk::data_set::add_attribute(const char* element, const char* attribute,
+		junk::type type, std::size_t size)
+{
+	junk::element& elem = get_element(element);
+
+	std::size_t offset = 0;
+	if(!elem.attributes.empty())
+	{
+		junk::attribute& last = elem.attributes.back();
+		offset = last.offset + size_in_bytes(last);
+	}
+
+	elem.attributes.push_back(junk::attribute(type, attribute, size, offset));
+}
+
+std::size_t junk::data_set::get_size(const char* element) const
+{
+	return get_element(element).size;
+}
+
+void junk::data_set::set_size(const char* element, std::size_t size)
+{
+	get_element(element).size = size;
+}
+
+const junk::attribute& junk::data_set::get_attribute(const char* element, const char* attribute) const
+{
+	const junk::element& elem = get_element(element);
+
+	junk::attrib_list::const_iterator it = boost::range::find_if(elem.attributes,
+			boost::phoenix::bind(&junk::attribute::name, boost::phoenix::arg_names::arg1) == attribute
+			//boost::phoenix::arg_names::arg1->*&element::name_sg == name
+			);
+
+	if (it == elem.attributes.end())
+		throw std::runtime_error("attribute not found.");
+
+	return *it;
 }
 
 void junk::data_set::load(bool new_file)
 {
 	try
 	{
-		self.mapped_files.resize(self.header.elements.size());
-		std::for_each(self.header.elements.begin(), self.header.elements.end(),
+		self.mapped_files.resize(self.elements.size());
+		boost::range::for_each(self.elements,
 			load_element(self.mapped_files.begin(),	self.filename, new_file));
 	}
 	catch (std::exception& except)
@@ -107,18 +167,44 @@ junk::const_raw_data junk::data_set::raw_data(std::size_t index) const
 
 junk::stream_range junk::data_set::stream_range(std::size_t index)
 {
-	assert(index < self.header.elements.size());
+	assert(index < self.elements.size());
 	char* begin = self.mapped_files[index].data();
 	char* end = begin + self.mapped_files[index].size();
-	std::size_t element_size = size_in_bytes(self.header.elements[index]);
+	std::size_t element_size = size_in_bytes(self.elements[index]);
 	return junk::make_stream_range(begin, end, element_size);
 }
 
 junk::const_stream_range junk::data_set::stream_range(std::size_t index) const
 {
-	assert(index < self.header.elements.size());
+	assert(index < self.elements.size());
 	const char* begin = self.mapped_files[index].data();
 	const char* end = begin + self.mapped_files[index].size();
-	std::size_t element_size = size_in_bytes(self.header.elements[index]);
+	std::size_t element_size = size_in_bytes(self.elements[index]);
 	return junk::make_stream_range(begin, end, element_size);
+}
+
+junk::element& junk::data_set::get_element(const char* name)
+{
+	junk::element_list::iterator it = boost::range::find_if(self.elements,
+			boost::phoenix::bind(&junk::element::name_sg, boost::phoenix::arg_names::arg1) == name
+			//boost::phoenix::arg_names::arg1->*&element::name_sg == name
+			);
+
+	if (it == self.elements.end())
+		throw std::runtime_error("element not found.");
+
+	return *it;
+}
+
+const junk::element& junk::data_set::get_element(const char* name) const
+{
+	junk::element_list::const_iterator it = boost::range::find_if(self.elements,
+			boost::phoenix::bind(&junk::element::name_sg, boost::phoenix::arg_names::arg1) == name
+			//boost::phoenix::arg_names::arg1->*&element::name_sg == name
+			);
+
+	if (it == self.elements.end())
+		throw std::runtime_error("element not found.");
+
+	return *it;
 }

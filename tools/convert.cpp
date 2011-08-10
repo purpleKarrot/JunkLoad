@@ -276,32 +276,32 @@ read_ply_data::read_ply_data(junk::data_set& junk, bool normal, bool color) :
 	ply_parser.list_property_definition_callbacks(list_property_definition_callbacks);
 }
 
-void setup_header(junk::header& header, bool normal, bool color)
+void setup_header(junk::data_set& data_set, bool normal, bool color)
 {
-	junk::element& vs = header.vertex();
-
-	create_attribute(vs, "position", junk::SP_FLOAT_32, 3);
+	data_set.add_element("vertex", "vertices");
+	data_set.add_attribute("vertex", "position", junk::float_32, 3);
 
 	if (normal)
-		create_attribute(vs, "normal", junk::SP_FLOAT_32, 3);
+		data_set.add_attribute("vertex", "normal", junk::float_32, 3);
 
 	if (color)
-		create_attribute(vs, "color", junk::SP_UINT_8, 3);
+		data_set.add_attribute("vertex", "color", junk::u_int_08, 3);
 
-	junk::compute_offsets(vs);
-
-	junk::element& fs = header.face();
-	junk::create_attribute(fs, "indices", junk::SP_UINT_32, 3);
-	junk::compute_offsets(fs);
+	data_set.add_element("face");
+	data_set.add_attribute("face", "indices", junk::u_int_32, 3);
 }
 
 void convert(const std::vector<std::string>& input, junk::data_set& junk, bool normal, bool color)
 {
-	junk::header& header = junk.header();
+	std::size_t vertices = 0;
+	std::size_t faces = 0;
 
-	acc_ply_size acc(header.vertex().size, header.face().size);
-	boost::range::for_each(input, acc);
+	boost::range::for_each(input, acc_ply_size (vertices, faces));
+
+	junk.set_size("vertex", vertices);
+	junk.set_size("face", faces);
 
 	junk.load(true);
+
 	boost::range::for_each(input, read_ply_data(junk, normal, color));
 }

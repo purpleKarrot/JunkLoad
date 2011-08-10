@@ -4,6 +4,7 @@
 #include <string>
 #include <junk/types.hpp>
 #include <junk/stream_range.hpp>
+#include <junk/attribute_accessor.hpp>
 
 #include <boost/pimpl.h>
 
@@ -30,15 +31,37 @@ struct data_set: pimpl<data_set>::pointer_semantics
 
 	void load(bool new_file);
 
-	junk::header& header();
-	const junk::header& header() const;
+	void safe_header();
+
+	void add_element(const char* name, const char* plural = 0);
+	void add_attribute(const char* element, const char* attribute,
+			junk::type type, std::size_t size = 1);
+
+	std::size_t get_size(const char* element) const;
+	void set_size(const char* element, std::size_t size);
 
 	junk::raw_data raw_data(std::size_t index);
 	junk::const_raw_data raw_data(std::size_t index) const;
 
 	junk::stream_range stream_range(std::size_t index);
 	junk::const_stream_range stream_range(std::size_t index) const;
-	//junk::element_range element_range(const std::string& name) const;
+
+	template<typename T>
+	attribute_accessor<T> get_accessor(const char* element, const char* attribute) const
+	{
+		const junk::attribute& attr = get_attribute(element, attribute);
+
+		assert(attr.type == traits::type<T>::value);
+		assert(attr.size == traits::size<T>::value);
+
+		return attribute_accessor<T>(attr.offset);
+	}
+
+//private:
+	element& get_element(const char* name);
+	const element& get_element(const char* name) const;
+
+	const attribute& get_attribute(const char* element, const char* attribute) const;
 };
 
 } // namespace junk

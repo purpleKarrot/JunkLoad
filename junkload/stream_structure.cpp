@@ -1,5 +1,6 @@
 #include <junk/types.hpp>
 
+#include <stdexcept>
 #include <boost/range/algorithm/find_if.hpp>
 using boost::range::find_if;
 
@@ -20,11 +21,6 @@ struct match_name
 
 	const std::string& name;
 };
-
-bool has_attribute(const element& e, const std::string& name)
-{
-	return find_if(e.attributes, match_name(name)) != e.attributes.end();
-}
 
 attribute& get_attribute(element& e,const std::string& name)
 {
@@ -48,26 +44,6 @@ const attribute& get_attribute(const element& e, const std::string& name)
 	}
 
 	return *it;
-}
-
-// creates an empty attribute with the specified name
-void create_attribute(element& e, const std::string& name, typid type, size_t size)
-{
-	e.attributes.push_back(attribute(type, name, size, 0));
-}
-
-void compute_offsets(element& e)
-{
-	size_t offset = 0;
-	std::vector<attribute>::iterator it = e.attributes.begin();
-	std::vector<attribute>::iterator end = e.attributes.end();
-
-	for (; it != end; ++it)
-	{
-		attribute& attr = *it;
-		attr.offset = offset;
-		offset += size_in_bytes(attr);
-	}
 }
 
 } // namespace junk

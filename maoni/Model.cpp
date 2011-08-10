@@ -81,8 +81,7 @@ void Model::draw(int ranges) const
 	glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuffer);
 
-	junk::header& header = data_set->header();
-	junk::element& vertex = header.get_element("vertex");
+	junk::element& vertex = data_set->get_element("vertex");
 
 	bool vertex_array = false;
 	bool normal_array = false;
@@ -110,7 +109,7 @@ void Model::draw(int ranges) const
 		}
 	}
 
-	std::size_t faces = header.get_element("face").size;
+	std::size_t faces = data_set->get_size("face");
 
 	for (int i = 0; i < ranges; ++i)
 	{

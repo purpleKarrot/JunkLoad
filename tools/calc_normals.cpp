@@ -11,12 +11,9 @@ typedef vec<unsigned int, 3> triangle;
 
 void calc_normals(junk::data_set& junk)
 {
-	const junk::element& vs = junk.header().vertex();
-	const junk::element& fs = junk.header().face();
-
-	junk::attribute_accessor<vec3> get_position(get_attribute(vs, "position").offset);
-	junk::attribute_accessor<vec3> get_normal(get_attribute(vs, "normal").offset);
-	junk::attribute_accessor<triangle> get_triangle(get_attribute(fs, "indices").offset);
+	junk::attribute_accessor<vec3> get_position = junk.get_accessor<vec3>("vertex", "position");
+	junk::attribute_accessor<vec3> get_normal = junk.get_accessor<vec3>("vertex", "normal");
+	junk::attribute_accessor<triangle> get_triangle = junk.get_accessor<triangle>("face", "indices");
 
 	junk::stream_range vertices = junk.stream_range(0);
 	junk::stream_range triangles = junk.stream_range(1);

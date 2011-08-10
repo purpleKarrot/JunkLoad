@@ -8,54 +8,46 @@
 #include <fstream>
 #include <boost/spirit/include/karma.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
-#include <junk/types.hpp>
+
+#include "adapted.hpp"
 
 namespace karma = boost::spirit::karma;
 namespace ascii = boost::spirit::ascii;
 
+#ifdef __BIG_ENDIAN__
+# define ENDIAN "BIG_ENDIAN"
+#else
+# define ENDIAN "LITTLE_ENDIAN"
+#endif
+
 namespace
 {
 
-struct scalar_symbols: karma::symbols<junk::typid, const char*>
+struct scalar_symbols: karma::symbols<junk::type, const char*>
 {
 	scalar_symbols()
 	{
 		this->add
-			(junk::SP_INT_8,    "int8"   )
-			(junk::SP_INT_16,   "int16"  )
-			(junk::SP_INT_32,   "int32"  )
-			(junk::SP_UINT_8,   "uint8"  )
-			(junk::SP_UINT_16,  "uint16" )
-			(junk::SP_UINT_32,  "uint32" )
-			(junk::SP_FLOAT_32, "float32")
-			(junk::SP_FLOAT_64, "float64")
+			(junk::s_int_08, "int8"   )
+			(junk::s_int_16, "int16"  )
+			(junk::s_int_32, "int32"  )
+			(junk::u_int_08, "uint8"  )
+			(junk::u_int_16, "uint16" )
+			(junk::u_int_32, "uint32" )
+			(junk::float_32, "float32")
+			(junk::float_64, "float64")
 		;
 	}
 };
 
-struct endian_policy: karma::bool_policies<>
-{
-    template <typename CharEncoding, typename Tag, typename OutputIterator>
-    static bool generate_true(OutputIterator& sink, bool b)
-    {
-        return karma::string_inserter<CharEncoding, Tag>::call(sink, "BIG_ENDIAN");
-    }
-
-    template<typename CharEncoding, typename Tag, typename OutputIterator>
-	static bool generate_false(OutputIterator& sink, bool b)
-	{
-		return karma::string_inserter<CharEncoding, Tag>::call(sink, "LITTLE_ENDIAN");
-	}
-};
-
 template<typename Iterator>
-struct header_grammar: karma::grammar<Iterator, junk::header()>
+struct header_grammar: karma::grammar<Iterator, junk::element_list()>
 {
 	header_grammar() :
 		header_grammar::base_type(start)
 	{
 		start
-			%= "#define " << endian << karma::eol << karma::eol
+			%= "#define " ENDIAN << karma::eol << karma::eol
 			<< element_ % karma::eol
 			;
 
@@ -75,13 +67,12 @@ struct header_grammar: karma::grammar<Iterator, junk::header()>
 			;
 	}
 
-	karma::rule<Iterator, junk::header()> start;
+	karma::rule<Iterator, junk::element_list()> start;
 	karma::rule<Iterator, junk::element()> element_;
 	karma::rule<Iterator, junk::attribute()> attribute_;
 	karma::rule<Iterator, std::size_t()> size_;
 
 	scalar_symbols scalar_;
-	karma::bool_generator<bool, endian_policy> endian;
 };
 
 } // unnamed namespace
@@ -89,14 +80,14 @@ struct header_grammar: karma::grammar<Iterator, junk::header()>
 namespace junk
 {
 
-bool save_header(const std::string& filename, const header& h)
+bool save_header(const std::string& filename, const element_list& elements)
 {
 	typedef std::ostream_iterator<char> sink_type;
 
 	std::ofstream file(filename.c_str());
 	sink_type sink(file);
-	header_grammar<sink_type> g;
-	return karma::generate(sink, g, h);
+	header_grammar<sink_type> grammar;
+	return karma::generate(sink, grammar, elements);
 }
 
 } // namespace junk
