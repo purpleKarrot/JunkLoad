@@ -7,7 +7,12 @@
 
 #include <boost/foreach.hpp>
 #include <junk/types.hpp>
-#include <GL/gl.h>
+
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+#else
+# include <GL/gl.h>
+#endif
 
 namespace junk
 {

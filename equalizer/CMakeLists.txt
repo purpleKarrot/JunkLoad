@@ -1,6 +1,11 @@
 # Copyright (c) 2011 Daniel Pfeifer <daniel@pfeifer-mail.de>
 
-find_package(Equalizer NO_MODULE)
+find_package(Equalizer QUIET NO_MODULE)
+if(NOT EQUALIZER_FOUND)
+  message(STATUS "skipping equalizer")
+  return()
+endif()
+
 include_directories(${Equalizer_INCLUDE_DIRS})
 
 add_library(eqMesh STATIC
