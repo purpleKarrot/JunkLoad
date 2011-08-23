@@ -8,7 +8,7 @@
 #ifndef JNK_ADAPTED_HPP
 #define JNK_ADAPTED_HPP
 
-#include <junk/types.hpp>
+#include <jnk/types.hpp>
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(junk::attribute,

@@ -40,6 +40,7 @@ void box(int& min, int& max)
 	mask |= maks >> 2;
 	mask |= maks >> 4;
 	mask |= maks >> 8;
+	mask |= maks >> 16;
 
 	min &= ~mask;
 	max |= mask;

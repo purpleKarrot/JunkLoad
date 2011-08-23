@@ -5,34 +5,73 @@
  *      Author: daniel
  */
 
-#include <junk/data_set.hpp>
+#include <jnk/data_set.hpp>
+#include <zix/z_index.hpp>
 
 #include <boost/qvm/all.hpp>
 using namespace boost::qvm;
 
-typedef float position[3];
-typedef unsigned int triangle[3];
-
+typedef vec<float, 3> position;
+typedef vec<uint32_t, 3> triangle;
 
 template<typename T>
-T minimum(T a, T b, T c)
+inline void minimize(T& a, const T& b)
 {
-	return (std::min)(a, (std::min)(b,c));
+	if (a > b)
+		a = b;
 }
 
 template<typename T>
-T minimum(T a, T b, T c, T d)
+inline void maximize(T& a, const T& b)
 {
-	return minimum(a,b, (std::min)(c,d));
+	if (a < b)
+		a = b;
 }
 
-position minimum(position const& p1, position const& p2, position const& p3, position const& p4)
+template<>
+inline void minimize<position>(position& a, const position& b)
 {
-	position p;
-	p[0] = minimum(p[0], p1[0],p2[0],p3[0],p4[0]);
-	p[1] = minimum(p[1], p1[1],p2[1],p3[1],p4[1]);
-	p[2] = minimum(p[2], p1[2],p2[2],p3[2],p4[2]);
-	return p;
+	minimize(a % X, b % X);
+	minimize(a % Y, b % Y);
+	minimize(a % Z, b % Z);
+}
+
+template<>
+inline void maximize<position>(position& a, const position& b)
+{
+	maximize(a % X, b % X);
+	maximize(a % Y, b % Y);
+	maximize(a % Z, b % Z);
+}
+
+template<typename T>
+inline void minimize(T& a, const T& b, const T& c)
+{
+	minimize(a, b);
+	minimize(a, c);
+}
+
+template<typename T>
+inline void maximize(T& a, const T& b, const T& c)
+{
+	maximize(a, b);
+	maximize(a, c);
+}
+
+template<typename T>
+inline void minimize(T& a, const T& b, const T& c, const T& d)
+{
+	minimize(a, b);
+	minimize(a, c);
+	minimize(a, d);
+}
+
+template<typename T>
+inline void maximize(T& a, const T& b, const T& c, const T& d)
+{
+	maximize(a, b);
+	maximize(a, c);
+	maximize(a, d);
 }
 
 int main(int argc, char* argv[])
@@ -44,20 +83,21 @@ int main(int argc, char* argv[])
 	}
 
 	junk::data_set data_set(argv[1]);
+
 	data_set.add_element("box", "boxes");
-	data_set.add_attribute<unsigned int>("box", "min_vertex");
-	data_set.add_attribute<unsigned int>("box", "max_vertex");
-	data_set.add_attribute<unsigned int>("box", "min_face");
-	data_set.add_attribute<unsigned int>("box", "max_face");
+	data_set.add_attribute<uint32_t>("box", "min_vertex");
+	data_set.add_attribute<uint32_t>("box", "max_vertex");
+	data_set.add_attribute<uint32_t>("box", "min_face");
+	data_set.add_attribute<uint32_t>("box", "max_face");
 	data_set.add_attribute<position>("box", "min_bbox");
 	data_set.add_attribute<position>("box", "max_bbox");
 
 	junk::accessor<position> get_position = data_set.get_accessor<position>("vertex", "position");
 	junk::accessor<triangle> get_triangle = data_set.get_accessor<triangle>("face", "indices");
-	junk::accessor<unsigned int> min_vertex = data_set.get_accessor<unsigned int>("box", "min_vertex");
-	junk::accessor<unsigned int> max_vertex = data_set.get_accessor<unsigned int>("box", "max_vertex");
-	junk::accessor<unsigned int> min_face = data_set.get_accessor<unsigned int>("box", "min_face");
-	junk::accessor<unsigned int> max_face = data_set.get_accessor<unsigned int>("box", "max_face");
+	junk::accessor<uint32_t> min_vertex = data_set.get_accessor<uint32_t>("box", "min_vertex");
+	junk::accessor<uint32_t> max_vertex = data_set.get_accessor<uint32_t>("box", "max_vertex");
+	junk::accessor<uint32_t> min_face = data_set.get_accessor<uint32_t>("box", "min_face");
+	junk::accessor<uint32_t> max_face = data_set.get_accessor<uint32_t>("box", "max_face");
 	junk::accessor<position> min_bbox = data_set.get_accessor<position>("box", "min_bbox");
 	junk::accessor<position> max_bbox = data_set.get_accessor<position>("box", "max_bbox");
 
@@ -65,20 +105,19 @@ int main(int argc, char* argv[])
 	junk::stream_range tri_range = data_set.stream_range(1);
 	junk::stream_range box_range = data_set.stream_range(2);
 
-
-	for (std::size_t i=0; i < tri_range.size(); ++i)
+	for (std::size_t i = 0; i < tri_range.size(); ++i)
 	{
 		triangle& tri = get_triangle(tri_range[i]);
 
-		unsigned int small_idx = (std::min)(tri%X, (std::min)(tri%Y,tri%Z));
-		position& smallest_pos = get_position(pos_range[small_idx]);
+		unsigned int small_idx = (std::min)(tri % X, (std::min)(tri % Y, tri % Z));
+		position& small = get_position(pos_range[small_idx]);
 
-		int z = z_index(smallest_pos);
+		int z = zix::z_index(small % X, small % Y, small % Z);
 
 		char* box = box_range[z];
 
-		minimize(min_vertex(box), tri%X, tri%Y, tri%Z);
-		maximize(max_vertex(box), tri%X, tri%Y, tri%Z);
+		minimize(min_vertex(box), tri % X, tri % Y, tri % Z);
+		maximize(max_vertex(box), tri % X, tri % Y, tri % Z);
 
 		minimize(min_face(box), i);
 		maximize(max_face(box), i);
@@ -87,7 +126,7 @@ int main(int argc, char* argv[])
 		const position& p2 = get_position(pos_range[tri % Y]);
 		const position& p3 = get_position(pos_range[tri % Z]);
 
-		minimize(min_bbox(box), p1, p2, p3)
+		minimize(min_bbox(box), p1, p2, p3);
 		maximize(max_bbox(box), p1, p2, p3);
 	}
 

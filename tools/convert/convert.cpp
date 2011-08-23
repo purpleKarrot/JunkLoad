@@ -6,9 +6,9 @@
 #include <boost/range/algorithm/for_each.hpp>
 #include <boost/qvm/v_traits_array.hpp>
 
-#include <junk/stream_iterator.hpp>
-#include <junk/accessor.hpp>
-#include <junk/data_set.hpp>
+#include <jnk/stream_iterator.hpp>
+#include <jnk/accessor.hpp>
+#include <jnk/data_set.hpp>
 
 #include "ply/config.hpp"
 #include "ply/ply.hpp"

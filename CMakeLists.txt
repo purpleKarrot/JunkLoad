@@ -7,7 +7,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
-include_directories(include)
+include_directories(
+  include
+  libs/jnk/include
+  libs/zix/include
+  )
 
 find_package(Boost
   COMPONENTS
@@ -20,7 +24,10 @@ find_package(Boost
 include(${Boost_USE_FILE})
 
 # loading library
-add_subdirectory(junkload)
+add_subdirectory(libs/jnk)
+
+# z-index utilities
+add_subdirectory(libs/zix)
 
 # preprocessing tools
 add_subdirectory(tools)
@@ -29,5 +36,5 @@ add_subdirectory(tools)
 add_subdirectory(data)
 
 # viewers
-add_subdirectory(equalizer)
-add_subdirectory(maoni)
+add_subdirectory(tools/equalizer)
+add_subdirectory(tools/maoni)

@@ -1,8 +1,8 @@
-#include <junk/data_set.hpp>
+#include <jnk/data_set.hpp>
 
 #include <iostream>
 #include <stdexcept>
-#include <junk/stream_range.hpp>
+#include <jnk/stream_range.hpp>
 #include <boost/foreach.hpp>
 #include <boost/range/algorithm/for_each.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>

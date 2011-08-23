@@ -1,27 +1,29 @@
 
-add_executable(junk
-  main.cpp
-  convert.cpp
-  ply/ply_parser.cpp
-  fix_scale.cpp
-  calc_normals.cpp
+# convert PLY to JNK
+add_executable(jnk_convert
+  convert/main.cpp
+  convert/convert.cpp
+  convert/ply/ply_parser.cpp
+  convert/fix_scale.cpp
+  convert/calc_normals.cpp
   )
-target_link_libraries(junk
-  junkload
+target_link_libraries(jnk_convert
+  jnk
   pthread
   )
-boost_link_libraries(junk STATIC
+boost_link_libraries(jnk_convert STATIC
   filesystem
   iostreams
   program_options
   thread
   )
 
+# sort JNK file according to z-index
 add_executable(sort
   sort/main.cpp
   )
 target_link_libraries(sort
-  junkload
+  jnk
   pthread
   )
 boost_link_libraries(sort STATIC
@@ -29,3 +31,15 @@ boost_link_libraries(sort STATIC
   iostreams
   thread
   )
+
+# augment a sorted JNK file with a bbox-stream
+add_executable(box
+  box/main.cpp
+  )
+target_link_libraries(box
+  jnk
+  )
+boost_link_libraries(box STATIC
+  iostreams
+  )
+  

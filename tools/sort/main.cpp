@@ -7,10 +7,10 @@
 
 #include <boost/iostreams/device/mapped_file.hpp>
 
-#include <junk/accessor.hpp>
-#include <junk/data_set.hpp>
+#include <jnk/accessor.hpp>
+#include <jnk/data_set.hpp>
 #include "intro_sort.hpp"
-#include "z_order.hpp"
+#include <zix/z_order.hpp>
 
 template<typename T>
 class smallest_component_accessor

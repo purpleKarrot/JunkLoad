@@ -9,7 +9,7 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
-#include <junk/data_set.hpp>
+#include <jnk/data_set.hpp>
 
 void convert(junk::data_set& data_set, const std::vector<std::string>& input,
 		bool use_normal, bool auto_normal, bool use_color);

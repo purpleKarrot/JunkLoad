@@ -6,6 +6,7 @@
  */
 
 #include <fstream>
+#include <boost/fusion/include/make_cons.hpp>
 #include <boost/spirit/include/karma.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 

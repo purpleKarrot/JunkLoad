@@ -19,7 +19,7 @@
  */
 
 #include <Maoni.hpp>
-#include <junk/data_set.hpp>
+#include <jnk/data_set.hpp>
 #include <boost/scoped_ptr.hpp>
 
 class Model: public Path

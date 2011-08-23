@@ -2,10 +2,10 @@
 #define PPK_DATA_SET_HPP
 
 #include <string>
-#include <junk/types.hpp>
-#include <junk/traits.hpp>
-#include <junk/stream_range.hpp>
-#include <junk/accessor.hpp>
+#include <jnk/types.hpp>
+#include <jnk/traits.hpp>
+#include <jnk/stream_range.hpp>
+#include <jnk/accessor.hpp>
 
 #include <boost/pimpl.h>
 

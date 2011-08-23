@@ -1,7 +1,7 @@
 #ifndef JNK_TRAITS_HPP
 #define JNK_TRAITS_HPP
 
-#include <junk/types.hpp>
+#include <jnk/types.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/qvm/v_traits.hpp>
 #include <boost/utility/enable_if.hpp>

@@ -1,7 +1,7 @@
 //
 
-#include <junk/accessor.hpp>
-#include <junk/data_set.hpp>
+#include <jnk/accessor.hpp>
+#include <jnk/data_set.hpp>
 
 #include <boost/qvm/all.hpp>
 using namespace boost::qvm;

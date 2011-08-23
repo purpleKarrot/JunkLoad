@@ -7,7 +7,7 @@ foreach(model bunny rockerArm screwdriver trico)
 
   add_custom_command(OUTPUT ${output}
     COMMAND
-      $<TARGET_FILE:junk> -af -i  ${input} -o ${output}
+      $<TARGET_FILE:jnk_convert> -af -i  ${input} -o ${output}
     DEPENDS
       ${input}
     )

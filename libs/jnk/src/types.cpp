@@ -6,7 +6,7 @@
  */
 
 #include <boost/foreach.hpp>
-#include <junk/types.hpp>
+#include <jnk/types.hpp>
 
 #ifdef __APPLE__
 # include <OpenGL/gl.h>
