@@ -9,6 +9,7 @@
 #define ZIX_Z_INDEX_HPP
 
 #include <cassert>
+#include <boost/qvm/all.hpp>
 
 namespace zix
 {
@@ -31,11 +32,14 @@ inline int stretch(int x)
 	return x;
 }
 
-inline int z_index(float x, float y, float z)
+template<typename Vector>
+inline int z_index(const Vector& v)
 {
-	int a = stretch(discretize(a));
-	int b = stretch(discretize(b));
-	int c = stretch(discretize(c));
+	using namespace boost::qvm;
+
+	int a = stretch(discretize(v % X));
+	int b = stretch(discretize(v % Y));
+	int c = stretch(discretize(v % Z));
 
 	return a | (b << 1) | (c << 2);
 }
