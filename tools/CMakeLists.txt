@@ -34,7 +34,7 @@ boost_link_libraries(sort STATIC
 
 # augment a sorted JNK file with a bbox-stream
 add_executable(box
-  box/main.cpp
+  box/assign.cpp
   )
 target_link_libraries(box
   jnk
@@ -42,4 +42,3 @@ target_link_libraries(box
 boost_link_libraries(box STATIC
   iostreams
   )
-  

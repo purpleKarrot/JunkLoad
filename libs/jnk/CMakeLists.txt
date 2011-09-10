@@ -1,7 +1,7 @@
 
 add_library(jnk
-  src/types.cpp
-  src/generator.cpp
-  src/parser.cpp
-  src/data_set.cpp
+  types.cpp
+  generator.cpp
+  parser.cpp
+  data_set.cpp
   )

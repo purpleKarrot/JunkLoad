@@ -1,14 +1,21 @@
 //Copyright (c) 2010 Daniel Pfeifer
 
-#ifndef __VMML_MATRIX_TRAITS_HPP__
-#define __VMML_MATRIX_TRAITS_HPP__
+#ifndef FRUSTUM_MATRIX_HPP
+#define FRUSTUM_MATRIX_HPP
 
 #include <vmmlib/matrix.hpp>
 #include <boost/qvm/m_traits.hpp>
 
+namespace frustum
+{
+
+typedef vmml::matrix<4, 4, float> Matrix;
+
+} // namespace frustum
+
 namespace boost
 {
-namespace la
+namespace qvm
 {
 
 template<size_t M, size_t N, typename T>
@@ -60,7 +67,7 @@ struct matrix_traits<vmml::matrix<M, N, T> >
 	}
 };
 
-} // namespace la
+} // namespace qvm
 } // namespace boost
 
-#endif /* VMML_MATRIX_TRAITS_HPP */
+#endif /* FRUSTUM_MATRIX_HPP */
