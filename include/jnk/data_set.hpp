@@ -30,7 +30,7 @@ struct data_set: pimpl<data_set>::pointer_semantics
 {
 	data_set(const std::string& filename, bool new_file = false);
 
-	void load(bool new_file);
+	void reload();
 
 	void add_element(const char* name, const char* plural = 0);
 

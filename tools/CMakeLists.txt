@@ -11,9 +11,7 @@ target_link_libraries(jnk_convert
   jnk
   pthread
   )
-boost_link_libraries(jnk_convert STATIC
-  filesystem
-  iostreams
+boost_link_libraries(jnk_convert
   program_options
   thread
   )
@@ -26,19 +24,15 @@ target_link_libraries(sort
   jnk
   pthread
   )
-boost_link_libraries(sort STATIC
-  filesystem
-  iostreams
+boost_link_libraries(sort
   thread
   )
 
 # augment a sorted JNK file with a bbox-stream
 add_executable(box
+  box/main.cpp
   box/assign.cpp
   )
 target_link_libraries(box
   jnk
-  )
-boost_link_libraries(box STATIC
-  iostreams
   )

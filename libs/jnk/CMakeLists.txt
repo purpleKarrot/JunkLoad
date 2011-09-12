@@ -5,3 +5,7 @@ add_library(jnk
   parser.cpp
   data_set.cpp
   )
+boost_link_libraries(jnk
+  iostreams
+  filesystem
+  )

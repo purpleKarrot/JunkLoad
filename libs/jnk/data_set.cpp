@@ -14,6 +14,8 @@
 #include <boost/spirit/home/phoenix/bind/bind_member_variable.hpp>
 #include <boost/range/algorithm/find_if.hpp>
 
+#include <boost/filesystem.hpp>
+
 #define self (*(*this))
 
 namespace junk
@@ -23,37 +25,6 @@ bool load_header(const std::string& filename, element_list& elements);
 bool save_header(const std::string& filename, const element_list& elements);
 
 } //namespace junk
-
-struct load_element
-{
-	typedef std::vector<boost::iostreams::mapped_file>::iterator iterator;
-
-	load_element(iterator it, const std::string& filename, bool new_file) :
-			it(it), filename(filename), new_file(new_file)
-	{
-	}
-
-	void operator()(const junk::element& element)
-	{
-		boost::iostreams::mapped_file_params params;
-		params.path = filename + '.' + element.name_pl;
-		params.mode = std::ios_base::in | std::ios_base::out;
-
-		if (new_file)
-		{
-			params.new_file_size = junk::file_size_in_bytes(element);
-			std::cout << "creating file '" << params.path << "' with a size of "
-					  << (double) params.new_file_size / 1073741824.0
-					  << " gigabytes." << std::endl;
-		}
-
-		*it++ = boost::iostreams::mapped_file(params);
-	}
-
-	iterator it;
-	const std::string& filename;
-	bool new_file;
-};
 
 template<>
 struct pimpl<junk::data_set>::implementation
@@ -76,7 +47,7 @@ junk::data_set::data_set(const std::string& filename, bool new_file) :
 		return;
 
 	junk::load_header(filename, self.elements);
-	load(false);
+	reload();
 
 	BOOST_FOREACH(junk::element& elem, self.elements)
 	{
@@ -94,7 +65,20 @@ void junk::data_set::add_element(const char* name, const char* plural)
 	junk::element elem;
 	elem.name_sg = name;
 	elem.name_pl = plural ? plural : elem.name_sg + 's';
-	self.elements.push_back(elem);
+
+	junk::element_list::iterator it = boost::range::find_if(self.elements,
+			boost::phoenix::bind(&junk::element::name_sg, boost::phoenix::arg_names::arg1) == name
+			//boost::phoenix::arg_names::arg1->*&element::name_sg == name
+			);
+
+	if (it == self.elements.end())
+	{
+		self.elements.push_back(elem);
+	}
+	else
+	{
+		*it = elem;
+	}
 }
 
 void junk::data_set::add_attribute(const char* element, const char* attribute,
@@ -137,22 +121,58 @@ const junk::attribute& junk::data_set::get_attribute(const char* element, const 
 	return *it;
 }
 
-void junk::data_set::load(bool new_file)
+void junk::data_set::reload()
 {
-	if (new_file)
-		junk::save_header(self.filename, self.elements);
+	bool header_changed = false;
 
 	try
 	{
 		self.mapped_files.resize(self.elements.size());
-		boost::range::for_each(self.elements,
-			load_element(self.mapped_files.begin(),	self.filename, new_file));
+		for (std::size_t i = 0; i < self.elements.size(); ++i)
+		{
+			boost::iostreams::mapped_file_params params;
+			params.path = self.filename + '.' + self.elements[i].name_pl;
+			params.mode = std::ios_base::in | std::ios_base::out;
+
+			if (!boost::filesystem::exists(params.path))
+			{
+				params.new_file_size = junk::file_size_in_bytes(self.elements[i]);
+
+				std::cout << "creating file '" << params.path << "' with a size of ";
+
+				if (params.new_file_size > 1073741824)
+				{
+					std::cout << params.new_file_size / 1073741824.0 << " G";
+				}
+				else if (params.new_file_size > 1048576)
+				{
+					std::cout << params.new_file_size / 1048576.0 << " M";
+				}
+				else if (params.new_file_size > 1024)
+				{
+					std::cout << params.new_file_size / 1024.0 << " k";
+				}
+				else
+				{
+					std::cout << params.new_file_size << " ";
+				}
+
+				std::cout << "B." <<std::endl;
+
+				header_changed = true;
+			}
+
+			self.mapped_files[i] = boost::iostreams::mapped_file(params);
+		}
 	}
 	catch (std::exception& except)
 	{
 		std::cerr << boost::diagnostic_information(except);
 		std::abort();
 	}
+
+	if (header_changed)
+		junk::save_header(self.filename, self.elements);
 }
 
 junk::raw_data junk::data_set::raw_data(std::size_t index)

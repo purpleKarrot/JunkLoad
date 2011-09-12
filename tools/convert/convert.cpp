@@ -300,7 +300,7 @@ void convert(junk::data_set& data_set, const std::vector<std::string>& input,
 	data_set.set_size("vertex", vertices);
 	data_set.set_size("face", faces);
 
-	data_set.load(true);
+	data_set.reload();
 
 	boost::range::for_each(input, read_ply_data(data_set, use_normal, use_color));
 }

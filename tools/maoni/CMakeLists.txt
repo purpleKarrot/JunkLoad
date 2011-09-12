@@ -17,7 +17,3 @@ target_link_libraries(massive_maoni
   ${MAONI_LIBRARIES}
   jnk
   )
-
-boost_link_libraries(massive_maoni STATIC
-  iostreams
-  )
