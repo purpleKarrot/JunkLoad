@@ -19,7 +19,7 @@ namespace qvm
 {
 
 template<size_t M, size_t N, typename T>
-struct matrix_traits<vmml::matrix<M, N, T> >
+struct m_traits<vmml::matrix<M, N, T> >
 {
 	typedef vmml::matrix<M, N, T> matrix_type;
 

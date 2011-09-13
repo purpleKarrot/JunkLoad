@@ -8,6 +8,8 @@ find_package(Maoni NO_MODULE)
 include_directories(${Maoni_INCLUDE_DIRS})
 
 add_executable(massive_maoni
+  BoxModel.cpp
+  BoxNode.cpp
   main.cpp
   Model.cpp
   Shader.cpp

@@ -31,7 +31,7 @@ struct AlignedBox
 	}
 
 	// for use in frustum computations
-	Vertex p_vertex(const Plane& plane)
+	Vertex p_vertex(const Plane& plane) const
 	{
 		return Vertex(
 			plane.a < 0 ? this->min.x : this->max.x,
@@ -39,7 +39,7 @@ struct AlignedBox
 			plane.c < 0 ? this->min.z : this->max.z);
 	}
 
-	Vertex n_vertex(const Plane& plane)
+	Vertex n_vertex(const Plane& plane) const
 	{
 		return Vertex(
 			plane.a > 0 ? this->min.x : this->max.x,

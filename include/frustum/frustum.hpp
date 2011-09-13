@@ -3,6 +3,7 @@
 
 #include <frustum/matrix.hpp>
 #include <frustum/aligned_box.hpp>
+#include <boost/qvm/all.hpp>
 
 namespace frustum
 {
@@ -24,23 +25,23 @@ public:
 	{
 		using namespace boost::qvm;
 
-		this->plane[LEF] = row<0>(view) + row<3>(view);
-		this->plane[RIG] = row<0>(view) - row<3>(view);
-		this->plane[BOT] = row<1>(view) + row<3>(view);
-		this->plane[TOP] = row<1>(view) - row<3>(view);
-		this->plane[NEA] = row<2>(view) + row<3>(view);
-		this->plane[FAR] = row<2>(view) - row<3>(view);
+		this->planes[LEF] = row<3>(view) + row<0>(view);
+		this->planes[RIG] = row<3>(view) - row<0>(view);
+		this->planes[BOT] = row<3>(view) + row<1>(view);
+		this->planes[TOP] = row<3>(view) - row<1>(view);
+		this->planes[NEA] = row<3>(view) + row<2>(view);
+		this->planes[FAR] = row<3>(view) - row<3>(view);
 	}
 
-	Visibility test(const aligned_box& box)
+	Visibility test(const AlignedBox& box) const
 	{
 		Visibility visibility = full;
 
 		for (int i = 0; i < 6; ++i)
 		{
-			if (distance(this->plane[i], box.p_vertex(this->plane[i])) < 0)
+			if (distance(this->planes[i], box.p_vertex(this->planes[i])) < 0)
 				return none;
-			if (distance(this->plane[i], box.n_vertex(this->plane[i])) < 0)
+			if (distance(this->planes[i], box.n_vertex(this->planes[i])) < 0)
 				visibility = partial;
 		}
 

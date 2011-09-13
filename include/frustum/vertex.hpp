@@ -19,6 +19,15 @@ template<typename T>
 class vertex
 {
 public:
+	vertex()
+	{
+	}
+
+	vertex(T x, T y, T z) :
+			x(x), y(y), z(z)
+	{
+	}
+
 	T x, y, z;
 
 private:
@@ -27,7 +36,7 @@ private:
 };
 
 template<typename T>
-T vertex<T>::* const Vertex<T>::mem_array[3] =
+T vertex<T>::* const vertex<T>::mem_array[3] =
 {
 	&vertex<T>::x,
 	&vertex<T>::y,

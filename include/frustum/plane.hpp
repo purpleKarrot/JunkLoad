@@ -23,16 +23,16 @@ public:
 
 private:
 	friend struct boost::qvm::v_traits<plane>;
-	static T plane<T>::* const mem_array[3];
+	static T plane<T>::* const mem_array[4];
 };
 
 template<typename T>
-T plane<T>::* const plane<T>::mem_array[3] =
+T plane<T>::* const plane<T>::mem_array[4] =
 {
-	&Plane<T>::a,
-	&Plane<T>::b,
-	&Plane<T>::c,
-	&Plane<T>::d
+	&plane<T>::a,
+	&plane<T>::b,
+	&plane<T>::c,
+	&plane<T>::d
 };
 
 typedef plane<float> Plane;

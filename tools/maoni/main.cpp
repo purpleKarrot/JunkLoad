@@ -21,6 +21,7 @@
 #include <Maoni.hpp>
 #include "Model.hpp"
 #include "Shader.hpp"
+#include "BoxModel.hpp"
 
 RENDER_ALGORITHM(Junk,
 	(Model, model, "data/bunny.junk")
@@ -30,5 +31,16 @@ RENDER_ALGORITHM(Junk,
 {
 	shader.bind();
 	model.draw(ranges);
+	shader.unbind();
+}
+
+RENDER_ALGORITHM(Box,
+	(BoxModel, model, "data/sorted_bunny.junk")
+	(Shader, shader, "data/color.shader")
+	(int, loaded_nodes, 5)
+	)
+{
+	shader.bind();
+	model.draw(loaded_nodes);
 	shader.unbind();
 }
