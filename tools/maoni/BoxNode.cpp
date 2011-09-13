@@ -51,7 +51,7 @@ void BoxNode::render(const frustum::Frustum& frustum, bool full)
 
 			glVertexPointer(3, GL_FLOAT, 24, (const GLvoid*) 0);
 			glNormalPointer(GL_FLOAT, 24, (const GLvoid*) 12);
-			glDrawElements(GL_TRIANGLES, faces, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, faces * 3, GL_UNSIGNED_INT, 0);
 		}
 
 		return;

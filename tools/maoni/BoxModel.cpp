@@ -25,7 +25,7 @@ struct Box
 BoxModel::BoxModel(const char* filename) :
 		Path(filename),
 		fanout_(4),
-		height_(5),
+		height_(3),
 		leaves_(std::pow(fanout_, height_)),
 		branches_((leaves_ - 1) / (fanout_ - 1)),
 		loaded_nodes(leaves_)
@@ -101,7 +101,7 @@ void BoxModel::load(uint32_t index, GLuint& vbuffer, GLuint& ibuffer,
 
 	// load vetices directly
 	{
-		uint32_t vertices = box.max_vertex - box.min_vertex;
+		uint32_t vertices = 1 + box.max_vertex - box.min_vertex;
 		const GLvoid* data = vtx_range[box.min_vertex];
 		GLsizei size = vertices * 24;
 
@@ -113,7 +113,7 @@ void BoxModel::load(uint32_t index, GLuint& vbuffer, GLuint& ibuffer,
 
 	// recalc face offsets
 	{
-		faces = box.max_face - box.min_face;
+		faces = 1 + box.max_face - box.min_face;
 		std::vector<uint32_t> face_data(
 				reinterpret_cast<const uint32_t*>(idx_range[box.min_face]),
 				reinterpret_cast<const uint32_t*>(idx_range[box.max_face]) + 3);
