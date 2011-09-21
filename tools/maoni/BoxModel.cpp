@@ -26,7 +26,7 @@ BoxModel::BoxModel(const char* filename) :
 		Path(filename),
 		fanout_(4),
 		height_(3),
-		leaves_(std::pow(fanout_, height_)),
+		leaves_(std::pow<double>(fanout_, height_)),
 		branches_((leaves_ - 1) / (fanout_ - 1)),
 		loaded_nodes(leaves_)
 {

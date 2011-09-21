@@ -1,4 +1,5 @@
 
+find_package(OpenGL REQUIRED)
 find_package(Maoni NO_MODULE)
 #if(NOT MAONI_FOUND)
 #  message(STATUS "skipping maoni")
@@ -17,5 +18,6 @@ add_executable(massive_maoni
 
 target_link_libraries(massive_maoni
   ${MAONI_LIBRARIES}
+  ${OPENGL_LIBRARIES}
   jnk
   )

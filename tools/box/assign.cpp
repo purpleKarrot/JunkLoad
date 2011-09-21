@@ -12,7 +12,7 @@ using namespace boost::qvm;
 Assign::Assign(int fanout, int height, junk::data_set& data) :
 		fanout(fanout), height(height), data(data)
 {
-	leaves = std::pow(fanout, height);
+	leaves = std::pow<double>(fanout, height);
 	branches = (leaves - 1) / (fanout - 1);
 
 	face_max = data.get_size("face") - 1;
