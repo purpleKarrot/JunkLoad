@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Maoni/glew.h>
 #include "Shader.hpp"
 #include <iostream>
 #include <fstream>
